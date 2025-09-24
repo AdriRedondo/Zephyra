@@ -19,7 +19,11 @@
     el futuro de la carretera, un kilómetro a la vez. Consigue tu coche desde 100 &euro; / día.
     </p>
 
-    <p><a href="#Vehículos">Ir a vehículos</a></p>
+    <nav>
+        <a href="#Vehículos">Vehículos</a> |
+        <a href="#Reservas">Reservas</a>
+    </nav>
+    
 
     
     <a href="images/coche-electrico-grande.png">
@@ -60,8 +64,45 @@
 
    
 
+    <section id="Vehículos">
+        <h2>Vehiculos</h2>
+        <table border="1">
+            <caption>Vehícluos disponibles</caption>
+            <thead>
+                <tr>
+                <th scope="col">Matrícula</th>
+                <th scope="col">Marca</th>
+                <th scope="col">Autonomía (km)</th>
+            </tr>
+            </thead>
 
-    <h2 id="Vehículos">Vehiculos</h2>
+        </table>
+    
+    </section>
+
+    <section id="Reservas">
+        <h2>Reservas</h2>
+        <form>
+            <label>Nombre: </label>
+            <input type="text"><br><br>
+            <label>Correo electrónico: </label>
+            <input type="email"><br><br>
+            <label>Vehículos: </label>
+            <select>
+                <optgroup label="Vehiculos">
+                    <option value="1">Tesla</option>
+                    <option value="2">Toyota</option>
+                    <option value="3">Audi</option>
+                </optgroup>
+            </select><br><br>
+            <label>Fecha inicio: </label>
+            <input type="date"><br><br>
+            <label>Fecha fin: </label>
+            <input type="date"><br><br>
+
+
+        </form>
+    </section>
 
 </body>
 </html>
