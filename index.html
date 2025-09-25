@@ -87,25 +87,35 @@
         <section id="Reservas">
             <h2>Reservas</h2>
             <form>
-                <label>Nombre: </label>
-                <input type="text"><br><br>
-                <label>Correo electrónico: </label>
-                <input type="email"><br><br>
-                <label>Vehículos: </label>
-                <select>
+                <label for="nombre">Nombre: </label>
+                <input type="text" id="nombre" required><br><br>
+
+                <label for="correo">Correo electrónico: </label>
+                <input type="email" id="correo" required><br><br>
+
+                <label for="vehiculos">Vehículos: </label>
+                <select id="vehiculos" required>
                     <optgroup label="Vehiculos">
                         <option value="1">Tesla</option>
                         <option value="2">Toyota</option>
                         <option value="3">Audi</option>
                     </optgroup>
                 </select><br><br>
-                <label>Inicio: </label>
-                <input type="datetime-local"><br><br>
-                <label>Fin: </label>
-                <input type="datetime-local"><br><br>
 
-                <label>Acepta términos y condiciones</label>
-                <input type="checkbox">
+                <label for="inicio">Inicio: </label>
+                <input type="datetime-local" id="inicio" required><br><br>
+
+                <label for="fin">Fin: </label>
+                <input type="datetime-local" id="fin" required><br><br>
+
+                <label for="telefono">Teléfono: </label>
+                <input type="tel" id="telefono" pattern="[0-9]{9}">
+
+                <label for="terminos">Acepta términos y condiciones</label>
+                <input type="checkbox" id="terminos" required><br><br>
+
+                <input type="submit" value="Enviar">
+                <input type="reset" value="Limpiar">
             </form>
         </section>
 
