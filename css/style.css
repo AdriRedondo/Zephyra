@@ -1,0 +1,88 @@
+@font-face {
+    font-family: 'CaviarDreams';
+    src: url('../fonts/caviar_dreams/CaviarDreams.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat/Montserrat-VariableFont_wght.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: #F5F7F8;
+    color: #1E1E1E;
+    margin: 0;
+}
+
+main {
+    margin: 0 10%;
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    background: #3F74;
+    align-content: center;
+    text-align: center;
+    width: 100%;
+}
+
+.zephyra {
+    font-family: 'CaviarDreams';
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    color: rgb(2, 58, 38);
+}
+
+.div-logo {
+    margin-bottom: 10px;
+}
+
+.barra-menu {
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-left: 0;
+    gap: 10px;
+}
+
+.barra-menu a {
+    text-decoration: none;
+
+}
+
+.elem-menu {
+    display: inline-block;
+    border-radius: 3px;
+    align-content: normal;
+    flex: 1;
+    text-align: center;
+    color: rgb(2, 58, 38);
+    padding: 1%;
+    font-weight: 600;
+}
+
+.elem-menu:hover {
+    box-shadow: 0 1px 1px 1px #1E1E1EAA;
+}
+
+footer {
+    text-align: center;
+    font-size: x-small;
+}
+
+.multimedia-inicio {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+}

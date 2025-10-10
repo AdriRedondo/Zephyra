@@ -5,25 +5,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de la Flota de Vehículos Eléctricos</title>
-    
+
+    <link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body>
     <header>
-        <img src="images/icono-logo.png" alt="Logo Zephyra" title="Logo Zephyra" width="150">
-        <h1>Zephyra</h1>
         <a href="index-en.html" lang="es" title="Change to English">
             English (EN)
         </a>
+        <div class="div-logo">
+            <img src="images/icono-logo.png" alt="Logo Zephyra" title="Logo Zephyra" width="150">
+            <h1 class="zephyra">ZEPHYRA</h1>
+        </div>
+        <nav class="barra-menu">
+            <a class="elem-menu" href="#Inicio" accesskey="i">Inicio</a></li>
+            <a class="elem-menu" href="#Vehiculos" accesskey="v">Vehículos</a></li>
+            <a class="elem-menu" href="reservas.html" accesskey="r">Reservas</a></li>
+            <a class="elem-menu" href="contacto.html" accesskey="c">Contacto</a></li>
+
+        </nav>
     </header>
 
-    <nav>
-        <a href="#Inicio" accesskey="i">Inicio</a>
-        <a href="#Vehículos" accesskey="v">Vehículos</a>
-        <a href="#Reservas" accesskey="r">Reservas</a>
-        <a href="contacto.html" accesskey="c">Contacto</a>
 
-    </nav>
 
     <main>
         <section id="Inicio">
@@ -31,7 +36,7 @@
 
             <p>En un mundo que avanza hacia la <strong>movilidad
                     sostenible</strong>,
-                &copy;<strong>Zephyra</strong> no es solo una empresa de
+                &copy;<strong class="zephyra">Zephyra</strong> no es solo una empresa de
                 coches
                 eléctricos;
                 es la materialización del <strong>compromiso</strong>
@@ -44,7 +49,7 @@
                 con la
                 <strong>eficiencia
                     energética</strong> más avanzada. Con
-                &copy;<strong>Zephyra</strong>
+                &copy;<strong class="zephyra">Zephyra</strong>
                 , no solo asquieres
                 un vehículo; te unes a una <strong>revolución verde</strong>
                 que
@@ -53,12 +58,13 @@
                 tu coche
                 desde 100 &euro; / día.
             </p>
-            <a href="images/coche-electrico-grande.png">
-                <img src="images/coche-electrico.png" alt="Mujer apoyada en un coche eléctrico recargándose"
-                    title="Coche eléctrico" width="450">
-            </a>
-            <br>
-            <video src="videos/video-coche-2.mp4" height="250" autoplay controls></video>
+            <div class="d-flex justify-content-around">
+                <a href="images/coche-electrico-grande.png">
+                    <img src="images/coche-electrico.png" alt="Mujer apoyada en un coche eléctrico recargándose"
+                        title="Coche eléctrico" width="450">
+                </a>
+                <video src="videos/video-coche-2.mp4" height="250" autoplay controls></video>
+            </div>
             <h2>Beneficios de los vehículos eléctricos</h2>
             <ol type=1>
                 <li>Cero Emisiones</li>

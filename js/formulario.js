@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Fin: ", fin);
         console.log("Teléfono: ", telefono);
 
-        if (!/^[a-zA-Z]{3,}$/.test(nombre) || !/^(a-zA-Z0-9)+@+(a-zA-Z0-9)\.+{2,}/.test(correo()){
+        if (!/^[a-zA-Z]{3,}$/.test(nombre) || !/^(a-zA-Z0-9)+@+(a-zA-Z0-9)\.+{2,}/.test(correo())) {
             alert("Hay que poner un nombre y apellidos con minimo 3 caracteres.");
         }
 
