@@ -5,24 +5,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Electric Vehicle Fleet Management</title>
+
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
     <header>
-        <img src="images/icono-logo.png" alt="Zephyra Logo" title="Zephyra Logo" width="150">
-        <h1>Zephyra</h1>
-
-        <a href="index.html" lang="es" title="Cambiar a Español">
+        <a href="../html-es/index.html" lang="es" title="Change to Spanish">
             Español (ES)
         </a>
-    </header>
+        <div class="div-logo">
+            <img src="../images/icono-logo.png" alt="Logo Zephyra" title="Logo Zephyra" width="150">
+            <h1 class="zephyra">ZEPHYRA</h1>
+        </div>
+        <nav class="barra-menu">
+            <a class="elem-menu" href="index-en.html" accesskey="h">Home</a></li>
+            <a class="elem-menu" href="vehicles-en.html" accesskey="v">Vehicles</a></li>
+            <a class="elem-menu" href="bookings-en.html" accesskey="b">Bookings</a></li>
+            <a class="elem-menu" href="contact-en.html" accesskey="c">Contact</a></li>
 
-    <nav>
-        <a href="#Home" accesskey="h">Home</a>
-        <a href="#Vehicles" accesskey="v">Vehicles</a>
-        <a href="#Bookings" accesskey="b">Bookings</a>
-        <a href="contact-en.html" accesskey="c">Contact</a>
-    </nav>
+        </nav>
+    </header>
 
     <main>
         <section id="Home">
@@ -45,12 +48,12 @@
                 a time.
                 Get your car from &euro;100 / day.
             </p>
-            <a href="images/coche-electrico-grande.png">
-                <img src="images/coche-electrico.png" alt="Woman leaning on a recharging electric car"
+            <a href="../images/coche-electrico-grande.png">
+                <img src="../images/coche-electrico.png" alt="Woman leaning on a recharging electric car"
                     title="Electric Car" width="450">
             </a>
             <br>
-            <video src="videos/video-coche-2.mp4" height="250" autoplay controls></video>
+            <video src="../videos/video-coche-2.mp4" height="250" autoplay controls></video>
             <h2>Benefits of Electric Vehicles</h2>
             <ol type="1">
                 <li>Zero Emissions</li>
@@ -77,7 +80,8 @@
             </dl>
 
             <a href="https://www.ucm.es/">Complutense University of
-                Madrid</a>
+                Madrid
+            </a>
             <br>
         </section>
 
@@ -95,45 +99,6 @@
 
             </table>
 
-        </section>
-
-        <section id="Bookings">
-            <h2>Bookings</h2>
-            <form aria-label="Booking Form">
-                <fieldset>
-                    <legend>Booking Details</legend>
-                    <label for="nombre">Name: </label>
-                    <input type="text" id="nombre" required><br><br>
-
-                    <label for="correo">Email: </label>
-                    <input type="email" id="correo" required><br><br>
-
-                    <label for="vehiculos-form">Vehicles: </label>
-                    <select id="vehiculos-form" required>
-                        <option value="">Tesla</option>
-                        <option value="toyota">Toyota</option>
-                        <option value="audi">Audi</option>
-                    </select>
-                    <br><br>
-
-                    <label for="inicio">Start: </label>
-                    <input type="datetime-local" id="inicio" required><br><br>
-
-                    <label for="fin">End: </label>
-                    <input type="datetime-local" id="fin" required><br><br>
-
-                    <label for="telefono">Phone: </label>
-                    <input type="tel" id="telefono" pattern="[0-9]{9}"><br><br>
-
-                    <label for="terminos">Accept terms and
-                        conditions</label>
-                    <input type="checkbox" id="terminos" required><br><br>
-
-                    <button type="submit" aria-label="Submit Form">Send</button>
-                    <button type="reset" aria-label="Clear Form">Reset</button>
-                </fieldset>
-
-            </form>
         </section>
     </main>
     <footer>
