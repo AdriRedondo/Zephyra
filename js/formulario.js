@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("reservas-form");
     form.addEventListener("submit", (event) => {
-        event.preventDefault();
         const nombre = document.getElementById("nombre").value;
         const correo = document.getElementById("correo").value;
         const vehiculo = document.getElementById("vehiculos-form").value;
@@ -15,9 +14,57 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Fin: ", fin);
         console.log("Teléfono: ", telefono);
 
-        if (!/^[a-zA-Z]{3,}$/.test(nombre) || !/^(a-zA-Z0-9)+@+(a-zA-Z0-9)\.+{2,}/.test(correo())) {
-            alert("Hay que poner un nombre y apellidos con minimo 3 caracteres.");
+        var hoy = new Date();
+        var fecha_ini = new Date(inicio);
+        var fecha_fin = new Date(fin);
+        var es_correcto = true;
+
+        // Validación nombre y apellidos
+        if (!/^[a-zA-Z]{3,}$/.test(nombre)) {
+            es_correcto = false;
+            document.getElementById("nombre").classList.toggle("wrong-input");
         }
+        else {
+            document.getElementById("nombre").classList.toggle("right-input");
+        }
+
+        // Validación correo
+        //else if (!/^(a-zA-Z0-9)+@+(a-zA-Z0-9)\.+{2,}/.test(correo)) {
+        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) {
+            es_correcto = false;
+        }
+        else {
+
+        }
+
+        // Validación fecha ini
+        if (fecha_ini < hoy) {
+            es_correcto = false;
+        }
+        else {
+
+        }
+
+        // Validación fecha fin
+        if (fecha_fin < hoy) {
+
+        }
+        else {
+
+        }
+
+        // Validación fecha ini y fin
+        if (fecha_ini >= fecha_ini) {
+            es_correcto = false;
+        }
+        else {
+
+        }
+
+        if (!es_correcto) {
+            //event.preventDefault();
+        }
+
 
     });
 

@@ -1,0 +1,23 @@
+.bookings-fs {
+    box-shadow: 0 3px 3px 3px #0003;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+    padding: 12px;
+}
+
+.reservas-form {
+    background: #FFF;
+}
+
+
+.wrong-input {
+    border-color: red;
+}
+
+.right-input {
+    border-color: green;
+}

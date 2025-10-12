@@ -24,7 +24,8 @@ body {
 }
 
 main {
-    margin: 0 10%;
+    padding: 0 10%;
+    background: #F5F7F8;
     flex: 1;
 }
 
