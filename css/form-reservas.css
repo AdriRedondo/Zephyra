@@ -14,10 +14,12 @@ h2 {
 }
 
 
-.wrong-input {
-    border-color: red;
+input.wrong-input,
+select.wrong-input {
+    border: 2px solid red;
 }
 
-.right-input {
-    border-color: green;
+input.right-input,
+select.right-input {
+    border: 2px solid green;
 }
