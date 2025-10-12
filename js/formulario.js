@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("reservas-form");
+    const form = document.getElementById("reservas-form-id");
     form.addEventListener("submit", (event) => {
         const nombre = document.getElementById("nombre").value;
         const correo = document.getElementById("correo").value;
