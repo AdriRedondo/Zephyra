@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const inicio = document.getElementById("inicio");
     const fin = document.getElementById("fin");
     const telefono = document.getElementById("telefono");
-    const terminos = document.getElementById("terminos");
+
 
     console.log("Formulario cargado correctamente");
 
@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const esValidoInicio = validarInicio();
         const esValidoFin = validarFin();
         const esValidoTelefono = validarTelefono();
-        const esValidoTerminos = validarTerminos();
+
 
         console.log("Nombre: ", nombre.value);
         console.log("Correo: ", correo.value);
@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         if (esValidoNombre && esValidoCorreo && esValidoInicio &&
-            esValidoFin && esValidoTelefono && esValidoTerminos) {
+            esValidoFin && esValidoTelefono) {
             alert("La reserva ha sido realizada con éxito.");
 
         } else {
