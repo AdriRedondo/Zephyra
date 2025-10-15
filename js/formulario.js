@@ -10,21 +10,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("Formulario cargado correctamente");
 
+    function colorearInputs(input, esCorrecto) {
+        if (esCorrecto) {
+            input.classList.add("right-input");
+            input.classList.remove("wrong-input");
+        }
+        else {
+            input.classList.add("wrong-input");
+            input.classList.remove("right-input");
+        }
+    }
+
     // Validación nombre y apellidos
     function validarNombre() {
         const nombreValue = nombre.value.trim();
         const errorElement = document.getElementById("nombre-error");
 
         if (nombreValue == "" || !/^[a-zA-Z\s]{3,}$/.test(nombreValue)) {
-
-            nombre.classList.add("wrong-input");
-            nombre.classList.remove("right-input");
+            colorearInputs(nombre, false);
             errorElement.textContent = "El nombre debe tener al menos 3 caracteres y contener solo letras y espacios";
             return false;
         }
         else {
-            nombre.classList.add("right-input");
-            nombre.classList.remove("wrong-input");
+            colorearInputs(nombre, true);
             errorElement.textContent = "";
             return true;
 
@@ -38,19 +46,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const errorElement = document.getElementById("correo-error");
 
         if (correoValue == "" || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(correoValue)) {
-
-            correo.classList.add("wrong-input");
-            correo.classList.remove("right-input");
+            colorearInputs(correo, false);
             errorElement.textContent = "Introduce un correo electrónico válido";
             return false;
 
         }
         else {
-            correo.classList.add("right-input");
-            correo.classList.remove("wrong-input");
+            colorearInputs(correo, true);
             errorElement.textContent = "";
             return true;
-
         }
     }
 
@@ -62,13 +66,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const fechaInicio = new Date(inicioValue);
 
         if (inicioValue === "" || fechaInicio < hoy) {
-            inicio.classList.add("wrong-input");
-            inicio.classList.remove("right-input");
+            colorearInputs(inicio, false);
             errorElement.textContent = "La fecha de inicio debe ser posterior a la fecha actual";
             return false;
         } else {
-            inicio.classList.add("right-input");
-            inicio.classList.remove("wrong-input");
+            colorearInputs(inicio, true);
             errorElement.textContent = "";
             return true;
         }
@@ -85,13 +87,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const fechaInicio = new Date(inicioValue);
 
         if (finValue === "" || fechaFin < hoy || fechaInicio >= fechaFin) {
-            fin.classList.add("wrong-input");
-            fin.classList.remove("right-input");
+            colorearInputs(fin, false);
             errorElement.textContent = "La fecha de fin debe ser posterior a la fecha de inicio y a la fecha actual";
             return false;
         } else {
-            fin.classList.add("right-input");
-            fin.classList.remove("wrong-input");
+            colorearInputs(fin, true);
             errorElement.textContent = "";
             return true;
         }
@@ -103,13 +103,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const errorElement = document.getElementById("telefono-error");
 
         if (telefonoValue === "" || !/^[0-9]{9}$/.test(telefonoValue)) {
-            telefono.classList.add("wrong-input");
-            telefono.classList.remove("right-input");
+            colorearInputs(telefono, false);
             errorElement.textContent = "El teléfono debe tener exactamente 9 dígitos";
             return false;
         } else {
-            telefono.classList.add("right-input");
-            telefono.classList.remove("wrong-input");
+            colorearInputs(telefono, true);
             errorElement.textContent = "";
             return true;
         }
