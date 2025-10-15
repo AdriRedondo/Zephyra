@@ -38,6 +38,10 @@ header {
     width: 100%;
 }
 
+.language {
+    margin-right: 2rem;
+}
+
 .zephyra {
     font-family: 'CaviarDreams';
     margin: 0;
@@ -50,6 +54,7 @@ h1 {
 
 .div-logo {
     margin: 0;
+    max-height: 4rem;
     flex: 1;
     display: flex;
     flex-direction: row;
