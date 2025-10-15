@@ -1,92 +1,151 @@
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("reservas-form-id");
+    const nombre = document.getElementById("nombre");
+    const correo = document.getElementById("correo");
+    const vehiculo = document.getElementById("vehiculos-form");
+    const inicio = document.getElementById("inicio");
+    const fin = document.getElementById("fin");
+    const telefono = document.getElementById("telefono");
+    const terminos = document.getElementById("terminos");
+
+    console.log("Formulario cargado correctamente");
+
+    // Validación nombre y apellidos
+    function validarNombre() {
+        const nombreValue = nombre.value.trim();
+        const errorElement = document.getElementById("nombre-error");
+
+        if (nombreValue == "" || !/^[a-zA-Z\s]{3,}$/.test(nombreValue)) {
+
+            nombre.classList.add("wrong-input");
+            nombre.classList.remove("right-input");
+            errorElement.textContent = "El nombre debe tener al menos 3 caracteres y contener solo letras y espacios";
+            return false;
+        }
+        else {
+            nombre.classList.add("right-input");
+            nombre.classList.remove("wrong-input");
+            errorElement.textContent = "";
+            return true;
+
+        }
+    }
+
+    // Validación correo
+    function validarCorreo() {
+
+        const correoValue = correo.value.trim();
+        const errorElement = document.getElementById("correo-error");
+
+        if (correoValue == "" || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(correoValue)) {
+
+            correo.classList.add("wrong-input");
+            correo.classList.remove("right-input");
+            errorElement.textContent = "Introduce un correo electrónico válido";
+            return false;
+
+        }
+        else {
+            correo.classList.add("right-input");
+            correo.classList.remove("wrong-input");
+            errorElement.textContent = "";
+            return true;
+
+        }
+    }
+
+    // Validación fecha ini
+    function validarInicio() {
+        const inicioValue = inicio.value;
+        const errorElement = document.getElementById("inicio-error");
+        const hoy = new Date();
+        const fechaInicio = new Date(inicioValue);
+
+        if (inicioValue === "" || fechaInicio < hoy) {
+            inicio.classList.add("wrong-input");
+            inicio.classList.remove("right-input");
+            errorElement.textContent = "La fecha de inicio debe ser posterior a la fecha actual";
+            return false;
+        } else {
+            inicio.classList.add("right-input");
+            inicio.classList.remove("wrong-input");
+            errorElement.textContent = "";
+            return true;
+        }
+    }
+
+
+    // Validación fecha fin
+    function validarFin() {
+        const finValue = fin.value;
+        const inicioValue = inicio.value;
+        const errorElement = document.getElementById("fin-error");
+        const hoy = new Date();
+        const fechaFin = new Date(finValue);
+        const fechaInicio = new Date(inicioValue);
+
+        if (finValue === "" || fechaFin < hoy || fechaInicio >= fechaFin) {
+            fin.classList.add("wrong-input");
+            fin.classList.remove("right-input");
+            errorElement.textContent = "La fecha de fin debe ser posterior a la fecha de inicio y a la fecha actual";
+            return false;
+        } else {
+            fin.classList.add("right-input");
+            fin.classList.remove("wrong-input");
+            errorElement.textContent = "";
+            return true;
+        }
+    }
+
+
+    function validarTelefono() {
+        const telefonoValue = telefono.value.trim();
+        const errorElement = document.getElementById("telefono-error");
+
+        if (telefonoValue === "" || !/^[0-9]{9}$/.test(telefonoValue)) {
+            telefono.classList.add("wrong-input");
+            telefono.classList.remove("right-input");
+            errorElement.textContent = "El teléfono debe tener exactamente 9 dígitos";
+            return false;
+        } else {
+            telefono.classList.add("right-input");
+            telefono.classList.remove("wrong-input");
+            errorElement.textContent = "";
+            return true;
+        }
+    }
+
+
+    nombre.addEventListener("input", validarNombre);
+    correo.addEventListener("input", validarCorreo);
+    inicio.addEventListener("input", validarInicio);
+    fin.addEventListener("input", validarFin);
+    telefono.addEventListener("input", validarTelefono);
+
+
     form.addEventListener("submit", (event) => {
         event.preventDefault();
-        const nombre = document.getElementById("nombre").value;
-        const correo = document.getElementById("correo").value;
-        const vehiculo = document.getElementById("vehiculos-form").value;
-        const inicio = document.getElementById("inicio").value;
-        const fin = document.getElementById("fin").value;
-        const telefono = document.getElementById("telefono").value;
-        console.log("Nombre: ", nombre);
-        console.log("Correo: ", correo);
-        console.log("Vehículo: ", vehiculo);
-        console.log("Inicio: ", inicio);
-        console.log("Fin: ", fin);
-        console.log("Teléfono: ", telefono);
+        const esValidoNombre = validarNombre();
+        const esValidoCorreo = validarCorreo();
+        const esValidoInicio = validarInicio();
+        const esValidoFin = validarFin();
+        const esValidoTelefono = validarTelefono();
+        const esValidoTerminos = validarTerminos();
 
-        var hoy = new Date();
-        var fecha_ini = new Date(inicio);
-        var fecha_fin = new Date(fin);
-        var es_correcto = true;
+        console.log("Nombre: ", nombre.value);
+        console.log("Correo: ", correo.value);
+        console.log("Vehículo: ", vehiculo.value);
+        console.log("Inicio: ", inicio.value);
+        console.log("Fin: ", fin.value);
+        console.log("Teléfono: ", telefono.value);
 
-        // Validación nombre y apellidos
-        if (nombre == "" || !/^[a-zA-Z\s]{3,}$/.test(nombre)) {
-            es_correcto = false;
-            document.getElementById("nombre").classList.add("wrong-input");
-            document.getElementById("nombre").classList.remove("right-input");
 
-        }
-        else {
-            document.getElementById("nombre").classList.add("right-input");
-            document.getElementById("nombre").classList.remove("wrong-input");
+        if (esValidoNombre && esValidoCorreo && esValidoInicio &&
+            esValidoFin && esValidoTelefono && esValidoTerminos) {
+            alert("La reserva ha sido realizada con éxito.");
 
-        }
-
-        // Validación correo
-        //else if (!/^(a-zA-Z0-9)+@+(a-zA-Z0-9)\.+{2,}/.test(correo)) {
-        if (correo == "" || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(correo)) {
-            es_correcto = false;
-            document.getElementById("correo").classList.add("wrong-input");
-            document.getElementById("correo").classList.remove("right-input");
-
-        }
-        else {
-            document.getElementById("correo").classList.add("right-input");
-            document.getElementById("correo").classList.remove("wrong-input");
-
-        }
-
-        // Validación fecha ini
-        if (inicio == "" || fecha_ini < hoy) {
-            es_correcto = false;
-            document.getElementById("inicio").classList.add("wrong-input");
-            document.getElementById("inicio").classList.remove("right-input");
-
-        }
-        else {
-            document.getElementById("inicio").classList.add("right-input");
-            document.getElementById("inicio").classList.remove("wrong-input");
-
-        }
-
-        // Validación fecha fin
-        if (fin == "" || fecha_fin < hoy || fecha_ini >= fecha_fin) {
-            es_correcto = false;
-            document.getElementById("fin").classList.add("wrong-input");
-            document.getElementById("fin").classList.remove("right-input");
-        }
-        else {
-            document.getElementById("fin").classList.add("right-input");
-            document.getElementById("fin").classList.remove("wrong-input");
-        }
-
-        if (telefono == "" || !/^[0-9]{9}$/.test(telefono)) {
-            es_correcto = false;
-            document.getElementById("telefono").classList.add("wrong-input");
-            document.getElementById("telefono").classList.remove("right-input");
-        }
-        else {
-            document.getElementById("telefono").classList.add("right-input");
-            document.getElementById("telefono").classList.remove("wrong-input");
-        }
-
-        if (es_correcto) {
-            form.submit()
-            alert("La reserva ha sido realizada con exito.")
-        }
-        else {
-            alert("Campos erróneos.")
+        } else {
+            alert("Por favor, corrige los campos erróneos antes de enviar el formulario.");
         }
     });
 });

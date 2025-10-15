@@ -14,12 +14,22 @@ h2 {
 }
 
 
-input.wrong-input,
-select.wrong-input {
-    border: 2px solid red;
+.wrong-input {
+    border-color: #dc3545 !important;
+    background-color: #f8d7da !important;
+    border-width: 2px !important;
 }
 
-input.right-input,
-select.right-input {
-    border: 2px solid green;
+.right-input {
+    border-color: #198754 !important;
+    background-color: #d1e7dd !important;
+    border-width: 2px !important;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+    display: block;
+    height: 1.2em;
 }
