@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const correo = document.getElementById("correo");
     const vehiculo = document.getElementById("vehiculos-form");
     const inicio = document.getElementById("inicio");
-    const fin = document.getElementById("fin");
+    //const fin = document.getElementById("fin");
     const telefono = document.getElementById("telefono");
     const progressBar = document.querySelector(".progress-bar");
     console.log("Formulario cargado correctamente");
@@ -12,32 +12,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
     nombre.addEventListener("input", validarNombre);
     correo.addEventListener("input", validarCorreo);
+    vehiculo.addEventListener("input", validarVehiculo);
     inicio.addEventListener("input", validarInicio);
-    fin.addEventListener("input", validarFin);
+    horas.addEventListener("input", validarHoras);
+    //fin.addEventListener("input", validarFin);
     telefono.addEventListener("input", validarTelefono);
 
     form.addEventListener("submit", (event) => {
         event.preventDefault();
         const esValidoNombre = validarNombre();
         const esValidoCorreo = validarCorreo();
+        const esValidoVehiculo = validarVehiculo();
         const esValidoInicio = validarInicio();
-        const esValidoFin = validarFin();
+        const esValidoHoras = validarHoras();
+        //const esValidoFin = validarFin();
         const esValidoTelefono = validarTelefono();
 
         console.log("Nombre: ", nombre.value);
         console.log("Correo: ", correo.value);
         console.log("Vehículo: ", vehiculo.value);
         console.log("Inicio: ", inicio.value);
-        console.log("Fin: ", fin.value);
+        //console.log("Fin: ", fin.value);
         console.log("Teléfono: ", telefono.value);
 
         if (esValidoNombre && esValidoCorreo && esValidoInicio &&
-            esValidoFin && esValidoTelefono) {
+            esValidoVehiculo && esValidoTelefono) {
             alert("La reserva ha sido realizada con éxito.");
 
         } else {
             alert("Por favor, corrige los campos erróneos antes de enviar el formulario.");
         }
+    });
+
+    form.addEventListener("reset", (event) => {
+        resetColors(nombre);
+        resetColors(correo);
+        resetColors(vehiculo);
+        resetColors(inicio);
+        resetColors(horas);
+        resetColors(telefono);
+        checkProgressBar();
+
     });
 
     // Colorear los inputs según estén mal o bien
@@ -90,6 +105,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Validación correo
+    function validarVehiculo() {
+
+        const vehiculoValue = vehiculo.value.trim();
+        const errorElement = document.getElementById("vehículo-error");
+        console.log(vehiculoValue);
+
+        if (vehiculoValue == "") {
+            vehiculo.classList.remove("right-input");
+            errorElement.textContent = "Seleccione uno de los vehículos disponibles";
+            return false;
+        }
+        else {
+            colorearInputs(vehiculo, true);
+            errorElement.textContent = "";
+            return true;
+        }
+    }
+
     // Validación fecha ini
     function validarInicio() {
         const inicioValue = inicio.value;
@@ -108,9 +142,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Validación fecha ini
+    function validarHoras() {
+        const horasValue = horas.value;
+        const errorElement = document.getElementById("horas-error");
+
+        if (horasValue <= 0 && !Number.isInteger(horasValue)) {
+            colorearInputs(horas, false);
+            errorElement.textContent = "El numero de horas debe ser un nmero entero positivo";
+            return false;
+        } else {
+            colorearInputs(horas, true);
+            errorElement.textContent = "";
+            return true;
+        }
+    }
+
 
     // Validación fecha fin
-    function validarFin() {
+    /*function validarFin() {
         const finValue = fin.value;
         const inicioValue = inicio.value;
         const errorElement = document.getElementById("fin-error");
@@ -128,6 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return true;
         }
     }
+        */
 
     // Validación del teléfono
     function validarTelefono() {
@@ -150,33 +201,42 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function checkProgressBar() {
-        let correctInputs = 0; // lo inicializo a 1 porque cuento el campo de vehículos bien predeterminado (que habrá que cambiarlo)
+        let correctInputs = 0;
         correctInputs += validInput(nombre);
         correctInputs += validInput(correo);
+        correctInputs += validInput(vehiculo);
         correctInputs += validInput(inicio);
-        correctInputs += validInput(fin);
+        correctInputs += validInput(horas);
         correctInputs += validInput(telefono);
 
         switch (correctInputs) {
             case 0:
-                progressBar.style.width = "16.7%";
+                progressBar.style.width = "0%"
                 break;
             case 1:
-                progressBar.style.width = "33.3%";
+                progressBar.style.width = "16.7%";
                 break;
             case 2:
-                progressBar.style.width = "50%";
+                progressBar.style.width = "33.3%";
                 break;
             case 3:
-                progressBar.style.width = "66.7%"
+                progressBar.style.width = "50%";
                 break;
             case 4:
-                progressBar.style.width = "83.3%"
+                progressBar.style.width = "66.7%"
                 break;
             case 5:
+                progressBar.style.width = "83.3%"
+                break;
+            case 6:
                 progressBar.style.width = "100%"
                 break;
         }
+    }
+
+    function resetColors(input) {
+        input.classList.remove("right-input");
+        input.classList.remove("wrong-input");
     }
 });
 
