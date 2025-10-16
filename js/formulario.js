@@ -6,10 +6,41 @@ document.addEventListener("DOMContentLoaded", () => {
     const inicio = document.getElementById("inicio");
     const fin = document.getElementById("fin");
     const telefono = document.getElementById("telefono");
-
-
+    const progressBar = document.querySelector(".progress-bar");
     console.log("Formulario cargado correctamente");
+    checkProgressBar();
 
+    nombre.addEventListener("input", validarNombre);
+    correo.addEventListener("input", validarCorreo);
+    inicio.addEventListener("input", validarInicio);
+    fin.addEventListener("input", validarFin);
+    telefono.addEventListener("input", validarTelefono);
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const esValidoNombre = validarNombre();
+        const esValidoCorreo = validarCorreo();
+        const esValidoInicio = validarInicio();
+        const esValidoFin = validarFin();
+        const esValidoTelefono = validarTelefono();
+
+        console.log("Nombre: ", nombre.value);
+        console.log("Correo: ", correo.value);
+        console.log("Vehículo: ", vehiculo.value);
+        console.log("Inicio: ", inicio.value);
+        console.log("Fin: ", fin.value);
+        console.log("Teléfono: ", telefono.value);
+
+        if (esValidoNombre && esValidoCorreo && esValidoInicio &&
+            esValidoFin && esValidoTelefono) {
+            alert("La reserva ha sido realizada con éxito.");
+
+        } else {
+            alert("Por favor, corrige los campos erróneos antes de enviar el formulario.");
+        }
+    });
+
+    // Colorear los inputs según estén mal o bien
     function colorearInputs(input, esCorrecto) {
         if (esCorrecto) {
             input.classList.add("right-input");
@@ -19,6 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
             input.classList.add("wrong-input");
             input.classList.remove("right-input");
         }
+        checkProgressBar();
     }
 
     // Validación nombre y apellidos
@@ -97,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-
+    // Validación del teléfono
     function validarTelefono() {
         const telefonoValue = telefono.value.trim();
         const errorElement = document.getElementById("telefono-error");
@@ -113,37 +145,38 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function validInput(input) {
+        return input.classList.contains("right-input");
+    }
 
-    nombre.addEventListener("input", validarNombre);
-    correo.addEventListener("input", validarCorreo);
-    inicio.addEventListener("input", validarInicio);
-    fin.addEventListener("input", validarFin);
-    telefono.addEventListener("input", validarTelefono);
+    function checkProgressBar() {
+        let correctInputs = 0; // lo inicializo a 1 porque cuento el campo de vehículos bien predeterminado (que habrá que cambiarlo)
+        correctInputs += validInput(nombre);
+        correctInputs += validInput(correo);
+        correctInputs += validInput(inicio);
+        correctInputs += validInput(fin);
+        correctInputs += validInput(telefono);
 
-
-    form.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const esValidoNombre = validarNombre();
-        const esValidoCorreo = validarCorreo();
-        const esValidoInicio = validarInicio();
-        const esValidoFin = validarFin();
-        const esValidoTelefono = validarTelefono();
-
-
-        console.log("Nombre: ", nombre.value);
-        console.log("Correo: ", correo.value);
-        console.log("Vehículo: ", vehiculo.value);
-        console.log("Inicio: ", inicio.value);
-        console.log("Fin: ", fin.value);
-        console.log("Teléfono: ", telefono.value);
-
-
-        if (esValidoNombre && esValidoCorreo && esValidoInicio &&
-            esValidoFin && esValidoTelefono) {
-            alert("La reserva ha sido realizada con éxito.");
-
-        } else {
-            alert("Por favor, corrige los campos erróneos antes de enviar el formulario.");
+        switch (correctInputs) {
+            case 0:
+                progressBar.style.width = "16.7%";
+                break;
+            case 1:
+                progressBar.style.width = "33.3%";
+                break;
+            case 2:
+                progressBar.style.width = "50%";
+                break;
+            case 3:
+                progressBar.style.width = "66.7%"
+                break;
+            case 4:
+                progressBar.style.width = "83.3%"
+                break;
+            case 5:
+                progressBar.style.width = "100%"
+                break;
         }
-    });
+    }
 });
+
