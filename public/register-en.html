@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="./styles/bootstrap.min.css">
     <link rel="stylesheet" href="./styles/style.css">
+    <link rel="stylesheet" href="./styles/form-registro.css">
 </head>
 
 <body>
@@ -30,31 +31,42 @@
                     <li class="nav-item"><a class="nav-link elem-menu" href="register-en.html" accesskey="g">Register</a></li>
                 </ul>
             </div>
-            <a href="./index.html" lang="es" title="Change to Spanish">
+            <a href="./registro.html" lang="es" title="Change to Spanish">
             Español (ES)
             </a>
         </nav>
     </header>
     <main>
-        <form>
-            <h2>Contacto</h2>
+        <section id="Registro" class="registro">
+            <h2>Registration</h2>
+            <form id="registro-form-id" class="registro-form" aria-label="Registration form">
+                <div class="mb-3">
+                    <fieldset class="registro-fs">
+                        <legend>Registration Details</legend>
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Name:
+                            </label>
+                            <input type="text" id="nombre" class="form-control" placeholder="Ex: Eustaquio Ramirez">
+                            <span id="nombre-error" class="error" aria-live="polite"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contraseña" class="form-label">Password:
+                            </label>
+                            <input type="text" id="contraseña" class="form-control" placeholder="Ex: ASDFg7&A">
+                            <span id="contraseña-error" class="error" aria-live="polite"></span>
+                        </div>
 
-            <fieldset>
-                <legend>Datos de contacto</legend>
-
-                <label for="nombre">Name</label>
-                <input type="text" id="nombre"><br><br>
-                <label for="email">Email</label>
-                <input type="text" id="email"><br><br>
-                <label for="mensaje">Message</label>
-                <input type="text" id="mensaje"><br><br>
-                <button type="submit">Send</button>
-            </fieldset>
-        </form>
+                        <button type="submit" class="btn btn-success" aria-label="Submit form">Submit</button>
+                        <button type="reset" class="btn btn-secondary" aria-label="Clear form">Clear</button>
+                    </fieldset>
+                </div>
+            </form>
+        </section>
     </main>
     <footer>
         <p>&copy; COPYRIGHT 2025 Zephyra</p>
     </footer>
+    <script src="./script/formulario-registro.js" type="text/javascript"></script>
     <script src="./script/bootstrap.bundle.min.js" type="text/javascript"></script>
 </body>
 
