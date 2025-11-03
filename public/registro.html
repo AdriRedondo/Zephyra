@@ -1,101 +1,80 @@
 <!DOCTYPE html>
 <html lang="es">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Reservas de coches</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas de coches</title>
 
-        <link rel="stylesheet" href="./styles/style.css">
-        <link rel="stylesheet" href="./styles/form-reservas.css">
-        <link rel="stylesheet" href="./styles/bootstrap.min.css">
+    <link rel="stylesheet" href="./styles/bootstrap.min.css">
+    <link rel="stylesheet" href="./styles/style.css">
+    <link rel="stylesheet" href="./styles/form-registro.css">
+    
 
-    </head>
+</head>
 
-    <body>
-        <header>
-            <nav class="navbar navbar-expand-lg border-bottom border-dark">
-                <button class="navbar-toggler-dark" type="button"
-                    data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <a class="navbar-brand div-logo" href="./index.html">
-                    <img src="./images/icono-logo.png" alt="Logo Zephyra"
-                        title="Logo Zephyra" width="100">
-                    <h1 class="zephyra">ZEPHYRA</h1>
-                </a>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link elem-menu"
-                                href="index.html" accesskey="i">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link elem-menu"
-                                href="vehiculos.html"
-                                accesskey="v">Vehículos</a>
-                        </li>
-                        <li class="nav-item"><a class="nav-link elem-menu"
-                                href="reservas.html" accesskey="r">Reservas</a>
-                        </li>
-                        <li class="nav-item"><a class="nav-link elem-menu"
-                                href="contacto.html" accesskey="c">Contacto</a>
-                        </li>
-                        <li class="nav-item"><a class="nav-link elem-menu"
-                                href="registro.html" accesskey="g">Registro</a>
-                        </li>
-                    </ul>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand div-logo" href="./index.html">
+                <img src="./images/icono-logo.png" alt="Logo Zephyra" title="Logo Zephyra" width="100">
+                <h1 class="zephyra">ZEPHYRA</h1>
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link elem-menu" href="index.html" accesskey="i">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link elem-menu" href="vehiculos.html" accesskey="v">Vehículos</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link elem-menu" href="reservas.html" accesskey="r">Reservas</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link elem-menu" href="contacto.html" accesskey="c">Contacto</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link elem-menu" href="registro.html" accesskey="g">Registro</a>
+                    </li>
+                </ul>
+            </div>
+            <a href="./index-en.html" lang="es" title="Cambiar a Inglés" class="language">
+                English (EN)
+            </a>
+        </nav>
+    </header>
+    <main>
+        <section id="Registro" class="registro">
+            <h2>Registro</h2>
+            <form id="registro-form-id" class="registro-form" aria-label="Formulario de registro">
+                <div class="mb-3">
+                    <fieldset class="registro-fs">
+                        <legend>Datos registro</legend>
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre:
+                            </label>
+                            <input type="text" id="nombre" class="form-control" placeholder="Ej: Eustaquio Ramirez">
+                            <span id="nombre-error" class="error" aria-live="polite"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contraseña" class="form-label">Contraseña:
+                            </label>
+                            <input type="text" id="contraseña" class="form-control" placeholder="Ej: ASDFg7&A">
+                            <span id="contraseña-error" class="error" aria-live="polite"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-success" aria-label="Enviar formulario">Enviar</button>
+                        <button type="reset" class="btn btn-secondary" aria-label="Limpiar formulario">Limpiar</button>
+                    </fieldset>
                 </div>
-                <a href="./bookings-en.html" lang="es"
-                    title="Cambiar a Inglés" class="language">
-                    English (EN)
-                </a>
-            </nav>
-        </header>
-        <main>
-            <section id="Registro" class="registro">
-                <h2>Registro</h2>
-                <form id="registro-form-id" class="registro-form"
-                    aria-label="Formulario de registro">
-                    <div class="mb-3">
-                        <fieldset class="registro-fs">
-                            <legend>Datos registro</legend>
-                            <div class="mb-3">
-                                <label for="nombre" class="form-label">Nombre:
-                                </label>
-                                <input type="text" id="nombre"
-                                    class="form-control"
-                                    placeholder="Ej: Eustaquio Ramirez">
-                                <span id="nombre-error" class="error"
-                                    aria-live="polite"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label for="contraseña"
-                                    class="form-label">Contraseña:
-                                </label>
-                                <input type="text" id="contraseña"
-                                    class="form-control"
-                                    placeholder="Ej: ASDFg7&A">
-                                <span id="contraseña-error" class="error"
-                                    aria-live="polite"></span>
-                            </div>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy;COPYRIGHT 2025 Zephyra</p>
+    </footer>
+    <script src="./script/formulario-registro.js" type="text/javascript"></script>
+    <script src="./script/bootstrap.bundle.min.js" type="text/javascript"></script>
 
-                            <button type="submit" class="btn btn-success"
-                                aria-label="Enviar formulario">Enviar</button>
-                            <button type="reset" class="btn btn-secondary"
-                                aria-label="Limpiar formulario">Limpiar</button>
-                        </fieldset>
-                    </div>
-                </form>
-            </section>
-        </main>
-        <footer>
-            <p>&copy;COPYRIGHT 2025 Zephyra</p>
-        </footer>
-        <script src="../script/formulario-reservas.js"
-            type="text/javascript"></script>
-        <script src="../script/bootstrap.bundle.min.js"
-            type="text/javascript"></script>
-
-    </body>
+</body>
 
 </html>

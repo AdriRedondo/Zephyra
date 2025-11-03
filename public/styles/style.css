@@ -21,22 +21,34 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
+    font-size: 16px;
 }
 
-
 main {
-    padding: 0 10%;
+    padding: 2rem 10%;
     background: #F5F7F8;
     flex: 1;
+    padding-top:10rem;
 }
 
 header {
+    position:fixed;
+    top: 0;
+    z-index: 1000;
     display: flex;
     flex-direction: column;
-    background: #3F74;
+    background: #023A26;
+    padding: 1.5rem 0;
     align-content: center;
     text-align: center;
     width: 100%;
+}
+
+.navbar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
 }
 
 .language {
@@ -50,7 +62,11 @@ header {
 }
 
 h1 {
-    color: rgb(2, 58, 38);
+    color: rgb(255, 255, 255);
+}
+h2{
+    text-align: center;
+    margin-top: 2rem;
 }
 
 .div-logo {
@@ -69,14 +85,42 @@ h1 {
     align-content: center;
 }
 
+.div-visual-content{
+    display:flex;
+    flex-direction: row;
+    gap: 30px;
+    margin: 3rem 0;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.div-visual-content a, .div-visual-content video {
+    width: 45%; 
+    height: 50vh;
+    display:flex;
+    max-height: 50vh; 
+    border-radius: 10px; 
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+    object-fit: cover; 
+}
+.div-visual-content a img{
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover; 
+    border-radius: 10px;
+    box-shadow: none;
+    max-height: 50vh;
+}
+
 .barra-menu {
     list-style-type: none;
     display: flex;
     flex-direction: row;
     width: 100%;
     margin-left: 0;
-    gap: 10px;
-    margin: 0;
+    gap: 50px;
+    margin-top: 1rem;
 }
 
 .barra-menu a {
@@ -90,19 +134,23 @@ h1 {
     align-content: normal;
     flex: 1;
     text-align: center;
-    color: rgb(2, 58, 38);
+    color: rgb(255, 255, 255);
     padding: 1%;
     margin-bottom: 2px;
     font-weight: 600;
 }
 
 .elem-menu:hover {
-    box-shadow: 0 1px 1px 1px #1E1E1EAA;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
 }
 
 footer {
+    background: #023A26;
+    color: white;
     text-align: center;
-    font-size: x-small;
-    max-height: 1%;
+    padding: 1rem 0;
+    margin-top: 2rem; 
+    font-size: small;
 
 }
