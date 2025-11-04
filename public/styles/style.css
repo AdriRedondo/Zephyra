@@ -72,8 +72,14 @@ h2 {
     margin-top: 2rem;
 }
 
+.navbar-toggler,
+.navbar-toggler:focus {
+    border: none;
+    box-shadow: none;
+}
+
 .div-logo {
-    margin: 0 4rem;
+    margin-left: 0;
     max-height: 4rem;
     flex: 1;
     display: flex;
@@ -83,10 +89,6 @@ h2 {
     justify-content: center;
 }
 
-.div-logo .zephyra {
-    text-align: center;
-    align-content: center;
-}
 
 .div-visual-content {
     display: flex;
@@ -147,10 +149,27 @@ h2 {
     font-weight: 600;
 }
 
-.elem-menu:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+.elem-menu:hover,
+.dropdown-item:hover {
     color: white;
 }
+
+.dropdown-menu {
+    background-color: #024C32;
+    /* Un verde un poco más claro para contraste */
+    border: 1px solid #016B45;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-item {
+    color: #fff;
+}
+
+.dropdown {
+    align-self: center;
+}
+
 
 footer {
     background: #023A26;
