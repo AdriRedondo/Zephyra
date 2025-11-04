@@ -143,7 +143,7 @@ h2 {
     width: 100%;
     flex: 1;
     text-align: center;
-    color: rgb(255, 255, 255);
+    color: white;
     padding: 1%;
     margin-bottom: 2px;
     font-weight: 600;
@@ -151,6 +151,7 @@ h2 {
 
 .elem-menu:hover,
 .dropdown-item:hover {
+    background: transparent;
     color: white;
 }
 
@@ -163,7 +164,7 @@ h2 {
 }
 
 .dropdown-item {
-    color: #fff;
+    color: lightgray;
 }
 
 .dropdown {
