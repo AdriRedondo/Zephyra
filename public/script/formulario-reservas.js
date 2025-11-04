@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (esValidoNombre && esValidoCorreo && esValidoInicio &&
             esValidoVehiculo && esValidoTelefono) {
             alert("La reserva ha sido realizada con éxito.");
+            form.submit();
 
         } else {
             alert("Por favor, corrige los campos erróneos antes de enviar el formulario.");

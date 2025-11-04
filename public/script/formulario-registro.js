@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("registro-form-id");
     const nombre = document.getElementById("nombre");
-    const contrasenia = document.getElementById("contraseña"); 
+    const contrasenia = document.getElementById("contraseña");
     console.log("Formulario de registro cargado correctamente");
 
-    
+
     nombre.addEventListener("input", validarNombre);
     contrasenia.addEventListener("input", validarContrasenia);
 
@@ -18,7 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (esValidoNombre && esValidoContrasenia) {
             alert("Registro realizado con éxito.");
-            
+            form.submit();
+
         } else {
             alert("Por favor, corrige los campos erróneos antes de enviar el formulario.");
         }
@@ -45,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Obtenemos el elemento de error asociado
         const errorElementId = `${input.id}-error`;
         const errorElement = document.getElementById(errorElementId);
-        
+
         // Removemos las clases de color
         input.classList.remove("right-input");
         input.classList.remove("wrong-input");

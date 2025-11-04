@@ -1,12 +1,7 @@
-.bookings-fs {
-    box-shadow: 0 3px 3px 3px #0003;
-    border-radius: 12px;
-    padding: 20px;
-}
-
 h2 {
     text-align: center;
     padding: 12px;
+    margin: 0;
 }
 
 .reservas-form {

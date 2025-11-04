@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./styles/bootstrap.min.css">
     <link rel="stylesheet" href="./styles/style.css">
     <link rel="stylesheet" href="./styles/form-registro.css">
-    
+
 
 </head>
 
@@ -45,20 +45,24 @@
     <main>
         <section id="Registro" class="registro">
             <h2>Registro</h2>
-            <form id="registro-form-id" class="registro-form" aria-label="Formulario de registro">
+            <form id="registro-form-id" class="registro-form" aria-label="Formulario de registro" method="post"
+                action="/submit-register">
                 <div class="mb-3">
                     <fieldset class="registro-fs">
+                        <input type="hidden" name="idioma" value="español">
                         <legend>Datos registro</legend>
                         <div class="mb-3">
                             <label for="nombre" class="form-label">Nombre:
                             </label>
-                            <input type="text" id="nombre" class="form-control" placeholder="Ej: Eustaquio Ramirez">
+                            <input type="text" id="nombre" name="nombre" class="form-control"
+                                placeholder="Ej: Eustaquio Ramirez">
                             <span id="nombre-error" class="error" aria-live="polite"></span>
                         </div>
                         <div class="mb-3">
                             <label for="contraseña" class="form-label">Contraseña:
                             </label>
-                            <input type="text" id="contraseña" class="form-control" placeholder="Ej: ASDFg7&A">
+                            <input type="text" id="contraseña" name="contraseña" class="form-control"
+                                placeholder="Ej: ASDFg7&A">
                             <span id="contraseña-error" class="error" aria-live="polite"></span>
                         </div>
 

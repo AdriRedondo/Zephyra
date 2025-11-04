@@ -25,40 +25,49 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link elem-menu" href="index-en.html" accesskey="h">Home</a></li>
-                    <li class="nav-item"><a class="nav-link elem-menu" href="vehicles-en.html" accesskey="v">Vehicles</a></li>
-                    <li class="nav-item"><a class="nav-link elem-menu" href="bookings-en.html" accesskey="b">Bookings</a></li>
-                    <li class="nav-item"><a class="nav-link elem-menu" href="contact-en.html" accesskey="c">Contact</a></li>
-                    <li class="nav-item"><a class="nav-link elem-menu" href="register-en.html" accesskey="g">Register</a></li>
+                    <li class="nav-item"><a class="nav-link elem-menu" href="vehicles-en.html"
+                            accesskey="v">Vehicles</a></li>
+                    <li class="nav-item"><a class="nav-link elem-menu" href="bookings-en.html"
+                            accesskey="b">Bookings</a></li>
+                    <li class="nav-item"><a class="nav-link elem-menu" href="contact-en.html" accesskey="c">Contact</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link elem-menu" href="register-en.html"
+                            accesskey="g">Register</a></li>
                 </ul>
             </div>
             <a href="./contacto.html" lang="es" title="Change to Spanish">
-            Español (ES)
+                Español (ES)
             </a>
         </nav>
     </header>
     <main>
         <section id="Contacto" class="contacto">
             <h2>Contact</h2>
-            <form id="contacto-form-id" class="contacto-form" aria-label="Contact form">
+            <form id="contacto-form-id" class="contacto-form" aria-label="Contact form" method="post"
+                action="/submit_contact">
                 <div class="mb-3">
                     <fieldset class="contact-fs">
+                        <input type="hidden" name="idioma" value="english">
                         <legend>Contact Details</legend>
                         <div class="mb-3">
                             <label for="nombre" class="form-label">Name:
                             </label>
-                            <input type="text" id="nombre" class="form-control" placeholder="Ex: Eustaquio Ramirez">
+                            <input type="text" id="nombre" name="nombre" class="form-control"
+                                placeholder="Ex: Eustaquio Ramirez">
                             <span id="nombre-error" class="error" aria-live="polite"></span>
                         </div>
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email:
+                            <label for="correo" class="form-label">Email:
                             </label>
-                            <input type="email" id="correo" class="form-control" placeholder="Ex: eusta03@ucm.es">
+                            <input type="email" id="correo" name="correo" class="form-control"
+                                placeholder="Ex: eusta03@ucm.es">
                             <span id="correo-error" class="error" aria-live="polite"></span>
                         </div>
                         <div class="mb-3">
                             <label for="mensaje" class="form-label">Message:
                             </label>
-                            <input type="text" id="mensaje" class="form-control" placeholder="Ex: Patata">
+                            <input type="text" id="mensaje" name="mensaje" class="form-control"
+                                placeholder="Ex: Patata">
                             <span id="mensaje-error" class="error" aria-live="polite"></span>
                         </div>
 

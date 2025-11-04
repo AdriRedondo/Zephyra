@@ -1,5 +1,3 @@
-
-
 #Vehiculos table {
     width: 80%;
     margin: 2rem auto;
@@ -10,20 +8,18 @@
 #Vehiculos caption {
     margin-bottom: 1rem;
     font-style: italic;
-    /* Color de texto: #1E1E1E (Texto) */
     color: #1E1E1E;
 }
 
-#Vehiculos th, #Vehiculos td {
+#Vehiculos th,
+#Vehiculos td {
     padding: 12px 15px;
     text-align: left;
-    /* Color de borde: #CCCCCC (Neutro) */
     border-bottom: 1px solid #CCCCCC;
 }
 
 #Vehiculos thead th {
-    /* Color de fondo de cabecera de tabla: #023A26 (Primario) */
-    background-color: #023A26; 
+    background-color: #023A26;
     color: white;
     font-weight: bold;
 }

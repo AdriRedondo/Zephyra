@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("contacto-form-id");
     const nombre = document.getElementById("nombre");
-    const correo = document.getElementById("correo"); // Corregido: usando el id 'correo'
+    const correo = document.getElementById("correo");
     const mensaje = document.getElementById("mensaje");
     console.log("Formulario de contacto cargado correctamente");
 
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (esValidoNombre && esValidoCorreo && esValidoMensaje) {
             alert("Mensaje enviado con éxito.");
-            // Aquí iría la lógica para enviar los datos al servidor.
+            form.submit();
         } else {
             alert("Por favor, corrige los campos erróneos antes de enviar el formulario.");
         }
@@ -45,18 +45,18 @@ document.addEventListener("DOMContentLoaded", () => {
             input.classList.remove("right-input");
         }
     }
-    
+
     function resetColors(input) {
-        
+
         const errorElementId = `${input.id}-error`;
         const errorId = input.id === 'correo' ? 'correo-error' : errorElementId;
         const errorElement = document.getElementById(errorId);
-        
-        
+
+
         input.classList.remove("right-input");
         input.classList.remove("wrong-input");
 
-       
+
         if (errorElement) {
             errorElement.textContent = "";
         }
