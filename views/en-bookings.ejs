@@ -1,0 +1,74 @@
+<%- include('en-header', { title: 'Car bookings' , estilos: ['style', 'form-reservas' ], actual_es: 'es-reservas' ,
+    actual_en: 'en-bookings' }) %>
+    <main>
+        <section id="Reservas" class="reservas">
+            <h2>Car Bookings</h2>
+            <form id="reservas-form-id" class="reservas-form" aria-label="Booking form" method="post"
+                action="/submit-bookings">
+                <div class="mb-3">
+                    <fieldset class="bookings-fs">
+                        <input type="hidden" name="idioma" value="english">
+                        <legend>Booking Details</legend>
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Name:
+                            </label>
+                            <input type="text" id="nombre" name="nombre" class="form-control"
+                                placeholder="Ej: Eustaquio Ramirez">
+                            <span id="nombre-error" class="error" aria-live="polite"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="correo" class="form-label">Email
+                                address: </label>
+                            <input type="email" id="correo" name="correo" class="form-control"
+                                placeholder="Ej: eusta03@ucm.es">
+                            <span id="correo-error" class="error" aria-live="polite"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="vehiculos-form" class="form-label">Vehicles: </label>
+                            <select id="vehiculos-form" name="vehiculos_form" class="form-control">
+                                <option value="">---</option>
+                                <option value="coche">Car</option>
+                                <option value="moto">Motorcycle</option>
+                                <option value="patinete">Scooter</option>
+                                <option value="furgoneta">Van</option>
+                            </select>
+                            <span id="vehículo-error" class="error"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inicio" class="form-label">Start:
+                            </label>
+                            <input type="datetime-local" id="inicio" name="inicio" class="form-control">
+                            <span id="inicio-error" class="error" aria-live="polite"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="horas" class="form-label">Booking hours: </label>
+                            <input type="number" id="horas" name="horas" class="form-control" placeholder="Ej: 24">
+                            <span id="horas-error" class="error" aria-live="polite"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telefono" class="form-label">Phone: </label>
+                            <input type="tel" id="telefono" name="telefono" class="form-control"
+                                placeholder="Ej: 123456789">
+                            <span id="telefono-error" class="error" aria-live="polite"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="terminos">Accept terms and
+                                conditions</label>
+                            <input type="checkbox" id="terminos" name="terminos" class="form-check-input" required>
+                        </div>
+                        <div class="progress mb-3" role="progressbar" aria-label="Form progress bar"
+                            aria-valuenow="16.7" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar"></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success" aria-label="Submit form">Submit</button>
+                        <button type="reset" class="btn btn-secondary" aria-label="Clear form">Clear</button>
+                    </fieldset>
+                </div>
+            </form>
+        </section>
+    </main>
+    <%- include('footer', {scripts: ['formulario-reservas']}) -%>

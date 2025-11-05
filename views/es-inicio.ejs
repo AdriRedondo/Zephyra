@@ -1,6 +1,5 @@
-<%- include('es-header', { title: 'Gestión de la flota de Vehículos Electricos' }) %>
-
-
+<%- include('es-header', { title: 'Gestión de la flota de Vehículos Electricos' , estilos: ['style', 'index' ],
+    actual_es: 'es-inicio' , actual_en: 'en-home' }) %>
 
     <main>
         <section id="Inicio">
@@ -71,9 +70,4 @@
             <br>
         </section>
     </main>
-
-    <script src="./script/bootstrap.bundle.min.js" type="text/javascript"></script>
-
-    </body>
-
-    </html>
+    <%- include('footer', {scripts: []}) -%>

@@ -7,15 +7,19 @@ const PORT = 3000;
 // Middleware para servir toda la carpeta public como estática
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.set('view engine', 'ejs');
+app.use(express.urlencoded({ extended: false }));
 
+app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('es-inicio');
 });
 
-app.use(express.urlencoded({ extended: false }));
+app.get('/:dir', (req, res) => {
+    res.render(req.params.dir);
+});
+
 
 app.post('/submit_contact', (req, res) => {
     console.log(req.body);
@@ -25,9 +29,9 @@ app.post('/submit_contact', (req, res) => {
     let message = req.body.mensaje;
 
     if (req.body.idioma === 'english')
-        res.redirect('contact-en.html');
+        res.redirect('en-contact');
     else
-        res.redirect('/contacto.html');
+        res.redirect('es-contacto');
 });
 
 app.post('/submit-register', (req, res) => {
@@ -37,9 +41,9 @@ app.post('/submit-register', (req, res) => {
     let password = req.body.contraseña;
 
     if (req.body.idioma === 'english')
-        res.redirect('register-en.html');
+        res.redirect('en-sign-in');
     else
-        res.redirect('/registro.html');
+        res.redirect('es-registro');
 });
 
 app.post('/submit-bookings', (req, res) => {
@@ -53,9 +57,9 @@ app.post('/submit-bookings', (req, res) => {
     let phone = req.body.telefono;
 
     if (req.body.idioma === 'english')
-        res.redirect('bookings-en.html');
+        res.redirect('en-bookings');
     else
-        res.redirect('/reservas.html');
+        res.redirect('es-reservas');
 });
 
 

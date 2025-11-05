@@ -1,0 +1,39 @@
+<%- include('es-header', { title: 'Vehículos disponibles' , estilos: ['style', 'vehiculos' ], actual_es: 'es-vehiculos'
+    , actual_en: 'en-vehicles' }) %>
+    <main>
+        <section id="Vehiculos">
+            <h2>Vehiculos</h2>
+            <table>
+                <caption>Vehícluos disponibles</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Matrícula</th>
+                        <th scope="col">Marca</th>
+                        <th scope="col">Modelo</th>
+                        <th scope="col">Autonomía (km)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>4567-LZZ</td>
+                        <td>Tesla</td>
+                        <td>Model 3 Long Range</td>
+                        <td>629</td>
+                    </tr>
+                    <tr>
+                        <td>8901-KXX</td>
+                        <td>Volkswagen</td>
+                        <td>ID.3 Pro S</td>
+                        <td>549</td>
+                    </tr>
+                    <tr>
+                        <td>2345-MCC</td>
+                        <td>Kia</td>
+                        <td>EV6 Long Range</td>
+                        <td>528</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <%- include('footer', {scripts: []}) -%>

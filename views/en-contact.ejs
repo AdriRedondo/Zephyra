@@ -1,0 +1,41 @@
+<%- include('en-header', { title: 'Contact form' , estilos: ['style', 'form-contact' ], actual_es: 'es-contacto' ,
+    actual_en: 'en-contact' }) %>
+    <main>
+        <section id="Contacto" class="contacto">
+            <h2>Contact</h2>
+            <form id="contacto-form-id" class="contacto-form" aria-label="Contact form" method="post"
+                action="/submit_contact">
+                <div class="mb-3">
+                    <fieldset class="contact-fs">
+                        <input type="hidden" name="idioma" value="english">
+                        <legend>Contact Details</legend>
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Name:
+                            </label>
+                            <input type="text" id="nombre" name="nombre" class="form-control"
+                                placeholder="Ex: Eustaquio Ramirez">
+                            <span id="nombre-error" class="error" aria-live="polite"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="correo" class="form-label">Email:
+                            </label>
+                            <input type="email" id="correo" name="correo" class="form-control"
+                                placeholder="Ex: eusta03@ucm.es">
+                            <span id="correo-error" class="error" aria-live="polite"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="mensaje" class="form-label">Message:
+                            </label>
+                            <input type="text" id="mensaje" name="mensaje" class="form-control"
+                                placeholder="Ex: Patata">
+                            <span id="mensaje-error" class="error" aria-live="polite"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-success" aria-label="Send form">Send</button>
+                        <button type="reset" class="btn btn-secondary" aria-label="Clear form">Clear</button>
+                    </fieldset>
+                </div>
+            </form>
+        </section>
+    </main>
+    <%- include('footer', {scripts: ['formulario-contacto']}) -%>

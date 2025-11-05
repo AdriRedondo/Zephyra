@@ -1,0 +1,34 @@
+<%- include('en-header', { title: 'Sign-in form' , estilos: ['style', 'form-registro' ], actual_es: 'es-registro' ,
+    actual_en: 'en-sign-in' }) %>
+    <main>
+        <section id="Registro" class="registro">
+            <h2>Registration</h2>
+            <form id="registro-form-id" class="registro-form" aria-label="Registration form" method="post"
+                action="/submit-register">
+                <div class="mb-3">
+                    <fieldset class="registro-fs">
+                        <input type="hidden" name="idioma" value="english">
+                        <legend>Registration Details</legend>
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Name:
+                            </label>
+                            <input type="text" id="nombre" name="nombre" class="form-control"
+                                placeholder="Ex: Eustaquio Ramirez">
+                            <span id="nombre-error" class="error" aria-live="polite"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contraseña" class="form-label">Password:
+                            </label>
+                            <input type="text" id="contraseña" name="constraseña" class="form-control"
+                                placeholder="Ex: ASDFg7&A">
+                            <span id="contraseña-error" class="error" aria-live="polite"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-success" aria-label="Submit form">Submit</button>
+                        <button type="reset" class="btn btn-secondary" aria-label="Clear form">Clear</button>
+                    </fieldset>
+                </div>
+            </form>
+        </section>
+    </main>
+    <%- include('footer', {scripts: ['formulario-registro']}) -%>
