@@ -1,0 +1,10 @@
+<%- include('es-header', { title: 'ERROR 404' , estilos: ['style' ],
+actual_es: 'error404' , actual_en: 'error404' }) %>
+<main>
+    <section id="error404">
+        <h2>Error 404</h2>
+        <p>La dirección a la que intentas acceder:
+            <code><%= url %></code>. No existe</p>
+    </section>
+</main>
+<%- include('footer', {scripts: []}) %>

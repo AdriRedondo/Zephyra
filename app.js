@@ -1,6 +1,11 @@
 const express = require('express');
 const path = require('path');
 
+const vehiculosRouter = require('./routes/vehiculos');
+const reservasRouter = require('./routes/reservas');
+const contactoRouter = require('./routes/contacto');
+const registroRouter = require('./routes/registro');
+
 const app = express();
 const PORT = 3000;
 
@@ -12,6 +17,11 @@ app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+app.use('/', vehiculosRouter);
+app.use('/', reservasRouter);
+app.use('/', contactoRouter);
+app.use('/', registroRouter);
+
 app.get('/', (req, res) => {
     res.render('es-inicio');
 });
@@ -21,46 +31,19 @@ app.get('/:dir', (req, res) => {
 });
 
 
-app.post('/submit_contact', (req, res) => {
-    console.log(req.body);
 
-    let name = req.body.nombre;
-    let email = req.body.correo;
-    let message = req.body.mensaje;
 
-    if (req.body.idioma === 'english')
-        res.redirect('en-contact');
-    else
-        res.redirect('es-contacto');
+app.use(function (req, res, next) {
+    res.status(404);
+    res.render("error404", { url: req.url });
 });
 
-app.post('/submit-register', (req, res) => {
-    console.log(req.body);
-
-    let name = req.body.nombre;
-    let password = req.body.contraseña;
-
-    if (req.body.idioma === 'english')
-        res.redirect('en-sign-in');
-    else
-        res.redirect('es-registro');
+app.use(function (err, req, res, next) {
+    res.status(500);
+    res.render("error500", { err: 'Error interno del servidor' });
 });
 
-app.post('/submit-bookings', (req, res) => {
-    console.log(req.body);
 
-    let name = req.body.nombre;
-    let email = req.body.correo;
-    let vehicles = req.body.vehiculos_form;
-    let start = req.body.correo;
-    let hours = req.body.horas;
-    let phone = req.body.telefono;
-
-    if (req.body.idioma === 'english')
-        res.redirect('en-bookings');
-    else
-        res.redirect('es-reservas');
-});
 
 
 app.listen(PORT, (err) => {
