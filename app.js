@@ -29,12 +29,16 @@ app.get('/', (req, res) => {
     res.redirect('es-inicio');
 });
 
+app.get('/es-inicio', (req, res) => {
+    res.render('es-inicio');
+});
 
 app.get('/en-home', (req, res) => {
     res.render('en-home');
 });
 
-app.get('/es-inicio', (req, res) => {
+
+app.get('/users', (req, res) => {
     // Ejemplo de query en la BD
     pool.query('SELECT * FROM usuarios', (err, results) => {
         if (err) {
@@ -43,7 +47,6 @@ app.get('/es-inicio', (req, res) => {
             return;
         }
         console.log(results);
-        res.render('es-inicio');
     });
 });
 
