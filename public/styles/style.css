@@ -152,16 +152,87 @@ h2 {
 .elem-menu:hover,
 .dropdown-item:hover {
     background: transparent;
-    color: white;
+    color: #000000c9;
 }
 
 .dropdown-menu {
-    background-color: #024C32;
     /* Un verde un poco más claro para contraste */
-    border: 1px solid #016B45;
+    border: 1px solid #000;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
+
+.modal-header {
+    background: linear-gradient(135deg, #023A26 0%, #024C32 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    border-bottom: none;
+    border-radius: 20px 20px 0 0;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.modal-header .btn-close:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+}
+
+
+.modal-body {
+    padding: 2rem;
+    background: transparent;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #F5F7F8 0%, #E8EBED 100%);
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(2, 58, 38, 0.3);
+}
+
+.modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out;
+    transform: scale(0.9);
+}
+
+
+.list-group {
+    background: transparent;
+    border-radius: 0;
+    gap: 12px;
+}
+
+.list-group-item {
+    background: white;
+    border: none;
+    border-radius: 12px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 0;
+}
+
+.list-group-item a {
+    display: block;
+    color: #000;
+    text-decoration: none;
+    height: 100%;
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+
+.list-group-item a:hover {
+    background: #024C32;
+    color: white;
+}
+
 
 .dropdown-item {
     color: lightgray;
