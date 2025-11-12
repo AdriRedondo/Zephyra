@@ -29,33 +29,23 @@ app.get('/', (req, res) => {
     res.redirect('es-inicio');
 });
 
-app.get('/es-inicio', (req, res) => {
-    res.render('es-inicio');
-});
 
 app.get('/en-home', (req, res) => {
     res.render('en-home');
 });
 
-/*app.get('/:dir', (req, res) => {
-    res.render(req.params.dir);
-});*/
-/*
-app.get('/es_inicio', (req, res) => {
-    console.log('HOLA');
+app.get('/es-inicio', (req, res) => {
 
-    pool.query('SELECT * FROM usuarios', (err, results) => {
+    pool.query('SELECT * FROM usuarios', (err, results) => { // Ejemplo de query en la BD
         if (err) {
             console.error('Error al obtener usuarios:', err);
             res.status(500).send('Error al obtener usuarios');
             return;
         }
+        console.log(results);
         res.render('es-inicio');
     });
 });
-
-*/
-
 
 app.use(function (req, res, next) {
     res.status(404);
