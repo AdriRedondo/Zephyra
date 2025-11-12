@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const pool = require('./db');
 
 const vehiculosRouter = require('./routes/vehiculos');
 const reservasRouter = require('./routes/reservas');
@@ -8,6 +9,8 @@ const registroRouter = require('./routes/registro');
 
 const app = express();
 const PORT = 3000;
+
+app.use(express.json());
 
 // Middleware para servir toda la carpeta public como estática
 app.use(express.static(path.join(__dirname, 'public')));
@@ -23,14 +26,35 @@ app.use('/', contactoRouter);
 app.use('/', registroRouter);
 
 app.get('/', (req, res) => {
+    res.redirect('es-inicio');
+});
+
+app.get('/es-inicio', (req, res) => {
     res.render('es-inicio');
 });
 
-app.get('/:dir', (req, res) => {
-    res.render(req.params.dir);
+app.get('/en-home', (req, res) => {
+    res.render('en-home');
 });
 
+/*app.get('/:dir', (req, res) => {
+    res.render(req.params.dir);
+});*/
+/*
+app.get('/es_inicio', (req, res) => {
+    console.log('HOLA');
 
+    pool.query('SELECT * FROM usuarios', (err, results) => {
+        if (err) {
+            console.error('Error al obtener usuarios:', err);
+            res.status(500).send('Error al obtener usuarios');
+            return;
+        }
+        res.render('es-inicio');
+    });
+});
+
+*/
 
 
 app.use(function (req, res, next) {

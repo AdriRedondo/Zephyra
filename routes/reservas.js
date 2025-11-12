@@ -1,6 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
+router.get('/es-reservas', (req, res) => {
+    res.render('es-reservas');
+});
+
+router.get('/en-bookings', (req, res) => {
+    res.render('en-bookings');
+});
+
 router.post('/submit-bookings', (req, res) => {
     console.log(req.body);
 

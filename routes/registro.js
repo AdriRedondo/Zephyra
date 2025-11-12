@@ -1,6 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
+router.get('/es-registro', (req, res) => {
+    res.render('es-registro');
+});
+
+router.get('/en-sign-up', (req, res) => {
+    res.render('en-sign-up');
+});
+
 router.post('/submit-register', (req, res) => {
     console.log(req.body);
 

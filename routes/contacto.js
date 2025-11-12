@@ -1,6 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
+router.get('/es-contacto', (req, res) => {
+    res.render('es-contacto');
+});
+
+router.get('/en-contact', (req, res) => {
+    res.render('en-contact');
+});
 
 router.post('/submit_contact', (req, res) => {
     console.log(req.body);

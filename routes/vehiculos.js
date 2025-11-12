@@ -16,6 +16,10 @@ const vehiculosDisponibles = [
     { matricula: '3344-YZA', marca: 'Ford', modelo: 'E-Transit', autonomia: 317, tipo: 'furgoneta' },
 ];
 
+router.get('/es-vehiculos', (req, res) => {
+    res.render('es-vehiculo');
+});
+
 router.get('/vehiculos', (req, res) => {
 
     const tipoFiltro = req.query.tipo;
