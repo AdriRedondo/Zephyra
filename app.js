@@ -35,8 +35,8 @@ app.get('/en-home', (req, res) => {
 });
 
 app.get('/es-inicio', (req, res) => {
-
-    pool.query('SELECT * FROM usuarios', (err, results) => { // Ejemplo de query en la BD
+    // Ejemplo de query en la BD
+    pool.query('SELECT * FROM usuarios', (err, results) => {
         if (err) {
             console.error('Error al obtener usuarios:', err);
             res.status(500).send('Error al obtener usuarios');
