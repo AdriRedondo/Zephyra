@@ -156,7 +156,6 @@ h2 {
 }
 
 .dropdown-menu {
-    /* Un verde un poco más claro para contraste */
     border: 1px solid #000;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
