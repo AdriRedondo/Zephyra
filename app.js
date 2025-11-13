@@ -8,6 +8,7 @@ const contactoRouter = require('./routes/contacto');
 const registroRouter = require('./routes/registro');
 const loginRouter = require('./routes/login').router;
 const logoutRouter = require('./routes/logout');
+const adminRouter = require('./routes/admin');
 
 const app = express();
 const PORT = 3000;
@@ -28,6 +29,7 @@ app.use('/', contactoRouter);
 app.use('/', registroRouter);
 app.use('/', loginRouter);
 app.use('/', logoutRouter);
+app.use('/', adminRouter);
 
 app.get('/', (req, res) => {
     res.redirect('es-inicio');
@@ -63,9 +65,6 @@ app.use(function (err, req, res, next) {
     res.status(500);
     res.render("error500", { err: 'Error interno del servidor' });
 });
-
-
-
 
 app.listen(PORT, (err) => {
     if (err) {
