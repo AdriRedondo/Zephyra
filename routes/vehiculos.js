@@ -17,7 +17,15 @@ const vehiculosDisponibles = [
 ];
 
 router.get('/es-vehiculos', (req, res) => {
-    res.render('es-vehiculo');
+    const viewData = {
+        title: 'Vehículos disponibles',
+        estilos: ['style', 'vehiculos'],
+        actual_es: 'es-vehiculos',
+        actual_en: 'en-vehicles',
+        vehiculos: vehiculosDisponibles,
+        tipoFiltro: 'todos'
+    };
+    res.render('es-vehiculos', viewData);
 });
 
 router.get('/vehiculos', (req, res) => {
