@@ -6,6 +6,8 @@ const vehiculosRouter = require('./routes/vehiculos');
 const reservasRouter = require('./routes/reservas');
 const contactoRouter = require('./routes/contacto');
 const registroRouter = require('./routes/registro');
+const loginRouter = require('./routes/login').router;
+const logoutRouter = require('./routes/logout');
 
 const app = express();
 const PORT = 3000;
@@ -24,6 +26,8 @@ app.use('/', vehiculosRouter);
 app.use('/', reservasRouter);
 app.use('/', contactoRouter);
 app.use('/', registroRouter);
+app.use('/', loginRouter);
+app.use('/', logoutRouter);
 
 app.get('/', (req, res) => {
     res.redirect('es-inicio');

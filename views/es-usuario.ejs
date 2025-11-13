@@ -1,0 +1,10 @@
+<%- include('es-header', { title: 'Usuario logeado' , estilos: ['style' ], actual_es: 'es-usuario' ,
+    actual_en: 'en-user' }) %>
+    <main>
+        <section id="User" class="user">
+            <h2>Usuario logeado: <%= correo %>
+            </h2>
+        </section>
+
+    </main>
+    <%- include('footer', {scripts: []}) -%>

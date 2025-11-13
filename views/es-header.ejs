@@ -44,13 +44,19 @@
                             <a class="nav-link elem-menu p-2" href="/es-contacto" accesskey="c">Contacto</a>
                         </li>
                         <li class="nav-item me-2">
-                            <a class="nav-link elem-menu p-2" href="/es-registro" accesskey="g">Registro</a>
+                            <a class="nav-link elem-menu p-2" href="/es-login" accesskey="l">Login</a>
                         </li>
                         <li class="nav-item me-2">
                             <a role="button" class="nav-link elem-menu p-2" accesskey="a" data-bs-toggle="modal"
                                 data-bs-target="#accessModal">Accesibilidad</a>
                         </li>
-
+                        <li class="nav-item me-2">
+                            <a role="button" class="nav-link elem-menu p-2" accesskey="a" data-bs-toggle="modal"
+                                data-bs-target="#adminModal">Admin</a>
+                        </li>
+                        <li class="nav-item me-2">
+                            <a class="nav-link elem-menu p-2" href="/es-logout" accesskey="g">Cerrar sesión</a>
+                        </li>
 
                     </ul>
                 </div>
@@ -94,6 +100,32 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     <button type="button" class="btn btn-success">Guardar cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="adminModal" tabindex="-1" aria-labelledby="adminModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="adminModalLabel">Administración</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group">
+                        <li class="list-group-item nav-item">
+                            <a href="/es-registro" accesskey="g">Registro</a>
+                        </li>
+                        <li class="list-group-item nav-item">
+                            <a href="#">Gestión de vehículos</a>
+                        </li>
+                        <li class="list-group-item nav-item">
+                            <a href="#">Usuarios</a>
+                        </li>
+                        <li class="list-group-item nav-item">
+                            <a href="#">Concesionarios</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
