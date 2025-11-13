@@ -1,5 +1,6 @@
 main {
-    padding: 0 2rem;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 
@@ -11,8 +12,8 @@ h2 {
 .admin-section {
     border-bottom: 1px solid #636262;
     margin-bottom: 2rem;
-    padding: 1rem 0.5rem;
-    width: 100vh;
+    padding: 0 0 2rem 1rem;
+    width: 100vw;
 }
 
 .container-fluid {
