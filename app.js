@@ -11,14 +11,11 @@ const logoutRouter = require('./routes/logout');
 const adminRouter = require('./routes/admin');
 
 const app = express();
-const PORT = 3000;
 
 app.use(express.json());
-
-// Middleware para servir toda la carpeta public como estática
-app.use(express.static(path.join(__dirname, 'public')));
-
 app.use(express.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -66,11 +63,4 @@ app.use(function (err, req, res, next) {
     res.render("error500", { err: 'Error interno del servidor' });
 });
 
-app.listen(PORT, (err) => {
-    if (err) {
-        console.log(`Error al abrir un servidor en el puerto 3000: ${err}`);
-    }
-    else {
-        console.log('Servidor en 3000.');
-    }
-});
+module.exports = app;
