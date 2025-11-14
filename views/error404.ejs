@@ -1,10 +1,27 @@
-<%- include('es-header', { title: 'ERROR 404' , estilos: ['style' ],
-actual_es: 'error404' , actual_en: 'error404' }) %>
-<main>
-    <section id="error404">
-        <h2>Error 404</h2>
-        <p>La dirección a la que intentas acceder:
-            <code><%= url %></code>. No existe</p>
-    </section>
-</main>
-<%- include('footer', {scripts: []}) %>
+<%- include('es-header', { title: 'ERROR 404' , estilos: ['style', 'errors' ], actual_es: 'error404' ,
+    actual_en: 'error404' }) %>
+    <main>
+        <section id="error404">
+            <div class="row">
+                <div class="col-6">
+                    <div class="container-fluid error-container">
+                        <div class="row">
+                            <h2 class="error-title mb-3">Error 404</h2>
+                            <h3 class="mb-3">Lo sentimos - no encontramos la página que está buscando.
+                            </h3>
+                            <p class="mb-3">Es posible que hayamos movido o eliminado la página que estás buscando, o
+                                que hayas
+                                escrito
+                                una
+                                URL
+                                incorrecta.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 div-visual-content">
+                    <img src="./images/coche-electrico2.png" alt="Icono de coche eléctrico" title="Coche eléctrico">
+                </div>
+            </div>
+        </section>
+    </main>
+    <%- include('footer', {scripts: []}) %>

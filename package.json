@@ -1,13 +1,13 @@
 {
-    "name": "ecomarket-app",
+    "name": "zephyra",
     "version": "1.0.0",
-    "description": "Aplicación web desarrollada con Node.js y Express.js basada en el portal EcoMarket",
-    "main": "app.js",
+    "description": "Aplicación web para zephyra",
+    "main": "server.js",
     "scripts": {
-        "start": "node app.js",
-        "dev": "nodemon app.js"
+        "start": "node server.js",
+        "dev": "nodemon server.js"
     },
-    "author": "Alumno EcoMarket",
+    "author": "Alejandro Canoray Adrían Redondo",
     "license": "MIT",
     "dependencies": {
         "cookie-parser": "^1.4.6",

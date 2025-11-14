@@ -1,0 +1,22 @@
+section {
+    width: 100%;
+    height: 100%;
+}
+
+main {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.error-container {
+    width: 100%;
+    height: 100%;
+    padding: 2rem 5rem;
+    text-align: left;
+    align-content: center;
+}
+
+.error-title {
+    font-size: 6rem;
+    font-weight: 900;
+}

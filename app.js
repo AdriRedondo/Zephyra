@@ -36,6 +36,14 @@ app.get('/es-inicio', (req, res) => {
     res.render('es-inicio');
 });
 
+app.get('/error404', (req, res) => {
+    res.render('error404');
+});
+
+app.get('/error500', (req, res) => {
+    res.render('error500');
+});
+
 app.get('/en-home', (req, res) => {
     res.render('en-home');
 });
@@ -54,13 +62,11 @@ app.get('/users', (req, res) => {
 });
 
 app.use(function (req, res, next) {
-    res.status(404);
-    res.render("error404", { url: req.url });
+    res.status(404).render("error404", { url: req.url });
 });
 
 app.use(function (err, req, res, next) {
-    res.status(500);
-    res.render("error500", { err: 'Error interno del servidor' });
+    res.status(500).render("error500", { err: 'Error interno del servidor' });
 });
 
 module.exports = app;
