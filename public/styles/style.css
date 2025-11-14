@@ -82,6 +82,8 @@ h2 {
     box-shadow: none;
 }
 
+
+
 .div-logo {
     margin-left: 0;
     max-height: 3rem;
@@ -268,4 +270,14 @@ footer {
 
 .input-hover:hover {
     cursor: pointer;
+}
+
+@media (max-width: 1199px) {
+    .logo-container {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+    }
 }
