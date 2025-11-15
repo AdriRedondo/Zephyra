@@ -19,16 +19,21 @@ pool.getConnection((err, connection) => {
     }
 });
 
-const crearTablas = async () => {
+const crearTablas = () => {
     const tablas = [
-        `CREATE TABLE IF NOT EXISTS Concesionarios (
+        {
+            nombre: 'Concesionarios',
+            consulta: `CREATE TABLE IF NOT EXISTS Concesionarios (
                 id_concesionario INT AUTO_INCREMENT PRIMARY KEY,
                 nombre VARCHAR(100) NOT NULL,
                 ciudad VARCHAR(100) NOT NULL,
                 direccion VARCHAR(200),
                 telefono_contacto VARCHAR(20)
-            )`,
-        `CREATE TABLE IF NOT EXISTS Usuarios (
+            )`
+        },
+        {
+            nombre: 'Usuarios',
+            consulta: `CREATE TABLE IF NOT EXISTS Usuarios (
                 id_usuario INT AUTO_INCREMENT PRIMARY KEY,
                 nombre VARCHAR(100) NOT NULL,
                 correo VARCHAR(150) NOT NULL UNIQUE,
@@ -39,11 +44,14 @@ const crearTablas = async () => {
                 preferencias_accesibilidad JSON,
                 CONSTRAINT fk_usuario_concesionario
                     FOREIGN KEY (id_concesionario)
-                    REFERENCES concesionarios (id_concesionario)
+                    REFERENCES Concesionarios(id_concesionario)
                     ON DELETE SET NULL
                     ON UPDATE CASCADE
-            )`,
-        `CREATE TABLE IF NOT EXISTS Vehiculos (
+            )`
+        },
+        {
+            nombre: 'Vehiculos',
+            consulta: `CREATE TABLE IF NOT EXISTS Vehiculos (
                 id_vehiculo INT AUTO_INCREMENT PRIMARY KEY,
                 matricula VARCHAR(20) NOT NULL UNIQUE,
                 marca VARCHAR(50) NOT NULL,
@@ -57,11 +65,14 @@ const crearTablas = async () => {
                 id_concesionario INT NOT NULL,
                 CONSTRAINT fk_vehiculo_concesionario
                     FOREIGN KEY (id_concesionario)
-                    REFERENCES concesionarios (id_concesionario)
+                    REFERENCES Concesionarios(id_concesionario)
                     ON DELETE CASCADE
                     ON UPDATE CASCADE
-            )`,
-        ` CREATE TABLE IF NOT EXISTS Reservas (
+            )`
+        },
+        {
+            nombre: 'Reservas',
+            consulta: ` CREATE TABLE IF NOT EXISTS Reservas (
                 id_reserva INT AUTO_INCREMENT PRIMARY KEY,
                 id_usuario INT NOT NULL,
                 id_vehiculo INT NOT NULL,
@@ -72,25 +83,39 @@ const crearTablas = async () => {
                 incidencias_reportadas TEXT,
                 CONSTRAINT fk_reserva_usuario
                     FOREIGN KEY (id_usuario)
-                    REFERENCES usuarios (id_usuario)
+                    REFERENCES Usuarios(id_usuario)
                     ON DELETE CASCADE
                     ON UPDATE CASCADE,
                 CONSTRAINT fk_reserva_vehiculo
                     FOREIGN KEY (id_vehiculo)
-                    REFERENCES vehiculos (id_vehiculo)
+                    REFERENCES Vehiculos(id_vehiculo)
                     ON DELETE CASCADE
                     ON UPDATE CASCADE
             )`
+        }
     ];
-    tablas.forEach((tabla) => {
-        pool.query(tabla, (err) => {
-            if (err) {
-                console.log('Error creando una tabla');
-            }
-        });
-        console.log('Tablas creadas correctamente');
 
-    });
+    let i = 0;
+    const crearSiguienteTabla = () => {
+        if (i >= tablas.length) {
+            console.log('Todas las tablas se han creado correctamente');
+            const { cargarDatosIniciales } = require('./loadDB');
+            cargarDatosIniciales();
+            return;
+        }
+        pool.query(tablas[i].consulta, (err) => {
+            if (err) {
+                console.log(`Error creando la tabla de ${tablas[i].nombre}: ${err.message}`);
+            }
+            else {
+                console.log(`Tabla de ${tablas[i].nombre} creadas correctamente`);
+            }
+            i++;
+            crearSiguienteTabla();
+        });
+    };
+    crearSiguienteTabla();
+
 }
 
 module.exports = pool;

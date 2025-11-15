@@ -1,0 +1,129 @@
+{
+    "concesionarios": [
+        {
+            "nombre": "Zephyra Madrid Centro",
+            "ciudad": "Madrid",
+            "direccion": "Calle Gran Vía, 28",
+            "telefono_contacto": "912345678"
+        },
+        {
+            "nombre": "Zephyra Barcelona Norte",
+            "ciudad": "Barcelona",
+            "direccion": "Passeig de Gràcia, 92",
+            "telefono_contacto": "934567890"
+        },
+        {
+            "nombre": "Zephyra Valencia Sur",
+            "ciudad": "Valencia",
+            "direccion": "Avenida del Puerto, 456",
+            "telefono_contacto": "963456789"
+        }
+    ],
+    "vehiculos": [
+        {
+            "matricula": "1234ABC",
+            "marca": "Tesla",
+            "modelo": "Model 3",
+            "año_matriculacion": 2023,
+            "numero_plazas": 5,
+            "autonomia_km": 450,
+            "color": "Blanco",
+            "imagen": "tesla-model3.jpg",
+            "estado": "disponible",
+            "concesionario_nombre": "Zephyra Madrid Centro"
+        },
+        {
+            "matricula": "5678DEF",
+            "marca": "Nissan",
+            "modelo": "Leaf",
+            "año_matriculacion": 2022,
+            "numero_plazas": 5,
+            "autonomia_km": 380,
+            "color": "Azul",
+            "imagen": "nissan-leaf.jpg",
+            "estado": "disponible",
+            "concesionario_nombre": "Zephyra Barcelona Norte"
+        },
+        {
+            "matricula": "9101GHI",
+            "marca": "BMW",
+            "modelo": "i3",
+            "año_matriculacion": 2023,
+            "numero_plazas": 4,
+            "autonomia_km": 260,
+            "color": "Negro",
+            "imagen": "bmw-i3.jpg",
+            "estado": "disponible",
+            "concesionario_nombre": "Zephyra Madrid Centro"
+        },
+        {
+            "matricula": "1213JKL",
+            "marca": "Renault",
+            "modelo": "Zoe",
+            "año_matriculacion": 2022,
+            "numero_plazas": 5,
+            "autonomia_km": 395,
+            "color": "Rojo",
+            "imagen": "renault-zoe.jpg",
+            "estado": "disponible",
+            "concesionario_nombre": "Zephyra Valencia Sur"
+        },
+        {
+            "matricula": "1415MNO",
+            "marca": "Volkswagen",
+            "modelo": "ID.3",
+            "año_matriculacion": 2023,
+            "numero_plazas": 5,
+            "autonomia_km": 420,
+            "color": "Gris",
+            "imagen": "vw-id3.jpg",
+            "estado": "mantenimiento",
+            "concesionario_nombre": "Zephyra Barcelona Norte"
+        },
+        {
+            "matricula": "1617PQR",
+            "marca": "Hyundai",
+            "modelo": "Kona Electric",
+            "año_matriculacion": 2023,
+            "numero_plazas": 5,
+            "autonomia_km": 484,
+            "color": "Verde",
+            "imagen": "hyundai-kona.jpg",
+            "estado": "disponible",
+            "concesionario_nombre": "Zephyra Valencia Sur"
+        }
+    ],
+    "usuarios": [
+        {
+            "nombre": "Administrador Sistema",
+            "correo": "admin@zephyra.com",
+            "contraseña": "Admin123!",
+            "rol": "admin",
+            "telefono": "600000001"
+        },
+        {
+            "nombre": "María García",
+            "correo": "maria.garcia@zephyra.com",
+            "contraseña": "Maria123!",
+            "rol": "empleado",
+            "telefono": "600111222",
+            "concesionario_nombre": "Zephyra Madrid Centro"
+        },
+        {
+            "nombre": "Carlos López",
+            "correo": "carlos.lopez@zephyra.com",
+            "contraseña": "Carlos123!",
+            "rol": "empleado",
+            "telefono": "600333444",
+            "concesionario_nombre": "Zephyra Barcelona Norte"
+        },
+        {
+            "nombre": "Ana Martínez",
+            "correo": "ana.martinez@zephyra.com",
+            "contraseña": "Ana123!",
+            "rol": "empleado",
+            "telefono": "607555666",
+            "concesionario_nombre": "Zephyra Valencia Sur"
+        }
+    ]
+}
