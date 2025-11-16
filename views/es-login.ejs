@@ -3,6 +3,7 @@
     <main>
         <section id="Login" class="login">
             <h2>Login</h2>
+
             <form id="login-form-id" class="login-form" aria-label="Formulario de login" method="post"
                 action="/submit_login">
                 <div class="mb-3">
@@ -19,12 +20,20 @@
                         <div class="mb-3">
                             <label for="contraseña" class="form-label">Contraseña:
                             </label>
-                            <input id="contraseña" name="contraseña" class="form-control" type="password"
+                            <input id="contraseña" name="password" class="form-control" type="password"
                                 placeholder="Escriba su contraseña">
                             <span id="contraseña-error" class="error" aria-live="polite"></span>
                         </div>
-                        <button type="submit" class="btn btn-success" aria-label="Enviar formulario">Enviar</button>
-                        <button type="reset" class="btn btn-secondary" aria-label="Limpiar formulario">Limpiar</button>
+
+                        <% if (typeof error !=='undefined' ) { %>
+                            <div class="alert alert-danger" role="alert">
+                                <%= error %>
+                            </div>
+                            <% } %>
+                                <button type="submit" class="btn btn-success"
+                                    aria-label="Enviar formulario">Enviar</button>
+                                <button type="reset" class="btn btn-secondary"
+                                    aria-label="Limpiar formulario">Limpiar</button>
                     </fieldset>
                 </div>
             </form>

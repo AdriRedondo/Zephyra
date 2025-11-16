@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const pool = require('../db')
+const bcrypt = require('bcrypt')
 
 const usuarios = [
     {
@@ -19,15 +21,51 @@ router.get('/en-login', (req, res) => {
 });
 
 router.post('/submit_login', (req, res) => {
-    console.log(req.body);
+    try {
+        console.log(req.body);
 
-    let email = req.body.correo;
-    let password = req.body.contraseña;
+        const language = req.body.idioma;
+        const email = req.body.correo;
+        const password = req.body.password;
 
-    if (req.body.idioma === 'english')
-        res.render('en-user', { correo: email });
-    else
-        res.render('es-usuario', { correo: email });
+        const consulta = 'SELECT * FROM Usuarios WHERE correo = ?';
+        pool.query(consulta, [email], async (err, results) => {
+            if (err) {
+                console.error('Error al consultar la base de datos sobre el usuario:', err);
+                return res.status(500).render('error500', { err: 'Error al verificar usuario para el login' });
+            }
+
+            //No se encuentra el usuario con ese correo
+            if (results.length === 0) {
+                if (language === 'english')
+                    return res.render('en-login', { error: `User not found` });
+                else
+                    return res.render('es-login', { error: `Usuario no encontrado` });
+            }
+
+            //Se encuentra el usuario
+            const usuario = results[0];
+            console.log(`Contraseña usuario de la BD: ${usuario.contraseña}`);
+            console.log(`Contraseña usuario del form: ${password}`);
+            const compare = await bcrypt.compare(password, usuario.contraseña);
+            if (!compare) {
+                if (language === 'english')
+                    return res.render('en-login', { error: 'Incorrect password' });
+                else
+                    return res.render('es-login', { error: 'Contraseña incorrecta' });
+            }
+
+            if (language === 'english')
+                res.render('en-user', { correo: email });
+            else
+                res.render('es-usuario', { correo: email });
+
+        });
+    }
+    catch (err) {
+        res.status(500).render('error500', { err: 'Error al logear el usuario: ', err });
+
+    }
 });
 
 

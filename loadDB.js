@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const pool = require('./db');
+const bcrypt = require('bcrypt');
 
 async function cargarDatosIniciales() {
     try {
@@ -70,6 +71,7 @@ function cargarUsuarios(usuarios) {
 
         let completed = 0;
         const total = usuarios.length;
+        const saltRounds = 10;
 
         for (const u of usuarios) {
             try {
@@ -87,8 +89,12 @@ function cargarUsuarios(usuarios) {
                         });
                     });
                 }
+                // Se encripta la contraseña  del usuario
+                const hashedPassword = await bcrypt.hash(u.contraseña, saltRounds);
+                console.log(`Hasheando contraseña para ${u.nombre}`);
+
                 const consulta = 'INSERT INTO Usuarios (nombre, correo, contraseña, rol, telefono, id_concesionario) VALUES (?, ?, ?, ?, ?, ?) ';
-                pool.query(consulta, [u.nombre, u.correo, u.contraseña, u.rol, u.telefono, id_concesionario], (err) => {
+                pool.query(consulta, [u.nombre, u.correo, hashedPassword, u.rol, u.telefono, id_concesionario], (err) => {
                     if (err) {
                         console.log(`Error al insertar el usuario ${u.nombre}: `, err.message);
                     }
