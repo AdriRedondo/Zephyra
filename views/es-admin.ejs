@@ -1,5 +1,5 @@
-<%- include('es-header', { title: 'Administración' , estilos: ['style', 'admin-sections' ], actual_es: 'es-admin' ,
-    actual_en: 'en-admin' }) %>
+<%- include('es-header', { title: 'Administración' , estilos: ['style', 'admin-sections' , 'form-registro' ],
+    actual_es: 'es-admin' , actual_en: 'en-admin' }) %>
     <main>
         <section id="gestor-vehiculos" class="admin-section">
             <div class="container-fluid">
@@ -27,7 +27,88 @@
                     <h2>Gestión de usuarios</h2>
                 </div>
                 <div class="row">
-                    Contenido...
+                    <form id="registro-form-id" class="registro-form" aria-label="Formulario de registro" method="post"
+                        action="/submit-register">
+                        <div class="mb-3">
+                            <fieldset class="registro-fs">
+                                <input type="hidden" name="idioma" value="español">
+                                <legend>Registrar usuario</legend>
+                                <div class="row">
+                                    <div class="mb-3 col-6">
+                                        <label for="nombre" class="form-label">Nombre:
+                                        </label>
+                                        <input type="text" id="nombre" name="nombre" class="form-control"
+                                            placeholder="Ej: Eustaquio Ramirez">
+                                        <span id="nombre-error" class="error" aria-live="polite"></span>
+                                    </div>
+                                    <div class="mb-3 col-6">
+                                        <label for="correo" class="form-label">Correo:
+                                        </label>
+                                        <input type="text" id="correo" name="correo" class="form-control"
+                                            placeholder="Ej: ASDFg7&A">
+                                        <span id="correo-error" class="error" aria-live="polite"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-6">
+                                        <label for="contraseña" class="form-label">Contraseña:
+                                        </label>
+                                        <input type="text" id="contraseña" name="password" class="form-control"
+                                            placeholder="Ej: ASDFg7&A">
+                                        <span id="contraseña-error" class="error" aria-live="polite"></span>
+                                    </div>
+                                    <div class="mb-3 col-6">
+                                        <label for="telefono" class="form-label">Teléfono:
+                                        </label>
+                                        <input type="tel" id="telefono" name="telefono" class="form-control"
+                                            placeholder="Ej: 666777888" pattern="^[0-9]{9}$"
+                                            title="Debe contener 9 dígitos">
+                                        <span id="telefono-error" class="error" aria-live="polite"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-6">
+                                        <label for="concesionario" class="form-label">Concesionario asignado:
+                                        </label>
+                                        <select id="concesionario" name="id_concesionario" class="form-select" required>
+                                            <option value="">Sin asignar</option>
+                                            <% if (typeof concesionarios !=='undefined' ) { %>
+                                                <% concesionarios.forEach(c=> { %>
+                                                    <option value="<%= c.idConcesionario %>">
+                                                        <%= c.nombre %> - <%= c.ciudad %>
+                                                    </option>
+                                                    <% }) %>
+                                                        <% } %>
+                                        </select>
+                                        <span id="concesionario-error" class="error" aria-live="polite"></span>
+                                    </div>
+                                    <div class="mb-3 col-6">
+                                        <label for="rol" class="form-label">Rol:
+                                        </label>
+                                        <select id="rol" name="rol" class="form-select" required>
+                                            <option value="empleado" selected>Empleado</option>
+                                            <option value="admin">Administrador</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <% if (typeof success !=='undefined' && success) { %>
+                                    <div class="alert alert-success" role="alert">
+                                        <%= success %>
+                                    </div>
+                                    <% } %>
+                                        <% if (typeof error !=='undefined' && error) { %>
+                                            <div class="alert alert-danger" role="alert">
+                                                <%= error %>
+                                            </div>
+                                            <% } %>
+                                                <button type="submit" class="btn btn-success"
+                                                    aria-label="Enviar formulario">Enviar</button>
+                                                <button type="reset" class="btn btn-secondary"
+                                                    aria-label="Limpiar formulario">Limpiar</button>
+                            </fieldset>
+                        </div>
+                    </form>
                 </div>
             </div>
         </section>

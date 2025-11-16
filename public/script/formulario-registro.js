@@ -1,23 +1,26 @@
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("registro-form-id");
     const nombre = document.getElementById("nombre");
+    const correo = document.getElementById("correo");
     const contrasenia = document.getElementById("contraseña");
     console.log("Formulario de registro cargado correctamente");
 
 
     nombre.addEventListener("input", validarNombre);
+    correo.addEventListener("input", validarCorreo);
     contrasenia.addEventListener("input", validarContrasenia);
 
     form.addEventListener("submit", (event) => {
         event.preventDefault();
         const esValidoNombre = validarNombre();
+        const esValidoCorreo = validarCorreo();
         const esValidoContrasenia = validarContrasenia();
 
         console.log("Nombre: ", nombre.value);
+        console.log("Correo: ", correo.value);
         console.log("Contraseña: ", contrasenia.value);
 
-        if (esValidoNombre && esValidoContrasenia) {
-            alert("Registro realizado con éxito.");
+        if (esValidoNombre && esValidoCorreo && esValidoContrasenia) {
             form.submit();
 
         } else {
@@ -89,6 +92,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         else {
             colorearInputs(contrasenia, true);
+            errorElement.textContent = "";
+            return true;
+        }
+    }
+    //Validar formato de correo
+    function validarCorreo() {
+
+        const correoValue = correo.value.trim();
+        const errorElement = document.getElementById("correo-error");
+
+        if (correoValue === "" || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(correoValue)) {
+            colorearInputs(correo, false);
+            errorElement.textContent = "Introduce un correo electrónico válido";
+            return false;
+
+        }
+        else {
+            colorearInputs(correo, true);
             errorElement.textContent = "";
             return true;
         }
