@@ -1,11 +1,12 @@
 const express = require('express');
+const { requiredAdminId, requiredEmployeeId } = require('../autorizaciones');
 const router = express.Router();
 
-router.get('/es-contacto', (req, res) => {
+router.get('/es-contacto', requiredAdminId || requiredEmployeeId, (req, res) => {
     res.render('es-contacto');
 });
 
-router.get('/en-contact', (req, res) => {
+router.get('/en-contact', requiredAdminId || requiredEmployeeId, (req, res) => {
     res.render('en-contact');
 });
 

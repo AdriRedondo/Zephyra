@@ -2,15 +2,24 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/es-logout', (req, res) => {
-    res.render('es-inicio');
-    console.log('Se cierra la sesión del usuario');
-    //Habrá que meter la logica para cerrar la sesión del usuario
+
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error al cerrar sesión: ', err);
+            res.status(500).render('error500', { err: 'Error al cerrar sesión' });
+        }
+        else {
+            console.log('El usuario se ha cerrado');
+            res.redirect('es-inicio');
+        }
+    });
 });
 
 router.get('/en-logout', (req, res) => {
     res.render('en-home');
-    console.log('The user loged out');
-    //Habrá que meter la logica para cerrar la sesión del usuario
+    console.log('The user logs out');
+    //Implementar el resto
 });
+
 
 module.exports = router;

@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Mensaje: ", mensaje.value);
 
         if (esValidoNombre && esValidoCorreo && esValidoMensaje) {
-            alert("Mensaje enviado con éxito.");
             form.submit();
         } else {
             alert("Por favor, corrige los campos erróneos antes de enviar el formulario.");

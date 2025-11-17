@@ -9,7 +9,32 @@ const loginRouter = require('./routes/login').router;
 const logoutRouter = require('./routes/logout');
 const adminRouter = require('./routes/admin');
 
+const session = require('express-session');
+const mysqlSession = require('express-mysql-session');
+const MySQLStore = mysqlSession(session);
+const sessionStore = new MySQLStore({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'zephyra'
+});
+
+const middleWareSession = session({
+    saveUninitialized: false,
+    secret: 'zephyrAA',
+    resave: false,
+    store: sessionStore
+});
+
 const app = express();
+
+app.use(middleWareSession);
+
+app.use((req, res, next) => {
+    res.locals.session = req.session;
+    res.locals.usuario = req.session.usuario || null;
+    next();
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -44,19 +69,6 @@ app.get('/error500', (req, res) => {
 
 app.get('/en-home', (req, res) => {
     res.render('en-home');
-});
-
-
-app.get('/users', (req, res) => {
-
-    pool.query('SELECT * FROM usuarios', (err, results) => {
-        if (err) {
-            console.error('Error al obtener usuarios:', err);
-            res.status(500).send('Error al obtener usuarios');
-            return;
-        }
-        console.log(results);
-    });
 });
 
 app.use(function (req, res, next) {

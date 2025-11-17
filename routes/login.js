@@ -3,21 +3,21 @@ const router = express.Router();
 const pool = require('../db')
 const bcrypt = require('bcrypt')
 
-const usuarios = [
-    {
-        nombre: 'Antonio Admin',
-        rol: 'admin',
-        correo: 'admin@ucm.es',
-        telefono: '123456789'
-    }
-]
-
 router.get('/es-login', (req, res) => {
     res.render('es-login');
 });
 
 router.get('/en-login', (req, res) => {
     res.render('en-login');
+});
+
+//Esto es temporal
+router.get('/es-usuario', (req, res) => {
+    res.render('es-usuario');
+});
+
+router.get('/en-user', (req, res) => {
+    res.render('en-user');
 });
 
 router.post('/submit_login', (req, res) => {
@@ -55,10 +55,19 @@ router.post('/submit_login', (req, res) => {
                     return res.render('es-login', { error: 'Contraseña incorrecta' });
             }
 
+            req.session.usuario = {
+                id_usuario: usuario.id_usuario,
+                nombre: usuario.nombre,
+                correo: usuario.correo,
+                rol: usuario.rol,
+                telefono: usuario.telefono,
+                id_concesionario: usuario.id_concesionario
+            };
+
             if (language === 'english')
-                res.render('en-user', { correo: email });
+                res.redirect('en-user');
             else
-                res.render('es-usuario', { correo: email });
+                res.redirect('es-usuario');
 
         });
     }
@@ -70,6 +79,5 @@ router.post('/submit_login', (req, res) => {
 
 
 module.exports = {
-    router,
-    usuarios
+    router
 };

@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Contraseña: ", contraseña.value);
 
         if (esValidoCorreo) {
-            alert("Mensaje enviado con éxito.");
             form.submit();
         } else {
             alert("Por favor, corrige los campos erróneos antes de enviar el formulario.");

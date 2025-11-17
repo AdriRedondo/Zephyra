@@ -37,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (esValidoNombre && esValidoCorreo && esValidoInicio &&
             esValidoVehiculo && esValidoTelefono) {
-            alert("La reserva ha sido realizada con éxito.");
             form.submit();
 
         } else {

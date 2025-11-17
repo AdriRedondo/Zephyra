@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const requiredAdminId = require('../autorizaciones').requiredAdminId;
 const bcrypt = require('bcrypt');
 
 router.get('/es-registro', async (req, res) => {
@@ -25,7 +26,7 @@ router.get('/en-sign-up', (req, res) => {
     res.render('en-sign-up');
 });
 
-router.get('/es-admin', async (req, res) => {
+router.get('/es-admin', requiredAdminId, async (req, res) => {
     try {
         const concesionarios = await obtenerConcesionarios();
         res.render('es-admin', {
@@ -83,7 +84,7 @@ router.post('/submit-register', (req, res) => {
 
             const telephoneValue = telephone === '' ? null : telephone;
             const concesionarioValue = idConcesionario === '' ? null : idConcesionario;
-            const rolevalue = role === null || role === ' empleado' ? 'empleado' : 'administrador';
+            const roleValue = role === null || role === ' empleado' ? 'empleado' : 'administrador';
 
             const saltRounds = 10;
             const hashedPassword = await bcrypt.hash(password, saltRounds);
