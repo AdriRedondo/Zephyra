@@ -48,7 +48,7 @@ app.get('/en-home', (req, res) => {
 
 
 app.get('/users', (req, res) => {
-    // Ejemplo de query en la BD
+
     pool.query('SELECT * FROM usuarios', (err, results) => {
         if (err) {
             console.error('Error al obtener usuarios:', err);

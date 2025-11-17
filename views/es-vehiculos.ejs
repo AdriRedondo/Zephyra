@@ -19,7 +19,11 @@
                 <% if (vehiculos && vehiculos.length > 0) { %>
                 <% vehiculos.forEach(function(vehiculo) { %>
                 <tr>
-                    <td><%= vehiculo.matricula %></td>
+                    <td>
+                        <a href="/es-vehiculos/<%= vehiculo.matricula %>">
+                            <%= vehiculo.matricula %>
+                        </a>
+                    </td>
                     <td><%= vehiculo.marca %></td>
                     <td><%= vehiculo.modelo %></td>
                     <td><%= vehiculo.autonomia %></td>

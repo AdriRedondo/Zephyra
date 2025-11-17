@@ -17,18 +17,6 @@ const vehiculosDisponibles = [
 ];
 
 router.get('/es-vehiculos', (req, res) => {
-    const viewData = {
-        title: 'Vehículos disponibles',
-        estilos: ['style', 'vehiculos'],
-        actual_es: 'es-vehiculos',
-        actual_en: 'en-vehicles',
-        vehiculos: vehiculosDisponibles,
-        tipoFiltro: 'todos'
-    };
-    res.render('es-vehiculos', viewData);
-});
-
-router.get('/vehiculos', (req, res) => {
 
     const tipoFiltro = req.query.tipo;
 
@@ -54,7 +42,34 @@ router.get('/vehiculos', (req, res) => {
         vehiculos: vehiculosFiltrados,
         tipoFiltro: tipoFiltro || 'todos'
     };
-    res.render('es-vehiculos', viewData);
+
+    if (req.body.idioma === 'english')
+        res.render('en-vehicles', viewData);
+    else
+        res.render('es-vehiculos', viewData);
+
 });
+
+
+router.get('/es-vehiculos/:id', (req, res) => {
+    const id = req.params.id;
+
+    const vehiculo = vehiculosDisponibles.find(v => v.matricula === id);
+
+    if (!vehiculo) {
+        return res.status(404).send("Vehículo no encontrado");
+    }
+
+    const viewData = {
+        title: `Detalle del vehículo ${vehiculo.matricula}`,
+        estilos: ['style', 'vehiculos'],
+        actual_es: 'es-vehiculos',
+        actual_en: 'en-vehicles',
+        vehiculo: vehiculo
+    };
+
+    res.render('es-vehiculos-detalle', viewData);
+});
+
 
 module.exports = router;

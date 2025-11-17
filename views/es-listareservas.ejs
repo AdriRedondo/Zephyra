@@ -1,0 +1,42 @@
+<%- include('es-header', {
+title: 'Lista de reservas',
+estilos: ['style'],
+actual_es: 'es-reservas'
+}) %>
+
+<main class="container my-4">
+    <h2 class="mb-4">Reservas realizadas</h2>
+
+    <% if (reservas.length === 0) { %>
+    <p>No hay reservas todavía.</p>
+    <% } else { %>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Vehículo</th>
+                <th>Fecha</th>
+                <th>Horas</th>
+                <th>Teléfono</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% reservas.forEach(r => { %>
+            <tr>
+                <td><%= r.nombre %></td>
+                <td><%= r.correo %></td>
+                <td><%= r.vehiculo %></td>
+                <td><%= r.fecha %></td>
+                <td><%= r.horas %></td>
+                <td><%= r.telefono %></td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    <% } %>
+
+    <a href="/es-reservas" class="btn btn-primary mt-3">← Volver</a>
+</main>
+
+<%- include('footer', { scripts: [] }) %>
