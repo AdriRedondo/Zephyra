@@ -1,43 +1,73 @@
 <%- include('es-header', { title: 'Vehículos disponibles' , estilos: ['style',
 'vehiculos' ], actual_es: 'es-vehiculos'
 , actual_en: 'en-vehicles' }) %>
-<main>
-    <section id="Vehiculos">
-        <h2>Vehiculos</h2>
-        <table>
-            <caption>Vehícluos disponibles</caption>
-            <thead>
-                <tr>
-                    <th scope="col">Matrícula</th>
-                    <th scope="col">Marca</th>
-                    <th scope="col">Modelo</th>
-                    <th scope="col">Autonomía (km)</th>
-                    <th scope="col">Tipo</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if (vehiculos && vehiculos.length > 0) { %>
-                <% vehiculos.forEach(function(vehiculo) { %>
-                <tr>
-                    <td>
-                        <a href="/es-vehiculos/<%= vehiculo.matricula %>">
-                            <%= vehiculo.matricula %>
-                        </a>
-                    </td>
-                    <td><%= vehiculo.marca %></td>
-                    <td><%= vehiculo.modelo %></td>
-                    <td><%= vehiculo.autonomia %></td>
-                    <td><%= vehiculo.tipo %></td>
-                </tr>
-                <% }); %>
-                <% } else { %>
-                <tr>
-                    <td colspan="4">No hay vehículos disponibles en este
-                        momento.</td>
-                </tr>
-                <% } %>
-            </tbody>
-        </table>
+<main class="vehiculos-container">
+
+    <aside class="filtros">
+        <h3>Filtrar</h3>
+
+        <form action="/es-vehiculos" method="get">
+
+            <label>Tipo:</label>
+            <select name="tipo" class="form-select mb-3">
+                <option value>Todos</option>
+                <option value="coche">Coches</option>
+                <option value="moto">Motos</option>
+                <option value="furgoneta">Furgonetas</option>
+            </select>
+
+            <label>Marca:</label>
+            <select name="marca" class="form-select mb-3">
+                <option value>Todas</option>
+                <%
+                const marcas = [...new Set(vehiculos.map(v => v.marca))];
+                marcas.forEach(m => {
+                %>
+                <option value="<%= m %>"><%= m %></option>
+                <% }) %>
+            </select>
+
+            <button type="submit" class="btn btn-success w-100">Aplicar
+                filtros</button>
+
+        </form>
+    </aside>
+
+    <section class="tarjetas">
+
+        <% if (vehiculos && vehiculos.length > 0) { %>
+
+        <% vehiculos.forEach(vehiculo => { %>
+
+        <div class="tarjeta">
+
+            <img class="tarjeta-img"
+                src="/images/vehiculos/<%= vehiculo.matricula %>.png"
+                alt="<%= vehiculo.marca %> <%= vehiculo.modelo %>">
+
+            <div class="tarjeta-body">
+
+                <h4><%= vehiculo.marca %> <%= vehiculo.modelo %></h4>
+
+                <p><strong>Matrícula:</strong> <%= vehiculo.matricula %></p>
+                <p><strong>Autonomía:</strong> <%= vehiculo.autonomia %> km</p>
+                <p><strong>Tipo:</strong> <%= vehiculo.tipo %></p>
+
+                <a href="/es-vehiculos/<%= vehiculo.matricula %>"
+                    class="btn btn-primary mt-2 w-100">
+                    Ver detalles
+                </a>
+
+            </div>
+
+        </div>
+
+        <% }) %>
+
+        <% } else { %>
+        <p>No hay vehículos disponibles con estos filtros.</p>
+        <% } %>
+
     </section>
 </main>
 <%- include('footer', {scripts: []}) -%>
