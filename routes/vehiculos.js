@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const fs = require('fs');
+const { log } = require('console');
 
 const dataPath = path.join(__dirname, '../data.json');
 const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
@@ -37,6 +38,9 @@ router.get('/es-vehiculos', (req, res) => {
         vehiculos: vehiculosFiltrados,
         tipoFiltro: tipoFiltro || 'todos'
     };
+
+    console.log(viewData.vehiculos);
+
 
     if (req.body.idioma === 'english')
         res.render('en-vehicles', viewData);

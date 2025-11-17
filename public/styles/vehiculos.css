@@ -28,8 +28,11 @@
     transition: transform .2s;
 }
 
+
 .tarjeta:hover {
-    transform: translateY(-5px);
+    /* No me gusta mucho :( 
+    transform: translateY(-5px);*/
+    outline: 2px #47865a54 solid;
 }
 
 .tarjeta-img {
