@@ -1,0 +1,20 @@
+<%- include('es-header', { title: 'Perfil de usuario' , estilos: ['style' ], actual_es: 'es-perfil' ,
+    actual_en: 'en-profile' }) %>
+
+    <main>
+        <section id="profile">
+            <h2 class="display-3">Perfil de usuario</h2>
+            <p class="display-6">Nombre: <%= usuario.nombre %>
+            </p>
+            <p class="display-6">Correo: <%= usuario.correo %>
+            </p>
+
+            <% if(usuario.telefono && usuario.telefono !=='' ){ %>
+                <p class="display-6">Telefono: <%= usuario.telefono %>
+                </p>
+                <% } %>
+                    <p class="display-6">Concesionario asignado: <%= concesionario %>
+                    </p>
+        </section>
+    </main>
+    <%- include('footer', {scripts: []}) -%>

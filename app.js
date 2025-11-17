@@ -8,6 +8,7 @@ const contactoRouter = require('./routes/contacto');
 const loginRouter = require('./routes/login').router;
 const logoutRouter = require('./routes/logout');
 const adminRouter = require('./routes/admin');
+const perfilRouter = require('./routes/perfil');
 
 const session = require('express-session');
 const mysqlSession = require('express-mysql-session');
@@ -50,6 +51,7 @@ app.use('/', contactoRouter);
 app.use('/', loginRouter);
 app.use('/', logoutRouter);
 app.use('/', adminRouter);
+app.use('/', perfilRouter);
 
 app.get('/', (req, res) => {
     res.redirect('es-inicio');
