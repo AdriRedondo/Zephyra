@@ -155,11 +155,6 @@ h2 {
     font-weight: 600;
 }
 
-.elem-menu:hover,
-.dropdown-item:hover {
-    background: transparent;
-    color: #000000c9;
-}
 
 .dropdown-menu {
     border: 1px solid #000;
@@ -233,11 +228,6 @@ h2 {
 }
 
 
-.list-group-item a:hover {
-    background: #024C32;
-    color: white;
-}
-
 
 .dropdown-item {
     color: lightgray;
@@ -263,13 +253,6 @@ footer {
 
 footer p {
     margin: 0;
-}
-
-.btn-primary {
-    background: var(--primary-btn-color);
-    border: 1px solid var(--primary-btn-color);
-    padding: 0.5rem;
-    letter-spacing: 0.15rem;
 }
 
 @media (max-width: 1199px) {
