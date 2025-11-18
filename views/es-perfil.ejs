@@ -1,20 +1,42 @@
-<%- include('es-header', { title: 'Perfil de usuario' , estilos: ['style' ], actual_es: 'es-perfil' ,
+<%- include('es-header', { title: 'Perfil de usuario' , estilos: ['style', 'profile' ], actual_es: 'es-perfil' ,
     actual_en: 'en-profile' }) %>
 
     <main>
-        <section id="profile">
-            <h2 class="display-3">Perfil de usuario</h2>
-            <p class="display-6">Nombre: <%= usuario.nombre %>
-            </p>
-            <p class="display-6">Correo: <%= usuario.correo %>
-            </p>
+        <div class=" d-flex justify-content-center align-items-center py-5">
+            <section id="profile" class="card p-4 rounded-4"">
+                <h2 class=" display-5 fw-bold mb-3">Perfil de Usuario</h2>
+                <div
+                    class="profile-circle bg-primary rounded-circle text-white d-flex align-items-center justify-content-center mx-auto mb-3">
+                    <%= usuario.nombre.charAt(0).toUpperCase() %>
 
-            <% if(usuario.telefono && usuario.telefono !=='' ){ %>
-                <p class="display-6">Telefono: <%= usuario.telefono %>
+                </div>
+
+                <p class="fs-4 mb-2"><strong>Nombre:</strong>
+                    <%= usuario.nombre %>
                 </p>
-                <% } %>
-                    <p class="display-6">Concesionario asignado: <%= concesionario %>
+                <p class="fs-4 mb-2"><strong>Correo:</strong>
+                    <%= usuario.correo %>
+                </p>
+
+                <% if(usuario.telefono && usuario.telefono !=='' ){ %>
+                    <p class="fs-4 mb-2"><strong>Telefono:</strong>
+                        <%= usuario.telefono %>
                     </p>
-        </section>
+                    <% } %>
+                        <p class="fs-4 mb-2">
+                            <strong>Concesionario asignado:</strong>
+                            <%= concesionario %>
+                        </p>
+                        <p class="fs-4 mb-2">
+                            <strong>Rol de usuario:</strong>
+                            <% if(usuario.rol==='admin' ) {%>
+                                Administrador
+                                <% } else {%>
+                                    Empleado
+                                    <% } %>
+                        </p>
+            </section>
+        </div>
+
     </main>
     <%- include('footer', {scripts: []}) -%>

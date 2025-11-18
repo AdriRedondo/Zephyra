@@ -70,12 +70,12 @@
                                     <div class="mb-3 col-6">
                                         <label for="concesionario" class="form-label">Concesionario asignado:
                                         </label>
-                                        <select id="concesionario" name="id_concesionario" class="form-select" required>
+                                        <select id="concesionario" name="concesionario" class="form-select" required>
                                             <option value="">Sin asignar</option>
                                             <% if (typeof concesionarios !=='undefined' ) { %>
                                                 <% concesionarios.forEach(c=> { %>
-                                                    <option value="<%= c.idConcesionario %>">
-                                                        <%= c.nombre %> - <%= c.ciudad %>
+                                                    <option value="<%= c.id_concesionario %>">
+                                                        <%= c.id_concesionario %> : <%= c.nombre %> - <%= c.ciudad %>
                                                     </option>
                                                     <% }) %>
                                                         <% } %>
@@ -86,7 +86,8 @@
                                         <label for="rol" class="form-label">Rol:
                                         </label>
                                         <select id="rol" name="rol" class="form-select" required>
-                                            <option value="empleado" selected>Empleado</option>
+                                            <option value="">Sin asignar</option>
+                                            <option value="empleado">Empleado</option>
                                             <option value="admin">Administrador</option>
                                         </select>
                                     </div>
