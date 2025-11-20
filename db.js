@@ -56,7 +56,6 @@ const crearTablas = () => {
                 matricula VARCHAR(20) NOT NULL UNIQUE,
                 marca VARCHAR(50) NOT NULL,
                 modelo VARCHAR(50) NOT NULL,
-                tipo VARCHAR(50) NOT NULL,
                 año_matriculacion YEAR,
                 numero_plazas INT,
                 autonomia_km DECIMAL(6,1),

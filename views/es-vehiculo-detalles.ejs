@@ -1,0 +1,87 @@
+<%- include('es-header', { title: 'Detalle vehiculos' , estilos: ['style', 'detalles-vehiculo' ],
+    actual_es: 'es-vehiculo-detalles' , actual_en: 'en-vehicle-details' } ) %>
+
+    <main>
+        <section id="VehiculoDetalle" class="row justify-content-center">
+
+            <div class="col-md-8">
+                <div class="card shadow-sm p-3">
+                    <h2 class="card-title mb-3">
+                        <%= vehiculo.marca %>
+                            <%= vehiculo.modelo %>
+                    </h2>
+
+                    <img src="/images/vehiculos/<%= vehiculo.matricula %>.png" class="card-img-top"
+                        alt="<%= vehiculo.marca %> <%= vehiculo.modelo %>" style="height: 250px; object-fit: cover;">
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <p><strong>Matrícula: </strong>
+                                    <%= vehiculo.matricula %>
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Número de plazas: </strong>
+                                    <%= vehiculo.numero_plazas %>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <p><strong>Autonomía: </strong>
+                                    <%= vehiculo.autonomia_km %> km
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Color: </strong>
+                                    <%= vehiculo.color %>
+                                </p>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <p><strong>Año de matriculación: </strong>
+                                    <%= vehiculo.año_matriculacion %>
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Estado: </strong>
+                                    <%= vehiculo.estado %>
+                                </p>
+                                </p>
+
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p><strong>Concesionario: </strong>
+                                    <%= vehiculo.nombre_concesionario %>
+                                </p>
+                                </p>
+
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-3">
+
+                            <% if(usuario && usuario.rol==='admin' ) { %>
+                                <form action="/es-vehiculos/<%= vehiculo.id_vehiculo %>/editar" method="post"
+                                    class="flex-fill">
+                                    <button class="btn btn-success w-100">Editar</button>
+                                </form>
+                                <form action="/es-vehiculos/<%= vehiculo.id_vehiculo %>/eliminar" method="post"
+                                    class="flex-fill">
+                                    <button class="btn btn-danger w-100">Eliminar</button>
+                                </form>
+                                <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <%- include('footer', {scripts: []}) %>
