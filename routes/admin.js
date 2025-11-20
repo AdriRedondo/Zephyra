@@ -65,7 +65,7 @@ router.post('/submit-register', (req, res) => {
         pool.query(consulta1, [email], (err, results) => {
             if (err) {
                 console.error('Error al verificar el correo:', err);
-                return res.status(500).render('error500', { err: 'Error en el registro' });
+                return res.status(500);
             }
 
             if (results.length > 0) {
@@ -94,7 +94,7 @@ router.post('/submit-register', (req, res) => {
             bcrypt.hash(password, saltRounds, (errEncriptacion, hashedPassword) => {
                 if (errEncriptacion) {
                     console.error('Error al encriptar la contraseña: ', errEncriptacion);
-                    return res.status(500).render('error500', { err: 'Error en el registro' });
+                    return res.status(500);
 
                 }
                 const consulta = `INSERT INTO Usuarios (nombre, correo, contraseña, rol, telefono, id_concesionario) 
@@ -141,7 +141,7 @@ router.post('/submit-register', (req, res) => {
     }
     catch (err) {
         console.error('Error en el registro de un usuario: ', err);
-        res.status(500).render('error500', { err: 'Error en el registro' });
+        res.status(500);
     }
 
 });

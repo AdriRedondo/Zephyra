@@ -74,11 +74,17 @@ app.get('/en-home', (req, res) => {
 });
 
 app.use(function (req, res, next) {
-    res.status(404).render("error404", { url: req.url });
+    const error = 'Error 404';
+    const texto1 = 'Hemos encontrado un problema inesperado.';
+    const texto2 = 'Por favor, inténtalo de nuevo más tarde.'
+    res.status(404).render("errors", { error, texto1, texto2 });
 });
 
 app.use(function (err, req, res, next) {
-    res.status(500).render("error500", { err: 'Error interno del servidor' });
+    const error = 'Error 500';
+    const texto1 = 'Lo sentimos - no encontramos la página que está buscando.';
+    const texto2 = 'Es posible que hayamos movido o eliminado la página que estás buscando, o que hayas escrito una  URL incorrecta.';
+    res.status(500).render("errors", { error, texto1, texto2 });
 });
 
 module.exports = app;

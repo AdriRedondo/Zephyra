@@ -32,7 +32,7 @@ router.post('/submit_login', (req, res) => {
         pool.query(consulta, [email], async (err, results) => {
             if (err) {
                 console.error('Error al consultar la base de datos sobre el usuario:', err);
-                return res.status(500).render('error500', { err: 'Error al verificar usuario para el login' });
+                return res.status(500);
             }
 
             //No se encuentra el usuario con ese correo
@@ -72,7 +72,7 @@ router.post('/submit_login', (req, res) => {
         });
     }
     catch (err) {
-        res.status(500).render('error500', { err: 'Error al logear el usuario: ', err });
+        res.status(500);
 
     }
 });

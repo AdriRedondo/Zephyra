@@ -6,7 +6,7 @@ router.get('/es-logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             console.error('Error al cerrar sesión: ', err);
-            res.status(500).render('error500', { err: 'Error al cerrar sesión' });
+            res.status(500);
         }
         else {
             console.log('El usuario se ha cerrado');

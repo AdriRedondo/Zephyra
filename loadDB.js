@@ -152,13 +152,9 @@ function cargarVehiculos(vehiculos, callback) {
     let completed = 0;
 
     vehiculos.forEach(v => {
-        const consulta = `INSERT INTO Vehiculos (matricula, marca, modelo, año_matriculacion, numero_plazas, autonomia_km, color, imagen, estado, id_concesionario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-        pool.query(consulta, [v.matricula, v.marca, v.modelo, v.año_matriculacion, v.numero_plazas, v.autonomia_km, v.color, v.imagen, v.estado, v.id_concesionario], err => {
-            if (err) {
-                console.error(`Error con ${v.matricula}:`, err.message);
-            } else {
-                console.log(` ${v.marca} ${v.modelo} - ${v.matricula}`);
-            }
+        const consulta = `INSERT INTO Vehiculos (matricula, marca, modelo, anyo_matriculacion, numero_plazas, autonomia_km, color, imagen, estado, id_concesionario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        pool.query(consulta, [v.matricula, v.marca, v.modelo, v.anyo_matriculacion, v.numero_plazas, v.autonomia_km, v.color, v.imagen, v.estado, v.id_concesionario], err => {
+            if (err) console.error(`Error con ${v.matricula}:`, err.message);
             completed++;
             if (completed === vehiculos.length) {
                 callback();
