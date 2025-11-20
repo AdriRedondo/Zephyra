@@ -111,7 +111,7 @@ router.post('/es-vehiculos/:id/editar', (req, res) => {
 
 router.post('/es-vehiculos/:id/eliminar', (req, res) => {
     console.log(`Se elimina el vehículo con matrícula: ${req.params.id}`);
-    //ñadir la logica para eliminarlo
+
     const consulta = 'DELETE FROM Vehiculos WHERE id_vehiculo = ?';
     pool.query(consulta, [req.params.id], (err, result) => {
         if (err) {
