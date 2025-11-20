@@ -110,12 +110,33 @@ router.post('/es-vehiculos/:id/es-vehiculo-form', (req, res) => {
 
 router.get('/es-vehiculos/:id/editar', (req, res) => {
     const language = req.body.idioma;
+
+    obtenerConcesionarios((errConc, concesionarios) => {
+        if (errConc) concesionarios = [];
+        const consulta = 'SELECT * FROM Vehiculos WHERE id_vehiculo = ?';
+        pool.query(consulta, (err, vehiculo) => {
+            if (err) {
+                console.error('Error al eliminar un vehículo:', err);
+                return res.status(500).render('error500');
+            }
+
+            if (language === 'english')
+                res.render('en-vehicle-form', { concesionarios, editar: true, vehiculo });
+            else
+                res.render('es-vehiculo-form', { concesionarios, editar: true, vehiculo });
+        });
+    });
+
+});
+
+router.get('/es-vehiculos/nuevo-vehiculo', (req, res) => {
+    const language = req.body.idioma;
     obtenerConcesionarios((errConc, concesionarios) => {
         if (errConc) concesionarios = [];
         if (language === 'english')
-            res.render('en-vehicle-form', { concesionarios });
+            res.render('en-vehicle-form', { concesionarios, editar: false });
         else
-            res.render('es-vehiculo-form', { concesionarios });
+            res.render('es-vehiculo-form', { concesionarios, editar: false });
     });
 
 });

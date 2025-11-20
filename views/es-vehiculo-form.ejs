@@ -13,7 +13,7 @@
                             <label for="matricula" class="form-label">Matrícula:
                             </label>
                             <input type="text" id="matricula" name="matricula" class="form-control"
-                                placeholder="ABC-1234">
+                                value="<%= vehiculo.matricula %>" placeholder="ABC-1234">
                             <span id="matricula-error" class="error" aria-live="polite"></span>
                         </div>
                         <div class="mb-3">
@@ -68,9 +68,15 @@
                             </select>
                             <span id="concesionario-error" class="error" aria-live="polite"></span>
                         </div>
-
-                        <button type="submit" class="btn btn-success" aria-label="Enviar formulario">Enviar</button>
-                        <button type="reset" class="btn btn-secondary" aria-label="Limpiar formulario">Limpiar</button>
+                        <% if(editar) { %>
+                            <button type="submit" action="/editar-vehiculo" class="btn btn-success"
+                                aria-label="Enviar formulario">Enviar</button>
+                            <% } else { %>
+                                <button type="submit" action="/nuevo-vehiculo" class="btn btn-success"
+                                    aria-label="Enviar formulario">Enviar</button>
+                                <% } %>
+                                    <button type="reset" class="btn btn-secondary"
+                                        aria-label="Limpiar formulario">Limpiar</button>
                     </fieldset>
                 </div>
             </form>
