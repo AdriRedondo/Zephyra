@@ -85,10 +85,9 @@
 
                                     <% if(usuario && usuario.rol==='admin' ) { %>
                                         <div class="d-flex gap-2 mt-3">
-                                            <form action="/es-vehiculos/<%= vehiculo.id_vehiculo %>/editar"
-                                                method="post" class="flex-fill">
-                                                <button class="btn btn-secondary w-100" type="submit">Editar</button>
-                                            </form>
+                                            <a type="button" class="btn btn-secondary w-100"
+                                                href="/es-vehiculos/<%= vehiculo.id_vehiculo %>/editar">Editar</a>
+
                                             <form action="/es-vehiculos/<%= vehiculo.id_vehiculo %>/eliminar"
                                                 method="post" class="flex-fill">
                                                 <button class="btn btn-danger w-100" type="submit">Eliminar</button>

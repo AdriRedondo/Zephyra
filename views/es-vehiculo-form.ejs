@@ -1,0 +1,80 @@
+<%- include('es-header', { title: 'Formulario de nuevo vehiculo' , estilos: ['style', 'forms' ],
+    actual_es: 'es-vehiculo-form' , actual_en: 'en-vehicle-form' }) %>
+    <main>
+        <section id="vehicle_id" class="vehicle">
+            <h2>Añadir nuevo vehículo</h2>
+            <form id="vehicle-form-id" class="formularios vehicle-form" aria-label="Formulario de vehiculo"
+                method="post" action="/es-vehiculo-form">
+                <div class="mb-3">
+                    <fieldset class="vehicle-fs" name="vehicle">
+                        <input type="hidden" name="idioma" value="español">
+                        <legend>Datos del vehículo</legend>
+                        <div class="mb-3">
+                            <label for="matricula" class="form-label">Matrícula:
+                            </label>
+                            <input type="text" id="matricula" name="matricula" class="form-control"
+                                placeholder="ABC-1234">
+                            <span id="matricula-error" class="error" aria-live="polite"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="marca" class="form-label">Marca:
+                            </label>
+                            <input type="text" id="marca" name="marca" class="form-control" placeholder="Toyota">
+                            <span id="marca-error" class="error" aria-live="polite"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modelo" class="form-label">Modelo:
+                            </label>
+                            <input type="text" id="modelo" name="modelo" class="form-control" placeholder="XRVZ-33">
+                            <span id="modelo-error" class="error" aria-live="polite"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="anyoMatri" class="form-label">Año de matriculación:
+                            </label>
+                            <input type="text" id="anyo_matri" name="anyoMatri" class="form-control" placeholder="1999">
+                            <span id="anyoMatri-error" class="error" aria-live="polite"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="numPlazas" class="form-label">Número de plazas:
+                            </label>
+                            <input type="text" id="numPlazas" name="numPlazas" class="form-control" placeholder="5">
+                            <span id="numPlazas-error" class="error" aria-live="polite"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="color" class="form-label">Color
+                            </label>
+                            <input type="text" id="color" name="color" class="form-control" placeholder="Rojo">
+                            <span id="color-error" class="error" aria-live="polite"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="imagen" class="form-label">Imagen:
+                            </label>
+                            <input type="text" id="imagen" name="imagen" class="form-control"
+                                placeholder="Por poner la imagen en la BD">
+                            <span id="imagen-error" class="error" aria-live="polite"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="concesionario" class="form-label">Concesionario asignado:
+                            </label>
+                            <select id="concesionario" name="concesionario" class="form-select" required>
+                                <option value="">Sin asignar</option>
+                                <% if (typeof concesionarios !=='undefined' ) { %>
+                                    <% concesionarios.forEach(c=> { %>
+                                        <option value="<%= c.id_concesionario %>">
+                                            <%= c.id_concesionario %> : <%= c.nombre %> - <%= c.ciudad %>
+                                        </option>
+                                        <% }) %>
+                                            <% } %>
+                            </select>
+                            <span id="concesionario-error" class="error" aria-live="polite"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-success" aria-label="Enviar formulario">Enviar</button>
+                        <button type="reset" class="btn btn-secondary" aria-label="Limpiar formulario">Limpiar</button>
+                    </fieldset>
+                </div>
+            </form>
+        </section>
+
+    </main>
+    <%- include('footer', {scripts: []}) -%>

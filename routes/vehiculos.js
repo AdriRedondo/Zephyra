@@ -103,9 +103,20 @@ router.get('/es-vehiculos/:id', (req, res) => {
     });
 });
 
-router.post('/es-vehiculos/:id/editar', (req, res) => {
-    console.log(`Se edita el vehículo con matrícula: ${req.params.id}`);
-    //Añadir la logica para modificarlo
+router.post('/es-vehiculos/:id/es-vehiculo-form', (req, res) => {
+    res.end('HOLAAA')
+
+});
+
+router.get('/es-vehiculos/:id/editar', (req, res) => {
+    const language = req.body.idioma;
+    obtenerConcesionarios((errConc, concesionarios) => {
+        if (errConc) concesionarios = [];
+        if (language === 'english')
+            res.render('en-vehicle-form', { concesionarios });
+        else
+            res.render('es-vehiculo-form', { concesionarios });
+    });
 
 });
 
@@ -122,5 +133,12 @@ router.post('/es-vehiculos/:id/eliminar', (req, res) => {
     });
 });
 
+const obtenerConcesionarios = (callback) => {
+    const consulta = 'SELECT id_concesionario, nombre, ciudad FROM Concesionarios';
+    pool.query(consulta, (err, results) => {
+        if (err) return callback(err, null)
+        callback(null, results)
+    });
+};
 
 module.exports = router;
