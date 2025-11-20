@@ -7,7 +7,7 @@
         "start": "node server.js",
         "dev": "nodemon server.js"
     },
-    "author": "Alejandro Canoray Adrían Redondo",
+    "author": "Alejandro Canora y Adrían Redondo",
     "license": "MIT",
     "dependencies": {
         "bcrypt": "^6.0.0",

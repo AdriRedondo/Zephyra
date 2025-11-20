@@ -53,13 +53,33 @@ function cargarDatosIniciales() {
             if (res[0].hayDatosV === 0) {
                 cargarVehiculos(data.vehiculos, () => {
                     console.log('Vehículos cargados');
+                    cargarClientesSiNecesario();
                 });
             } else {
                 console.log('la tabla de vehículos ya tiene datos, no se cargan más');
+                cargarClientesSiNecesario();
             }
         });
     }
+
+    function cargarClientesSiNecesario() {
+        const consulta = 'SELECT COUNT(*) AS hayDatos FROM Cliente';
+        pool.query(consulta, (err, res) => {
+            if (err) return console.error('Error al verificar Cliente:', err);
+
+            if (res[0].hayDatos === 0) {
+                cargarClientes(data.clientes, () => {
+                    console.log('Clientes cargados');
+                });
+            } else {
+                console.log('La tabla Cliente ya tiene datos, no se cargan más');
+            }
+        });
+    }
+
 }
+
+
 
 
 function cargarConcesionarios(concesionarios, callback) {
@@ -144,6 +164,45 @@ function cargarVehiculos(vehiculos, callback) {
                 callback();
             }
         });
+    });
+}
+function cargarClientes(clientes, callback) {
+    if (!clientes || clientes.length === 0) {
+        console.log('No hay clientes que cargar');
+        return callback();
+    }
+
+    let completed = 0;
+    const total = clientes.length;
+
+    clientes.forEach(c => {
+
+        const consulta = `
+            INSERT INTO Cliente (nombre, correo, telefono, preferencias_accesibilidad, direccion, codigo_postal)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `;
+
+        pool.query(
+            consulta,
+            [
+                c.nombre,
+                c.correo,
+                c.telefono || null,
+                JSON.stringify(c.preferencias_accesibilidad || {}),
+                c.direccion || null,
+                c.codigo_postal || null
+            ],
+            err => {
+                if (err) {
+                    console.error(`Error al insertar cliente ${c.nombre}:`, err.message);
+                } else {
+                    console.log(`Cliente ${c.nombre} insertado`);
+                }
+
+                completed++;
+                if (completed === total) callback();
+            }
+        );
     });
 }
 

@@ -92,7 +92,22 @@ const crearTablas = () => {
                     ON DELETE CASCADE
                     ON UPDATE CASCADE
             )`
+        },
+        {
+            nombre: 'Cliente',
+            consulta: `CREATE TABLE IF NOT EXISTS Cliente (
+
+                id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+                nombre VARCHAR(100) NOT NULL,
+                correo VARCHAR(150) NOT NULL UNIQUE, 
+                telefono VARCHAR(20),
+                preferencias_accesibilidad JSON,
+                direccion VARCHAR(200),
+                codigo_postal varchar(5)
+                
+            )`
         }
+
     ];
 
     let i = 0;
