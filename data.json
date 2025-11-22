@@ -28,7 +28,7 @@
             "numero_plazas": 5,
             "autonomia_km": 570,
             "color": "Azul",
-            "imagen": "byd-seal-1.jpg",
+            "imagen": "byd_seal1.png",
             "estado": "disponible",
             "tipo": "coche",
             "id_concesionario": 1
@@ -41,10 +41,10 @@
             "numero_plazas": 5,
             "autonomia_km": 570,
             "color": "Blanco",
-            "imagen": "byd-seal-2.jpg",
+            "imagen": "byd_seal2.png",
             "estado": "disponible",
             "tipo": "coche",
-            "id_concesionario": 1
+            "id_concesionario": 2
         },
         {
             "matricula": "1003BYD",
@@ -54,10 +54,10 @@
             "numero_plazas": 5,
             "autonomia_km": 570,
             "color": "Rojo",
-            "imagen": "byd-seal-3.jpg",
+            "imagen": "byd_seal3.png",
             "estado": "disponible",
             "tipo": "coche",
-            "id_concesionario": 2
+            "id_concesionario": 3
         },
         {
             "matricula": "2001TSL",
@@ -65,9 +65,9 @@
             "modelo": "Model 3",
             "anyo_matriculacion": 2024,
             "numero_plazas": 5,
-            "autonomia_km": 513,
+            "autonomia_km": 520,
             "color": "Blanco",
-            "imagen": "tesla-model3-1.jpg",
+            "imagen": "tesla1.png",
             "estado": "disponible",
             "tipo": "coche",
             "id_concesionario": 1
@@ -78,9 +78,9 @@
             "modelo": "Model 3",
             "anyo_matriculacion": 2024,
             "numero_plazas": 5,
-            "autonomia_km": 513,
+            "autonomia_km": 520,
             "color": "Negro",
-            "imagen": "tesla-model3-2.jpg",
+            "imagen": "tesla2.png",
             "estado": "disponible",
             "tipo": "coche",
             "id_concesionario": 2
@@ -93,8 +93,8 @@
             "numero_plazas": 5,
             "autonomia_km": 533,
             "color": "Gris",
-            "imagen": "tesla-modely-1.jpg",
-            "estado": "disponible",
+            "imagen": "tesla3.png",
+            "estado": "reservado",
             "tipo": "coche",
             "id_concesionario": 3
         },
@@ -106,7 +106,7 @@
             "numero_plazas": 5,
             "autonomia_km": 533,
             "color": "Azul",
-            "imagen": "tesla-modely-2.jpg",
+            "imagen": "tesla4.png",
             "estado": "disponible",
             "tipo": "coche",
             "id_concesionario": 1
@@ -119,7 +119,7 @@
             "numero_plazas": 5,
             "autonomia_km": 634,
             "color": "Rojo",
-            "imagen": "tesla-models.jpg",
+            "imagen": "tesla5.png",
             "estado": "disponible",
             "tipo": "coche",
             "id_concesionario": 2
@@ -132,7 +132,7 @@
             "numero_plazas": 7,
             "autonomia_km": 560,
             "color": "Blanco",
-            "imagen": "tesla-modelx.jpg",
+            "imagen": "tesla6.png",
             "estado": "mantenimiento",
             "tipo": "coche",
             "id_concesionario": 3
@@ -145,10 +145,10 @@
             "numero_plazas": 5,
             "autonomia_km": 445,
             "color": "Amarillo",
-            "imagen": "volvo-ex30.jpg",
+            "imagen": "volvo1.png",
             "estado": "disponible",
             "tipo": "coche",
-            "id_concesionario": 2
+            "id_concesionario": 1
         },
         {
             "matricula": "3002VLV",
@@ -158,10 +158,10 @@
             "numero_plazas": 5,
             "autonomia_km": 420,
             "color": "Blanco",
-            "imagen": "volvo-xc40.jpg",
+            "imagen": "volvo2.png",
             "estado": "reservado",
             "tipo": "coche",
-            "id_concesionario": 1
+            "id_concesionario": 2
         },
         {
             "matricula": "3003VLV",
@@ -171,7 +171,7 @@
             "numero_plazas": 5,
             "autonomia_km": 435,
             "color": "Negro",
-            "imagen": "volvo-c40.jpg",
+            "imagen": "volvo3.png",
             "estado": "disponible",
             "tipo": "coche",
             "id_concesionario": 3
@@ -184,7 +184,7 @@
             "numero_plazas": 5,
             "autonomia_km": 430,
             "color": "Blanco",
-            "imagen": "vw-id3-1.jpg",
+            "imagen": "VW1.png",
             "estado": "disponible",
             "tipo": "coche",
             "id_concesionario": 1
@@ -197,7 +197,7 @@
             "numero_plazas": 5,
             "autonomia_km": 500,
             "color": "Azul",
-            "imagen": "vw-id4-1.jpg",
+            "imagen": "VW2.png",
             "estado": "disponible",
             "tipo": "coche",
             "id_concesionario": 2
@@ -210,7 +210,7 @@
             "numero_plazas": 5,
             "autonomia_km": 530,
             "color": "Negro",
-            "imagen": "vw-id5.jpg",
+            "imagen": "VW3.png",
             "estado": "disponible",
             "tipo": "coche",
             "id_concesionario": 3
@@ -223,7 +223,7 @@
             "numero_plazas": 7,
             "autonomia_km": 415,
             "color": "Blanco",
-            "imagen": "vw-idbuzz.jpg",
+            "imagen": "VW4.png",
             "estado": "disponible",
             "tipo": "furgoneta",
             "id_concesionario": 1
@@ -236,10 +236,23 @@
             "numero_plazas": 5,
             "autonomia_km": 610,
             "color": "Gris",
-            "imagen": "vw-id7.jpg",
+            "imagen": "VW5.png",
             "estado": "mantenimiento",
             "tipo": "coche",
             "id_concesionario": 2
+        },
+        {
+            "matricula": "1111AAA",
+            "marca": "Citröen",
+            "modelo": "Picasso C4",
+            "anyo_matriculacion": 2002,
+            "numero_plazas": 5,
+            "autonomia_km": 7000,
+            "color": "Plateado",
+            "imagen": "PNG-de-coches.png",
+            "estado": "disponible",
+            "tipo": "coche",
+            "id_concesionario": 1
         }
     ],
     "usuarios": [

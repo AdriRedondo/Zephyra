@@ -63,9 +63,11 @@
                 </form>
 
             </div>
-            <div class="row nuevo-vehiculo-btn m-3">
-                <a type="button" class="btn btn-success" href="/es-vehiculos/nuevo-vehiculo">Nuevo vehículo</a>
-            </div>
+            <% if(usuario && usuario.rol==='admin' ){ %>
+                <div class="row filtros mt-3">
+                    <a type="button" class="btn btn-success" href="/es-vehiculos/nuevo-vehiculo">Nuevo vehículo</a>
+                </div>
+                <% } %>
         </aside>
 
 
@@ -74,39 +76,42 @@
             <% if (vehiculosFiltrados && vehiculosFiltrados.length>0) { %>
                 <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
                     <% vehiculosFiltrados.forEach(vehiculo=> { %>
-                        <div class="col">
-                            <div class="card h-100">
-                                <img src="/images/vehiculos/<%= vehiculo.matricula %>.png" class="card-img-top"
-                                    alt="<%= vehiculo.marca %> <%= vehiculo.modelo %>"
-                                    style="height: 160px; object-fit: cover;">
-                                <div class="card-body d-flex flex-column">
-                                    <h5 class="card-title">
-                                        <%= vehiculo.marca %>
-                                            <%= vehiculo.modelo %>
-                                    </h5>
-                                    <p class="card-text"><strong>Estado:</strong>
-                                        <%= vehiculo.estado %>
-                                    </p>
-                                    <a href="/es-vehiculos/<%= vehiculo.id_vehiculo %>"
-                                        class="btn btn-success mt-auto w-100">
-                                        Ver detalles
-                                    </a>
+                        <% if( usuario || ( !usuario && vehiculo.estado==='disponible' )) { %>
+                            <div class="col">
+                                <div class="card h-100">
+                                    <img src="/es-vehiculos/imagen/<%= vehiculo.id_vehiculo %>"
+                                        class="vehiculo-img card-img-top"
+                                        alt="<%= vehiculo.marca %> <%= vehiculo.modelo %>">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">
+                                            <%= vehiculo.marca %>
+                                                <%= vehiculo.modelo %>
+                                        </h5>
+                                        <p class="card-text"><strong>Estado:</strong>
+                                            <%= vehiculo.estado %>
+                                        </p>
+                                        <a href="/es-vehiculos/<%= vehiculo.id_vehiculo %>"
+                                            class="btn btn-success mt-auto w-100">
+                                            Ver detalles
+                                        </a>
 
-                                    <% if(usuario && usuario.rol==='admin' ) { %>
-                                        <div class="d-flex gap-2 mt-3">
-                                            <a type="button" class="btn btn-secondary w-100"
-                                                href="/es-vehiculos/<%= vehiculo.id_vehiculo %>/editar">Editar</a>
+                                        <% if(usuario && usuario.rol==='admin' ) { %>
+                                            <div class="d-flex gap-2 mt-3">
+                                                <a type="button" class="btn btn-secondary w-100"
+                                                    href="/es-vehiculos/<%= vehiculo.id_vehiculo %>/editar">Editar</a>
 
-                                            <form action="/es-vehiculos/<%= vehiculo.id_vehiculo %>/eliminar"
-                                                method="post" class="flex-fill">
-                                                <button class="btn btn-danger w-100" type="submit">Eliminar</button>
-                                            </form>
-                                        </div>
-                                        <% } %>
+                                                <form action="/es-vehiculos/<%= vehiculo.id_vehiculo %>/eliminar"
+                                                    method="post" class="flex-fill">
+                                                    <button class="btn btn-danger w-100" type="submit">Eliminar</button>
+                                                </form>
+                                            </div>
+                                            <% } %>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <% }) %>
+                            <% } %>
+
+                                <% }) %>
                 </div>
                 <% } else { %>
                     <div class="card text-center border-0 shadow-sm p-4">

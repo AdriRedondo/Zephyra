@@ -2,17 +2,17 @@
     actual_es: 'es-vehiculo-detalles' , actual_en: 'en-vehicle-details' } ) %>
 
     <main>
-        <section id="VehiculoDetalle" class="row justify-content-center">
+        <section id="vehiculoDetalles" class="row justify-content-center">
 
-            <div class="col-md-8">
+            <div class="container-vehiculo col-md-8 m-0">
                 <div class="card shadow-sm p-3">
                     <h2 class="card-title mb-3">
                         <%= vehiculo.marca %>
                             <%= vehiculo.modelo %>
                     </h2>
 
-                    <img src="/images/vehiculos/<%= vehiculo.matricula %>.png" class="card-img-top"
-                        alt="<%= vehiculo.marca %> <%= vehiculo.modelo %>" style="height: 250px; object-fit: cover;">
+                    <img src="/es-vehiculos/imagen/<%= vehiculo.id_vehiculo %>" class="card-img-top"
+                        alt="<%= vehiculo.marca %> <%= vehiculo.modelo %>">
 
                     <div class="card-body">
                         <div class="row">

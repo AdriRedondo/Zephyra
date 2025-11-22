@@ -20,6 +20,11 @@
     outline: 2px #47865a54 solid;
 }
 
+.vehiculo-img {
+    height: 160px;
+    object-fit: cover;
+}
+
 
 p {
     text-transform: capitalize;

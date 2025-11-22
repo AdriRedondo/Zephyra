@@ -12,6 +12,7 @@ function cargarDatosIniciales() {
     }
 
     const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+
     // Carga de concesionarios si está vacía su tabla
     const consultaC = 'SELECT COUNT(*) AS hayDatosC FROM Concesionarios';
     pool.query(consultaC, (err, res) => {
@@ -78,9 +79,6 @@ function cargarDatosIniciales() {
     }
 
 }
-
-
-
 
 function cargarConcesionarios(concesionarios, callback) {
     if (!concesionarios || concesionarios.length === 0) {
@@ -150,10 +148,31 @@ function cargarVehiculos(vehiculos, callback) {
     }
 
     let completed = 0;
+    const imagenesDir = path.join(__dirname, 'public', 'images', 'vehiculos');
 
     vehiculos.forEach(v => {
-        const consulta = `INSERT INTO Vehiculos (matricula, marca, modelo, anyo_matriculacion, numero_plazas, autonomia_km, color, imagen, estado, id_concesionario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-        pool.query(consulta, [v.matricula, v.marca, v.modelo, v.anyo_matriculacion, v.numero_plazas, v.autonomia_km, v.color, v.imagen, v.estado, v.id_concesionario], err => {
+
+        // Leer la imagen PNG desde el archivo si existe
+        let imagenBuffer = null;
+
+        if (v.imagen) {
+            const imagePath = path.join(imagenesDir, v.imagen);
+            if (fs.existsSync(imagePath)) {
+                try {
+                    // Leer el archivo como Buffer (BLOB)
+                    imagenBuffer = fs.readFileSync(imagePath);
+                    console.log(`Imagen ${v.imagen} cargada`);
+                } catch (error) {
+                    console.error(`Error al leer imagen ${v.imagen}:`, error.message);
+                }
+            } else {
+                console.log(`Advertencia: No se encontró la imagen ${imagePath}`);
+            }
+        }
+
+        const consulta = `INSERT INTO Vehiculos (matricula, marca, modelo, anyo_matriculacion, numero_plazas, autonomia_km, color, imagen, estado, id_concesionario) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        pool.query(consulta, [v.matricula, v.marca, v.modelo, v.anyo_matriculacion, v.numero_plazas, v.autonomia_km, v.color, imagenBuffer, v.estado, v.id_concesionario], err => {
             if (err) console.error(`Error con ${v.matricula}:`, err.message);
             completed++;
             if (completed === vehiculos.length) {
@@ -162,6 +181,7 @@ function cargarVehiculos(vehiculos, callback) {
         });
     });
 }
+
 function cargarClientes(clientes, callback) {
     if (!clientes || clientes.length === 0) {
         console.log('No hay clientes que cargar');

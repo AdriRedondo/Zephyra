@@ -60,7 +60,7 @@ const crearTablas = () => {
                 numero_plazas INT,
                 autonomia_km DECIMAL(6,1),
                 color VARCHAR(30),
-                imagen VARCHAR(255),
+                imagen LONGBLOB,
                 estado ENUM('disponible', 'reservado', 'mantenimiento') DEFAULT 'disponible',
                 id_concesionario INT NOT NULL,
                 CONSTRAINT fk_vehiculo_concesionario

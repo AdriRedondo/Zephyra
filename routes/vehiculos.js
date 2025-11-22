@@ -1,7 +1,19 @@
 const express = require('express');
+const multer = require('multer');
 const router = express.Router();
 const pool = require('../db');
 
+// Configuración de multer para almacenar archivos en memoria con formato BLOB ()
+const multerFactory = multer({
+    storage: multer.memoryStorage(),
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype !== 'image/png') {
+            req.fileValidationError = 'FORMATO_INVALIDO_PNG';
+            return cb(null, false);
+        }
+        cb(null, true);
+    }
+});
 
 router.get('/es-vehiculos', (req, res) => {
 
@@ -56,27 +68,47 @@ router.get('/es-vehiculos', (req, res) => {
             );
         }
 
-        const viewData = {
-            title: 'Vehículos disponibles',
-            estilos: ['style', 'vehiculos'],
-            actual_es: 'es-vehiculos',
-            actual_en: 'en-vehicles',
-            vehiculos: vehiculos,
-            vehiculosFiltrados: vehiculosFiltrados,
-            filtros: {
-                tipo: tipoFiltro,
-                marca: marcaFiltro,
-                modelo: modeloFiltro,
-                plazas: plazasFiltro,
-                concesionario: concesionarioFiltro
-            }
-        };
-
         if (req.body.idioma === 'english')
-            res.render('en-vehicles', viewData);
+            res.render('en-vehicles', {
+                vehiculos: vehiculos,
+                vehiculosFiltrados: vehiculosFiltrados,
+                filtros: {
+                    tipo: tipoFiltro,
+                    marca: marcaFiltro,
+                    modelo: modeloFiltro,
+                    plazas: plazasFiltro,
+                    concesionario: concesionarioFiltro
+                }
+            });
         else
-            res.render('es-vehiculos', viewData);
+            res.render('es-vehiculos', {
+                vehiculos: vehiculos,
+                vehiculosFiltrados: vehiculosFiltrados,
+                filtros: {
+                    tipo: tipoFiltro,
+                    marca: marcaFiltro,
+                    modelo: modeloFiltro,
+                    plazas: plazasFiltro,
+                    concesionario: concesionarioFiltro
+                }
+            });
 
+    });
+});
+
+// Ruta para servir imágenes PNG desde la BD
+router.get('/es-vehiculos/imagen/:id', (req, res) => {
+    const id = req.params.id;
+
+    obtenerImagen(id, (err, imagen) => {
+        if (err || !imagen) {
+            console.error('Error al obtener imagen:', err);
+            return res.status(404).send('Imagen no encontrada');
+        }
+
+        // Siempre es PNG
+        res.contentType('image/png');
+        res.end(imagen);
     });
 });
 
@@ -87,14 +119,30 @@ router.get('/es-vehiculos/nuevo-vehiculo', (req, res) => {
     obtenerConcesionarios((errConc, concesionarios) => {
         if (errConc) concesionarios = [];
         if (language === 'english')
-            res.render('en-vehicle-form', { concesionarios, editar: false, vehiculo: null });
+            res.render('en-vehicle-form', { concesionarios, editar: false, vehiculo: null, error: null });
         else
-            res.render('es-vehiculo-form', { concesionarios, editar: false, vehiculo: null });
+            res.render('es-vehiculo-form', { concesionarios, editar: false, vehiculo: null, error: null });
     });
 
 });
 
-router.post('/es-vehiculos/nuevo-vehiculo', (req, res) => {
+router.post('/es-vehiculos/nuevo-vehiculo', multerFactory.single('imagen'), (req, res) => {
+
+    if (req.fileValidationError === 'FORMATO_INVALIDO_PNG' ||
+        (req.file && req.file.mimetype !== 'image/png')) {
+
+        return obtenerConcesionarios((errConc, concesionarios) => {
+            if (errConc) concesionarios = [];
+
+            return res.render('es-vehiculo-form', {
+                concesionarios,
+                editar: false,
+                vehiculo: null,
+                error: 'Solo se admite formato PNG'
+            });
+        });
+    }
+
     const matricula = req.body.matricula;
     const marca = req.body.marca;
     const modelo = req.body.modelo;
@@ -102,13 +150,20 @@ router.post('/es-vehiculos/nuevo-vehiculo', (req, res) => {
     const numPlazas = req.body.numPlazas;
     const autonomia = req.body.autonomia;
     const color = req.body.color;
-    const imagen = req.body.imagen;
     const estado = req.body.estado;
     const concesionario = req.body.concesionario;
 
-    if (!matricula || !marca || !modelo || !anyoMatri || !numPlazas || !color || !imagen || !concesionario) {
+    if (!matricula || !marca || !modelo || !anyoMatri || !numPlazas || !color || !concesionario) {
         return res.status(400);
     }
+
+    if (!req.file) {
+        return res.status(400).send('La imagen es obligatoria');
+    }
+
+    // El archivo está en memoria como Buffer (siempre PNG)
+    const imagenBuffer = req.file.buffer;
+
 
     const consulta = `
         INSERT INTO Vehiculos 
@@ -116,7 +171,7 @@ router.post('/es-vehiculos/nuevo-vehiculo', (req, res) => {
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    pool.query(consulta, [matricula, marca, modelo, anyoMatri, numPlazas, autonomia, color, imagen || null, estado, concesionario], (err, result) => {
+    pool.query(consulta, [matricula, marca, modelo, anyoMatri, numPlazas, autonomia, color, imagenBuffer || null, estado, concesionario], (err, result) => {
         if (err) {
 
             if (err.code === 'ER_DUP_ENTRY') {
@@ -135,7 +190,7 @@ router.post('/es-vehiculos/nuevo-vehiculo', (req, res) => {
 
             console.error('Error al crear el vehículo:', err);
 
-            return res.status(500)
+            return res.status(500);
         }
 
         console.log(`Vehículo creado con ID: ${result.insertId}`);
@@ -150,14 +205,15 @@ router.get('/es-vehiculos/:id', (req, res) => {
         SELECT v.*, c.nombre AS nombre_concesionario
         FROM Vehiculos v
         LEFT JOIN Concesionarios c ON v.id_concesionario = c.id_concesionario
+        WHERE v.id_vehiculo = ?
     `;
     pool.query(consulta, [id], (err, resultados) => {
 
-        if (err || resultados.length === 0) {
-            if (err) console.log('Error al obtener un vehículo:');
+        if (err) {
+            console.log('Error al obtener un vehículo:');
             return res.status(500);
         }
-
+        if (resultados.length === 0) return res.status(404);
         const vehiculo = resultados[0];
 
         res.render('es-vehiculo-detalles', { vehiculo });
@@ -184,20 +240,36 @@ router.get('/es-vehiculos/:id/editar', (req, res) => {
             const vehiculo = resultados[0];
 
             if (!vehiculo) {
-                return res.status(500);
+                return res.status(404);
             }
             console.log(vehiculo);
 
             if (language === 'english')
-                res.render('en-vehicle-form', { concesionarios, editar: true, vehiculo });
+                res.render('en-vehicle-form', { concesionarios, editar: true, vehiculo, error: null });
             else
-                res.render('es-vehiculo-form', { concesionarios, editar: true, vehiculo });
+                res.render('es-vehiculo-form', { concesionarios, editar: true, vehiculo, error: null });
         });
     });
 
 });
 
-router.post('/es-vehiculos/:id/editar', (req, res) => {
+router.post('/es-vehiculos/:id/editar', multerFactory.single('imagen'), (req, res) => {
+
+    if (req.fileValidationError === 'FORMATO_INVALIDO_PNG' ||
+        (req.file && req.file.mimetype !== 'image/png')) {
+
+        return obtenerConcesionarios((errConc, concesionarios) => {
+            if (errConc) concesionarios = [];
+
+            return res.render('es-vehiculo-form', {
+                concesionarios,
+                editar: false,
+                vehiculo: null,
+                error: 'Solo se admite formato PNG'
+            });
+        });
+    }
+
     const id = req.params.id;
     const matricula = req.body.matricula;
     const marca = req.body.marca;
@@ -205,33 +277,60 @@ router.post('/es-vehiculos/:id/editar', (req, res) => {
     const anyoMatri = req.body.anyoMatri;
     const numPlazas = req.body.numPlazas;
     const color = req.body.color;
-    const imagen = req.body.imagen;
     const autonomia = req.body.autonomia;
     const estado = req.body.estado;
     const concesionario = req.body.concesionario;
 
-    if (!matricula || !marca || !modelo || !anyoMatri || !numPlazas || !color || !autonomia || !imagen || !estado || !concesionario) {
+    if (!matricula || !marca || !modelo || !anyoMatri || !numPlazas || !color || !autonomia || !estado || !concesionario) {
         return res.status(400);
     }
 
-    const consulta = `
-        UPDATE Vehiculos 
-        SET matricula = ?,
-            marca = ?,
-            modelo = ?,
-            anyo_matriculacion = ?,
-            numero_plazas = ?,
-            autonomia_km = ?,
-            color = ?,
-            imagen = ?,
-            estado = ?,
-            id_concesionario = ?
-        WHERE id_vehiculo = ?
-    `;
-    pool.query(consulta, [matricula, marca, modelo, anyoMatri, numPlazas, autonomia, color, imagen || null, estado, concesionario, id], (err, result) => {
+    // Si hay nueva imagen, actualizarla; si no, mantener la existente
+    let consulta, params;
+
+    if (req.file) {
+        const imagenBuffer = req.file.buffer;
+
+        console.log(`Nueva imagen PNG subida: ${req.file.originalname}`);
+        console.log(`Tamaño: ${req.file.size} bytes`);
+
+        consulta = `
+            UPDATE Vehiculos 
+            SET matricula = ?,
+                marca = ?,
+                modelo = ?,
+                anyo_matriculacion = ?,
+                numero_plazas = ?,
+                autonomia_km = ?,
+                color = ?,
+                imagen = ?,
+                estado = ?,
+                id_concesionario = ?
+            WHERE id_vehiculo = ?
+        `;
+        params = [matricula, marca, modelo, anyoMatri, numPlazas, autonomia, color, imagenBuffer, estado, concesionario, id];
+    } else {
+        // No se actualiza la imagen
+        consulta = `
+            UPDATE Vehiculos 
+            SET matricula = ?,
+                marca = ?,
+                modelo = ?,
+                anyo_matriculacion = ?,
+                numero_plazas = ?,
+                autonomia_km = ?,
+                color = ?,
+                estado = ?,
+                id_concesionario = ?
+            WHERE id_vehiculo = ?
+        `;
+        params = [matricula, marca, modelo, anyoMatri, numPlazas, autonomia, color, estado, concesionario, id];
+    }
+
+    pool.query(consulta, params, (err, result) => {
         if (err) {
             console.error('Error al actualizar el vehículo:', err);
-            return res.status(500);
+            return res.status(500).send('Error al actualizar');
         }
 
         console.log(`Vehículo actualizado con ID: ${id}`);
@@ -252,6 +351,7 @@ router.post('/es-vehiculos/:id/eliminar', (req, res) => {
     });
 });
 
+// Función auxiliar para obtener concesionarios
 const obtenerConcesionarios = (callback) => {
     const consulta = 'SELECT id_concesionario, nombre, ciudad FROM Concesionarios';
     pool.query(consulta, (err, results) => {
@@ -259,5 +359,30 @@ const obtenerConcesionarios = (callback) => {
         callback(null, results)
     });
 };
+
+// Función auxiliar para obtener imágenes PNG de la BD
+function obtenerImagen(id, callback) {
+    pool.getConnection((err, con) => {
+        if (err) {
+            return callback(err);
+        }
+
+        const sql = 'SELECT imagen FROM Vehiculos WHERE id_vehiculo = ?';
+        con.query(sql, [id], (err, result) => {
+            con.release();
+
+            if (err) {
+                return callback(err);
+            }
+
+            // Comprobar si existe un vehículo con el ID dado
+            if (result.length === 0) {
+                return callback(new Error('No existe el vehículo'));
+            }
+
+            callback(null, result[0].imagen);
+        });
+    });
+}
 
 module.exports = router;
