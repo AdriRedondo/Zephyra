@@ -13,6 +13,7 @@ const perfilRouter = require('./routes/perfil');
 const session = require('express-session');
 const mysqlSession = require('express-mysql-session');
 const MySQLStore = mysqlSession(session);
+
 const sessionStore = new MySQLStore({
     host: 'localhost',
     user: 'root',
@@ -75,6 +76,7 @@ app.get('/en-home', (req, res) => {
     res.render('en-home');
 });
 
+// Manejador error 404
 app.use(function (req, res, next) {
     const error = 'Error 404';
     const texto1 = 'Hemos encontrado un problema inesperado.';
@@ -82,6 +84,8 @@ app.use(function (req, res, next) {
     res.status(404).render("errors", { error, texto1, texto2 });
 });
 
+
+// Manejador error 500
 app.use(function (err, req, res, next) {
     const error = 'Error 500';
     const texto1 = 'Lo sentimos - no encontramos la página que está buscando.';

@@ -385,4 +385,28 @@ function obtenerImagen(id, callback) {
     });
 }
 
+
+router.get('/api/vehiculos', (req, res) => {
+
+    const consulta = `
+        SELECT v.*, c.nombre AS nombre_concesionario
+        FROM Vehiculos v
+        LEFT JOIN Concesionarios c ON v.id_concesionario = c.id_concesionario
+    `;
+
+    pool.query(consulta, (err, vehiculos) => {
+        if (err) {
+            console.error('Error al obtener vehículos JSON:', err);
+            return res.status(500).json({ error: 'Error interno del servidor' });
+        }
+
+
+        const vehiculosSinImagen = vehiculos.map(v => {
+            const { imagen, ...resto } = v;
+            return resto;
+        });
+
+        res.json(vehiculosSinImagen);
+    });
+});
 module.exports = router;
