@@ -22,6 +22,7 @@ router.get('/es-vehiculos', (req, res) => {
     const modeloFiltro = req.query.modelo;
     const plazasFiltro = req.query.plazas;
     const concesionarioFiltro = req.query.concesionario;
+    const estadoFiltro = req.query.estado;
 
     // JOIN con la tabla Concesionarios para obtener el nombre
     const consulta = `
@@ -68,6 +69,12 @@ router.get('/es-vehiculos', (req, res) => {
             );
         }
 
+        if (estadoFiltro) {
+            vehiculosFiltrados = vehiculosFiltrados.filter(
+                v => v.estado && v.estado.toLowerCase() === estadoFiltro.toLowerCase()
+            );
+        }
+
         if (req.body.idioma === 'english')
             res.render('en-vehicles', {
                 vehiculos: vehiculos,
@@ -77,7 +84,8 @@ router.get('/es-vehiculos', (req, res) => {
                     marca: marcaFiltro,
                     modelo: modeloFiltro,
                     plazas: plazasFiltro,
-                    concesionario: concesionarioFiltro
+                    concesionario: concesionarioFiltro,
+                    estado: estadoFiltro
                 }
             });
         else
@@ -89,7 +97,8 @@ router.get('/es-vehiculos', (req, res) => {
                     marca: marcaFiltro,
                     modelo: modeloFiltro,
                     plazas: plazasFiltro,
-                    concesionario: concesionarioFiltro
+                    concesionario: concesionarioFiltro,
+                    estado: estadoFiltro
                 }
             });
 
