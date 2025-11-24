@@ -55,6 +55,12 @@ router.post('/submit_login', (req, res) => {
                     return res.render('es-login', { error: 'Contraseña incorrecta' });
             }
 
+            if (req.body.recordar) {
+                req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000;
+            } else {
+                req.session.cookie.expires = false;
+            }
+
             req.session.usuario = {
                 id_usuario: usuario.id_usuario,
                 nombre: usuario.nombre,
