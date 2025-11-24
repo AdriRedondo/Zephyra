@@ -58,7 +58,7 @@
                             <% }) %>
                     </select>
 
-                    <button type="submit" class="btn btn-success w-100">Aplicar filtros</button>
+                    <button type="submit" class="btn btn-success w-100">Aplicar</button>
 
                 </form>
 
@@ -90,22 +90,28 @@
                                         <p class="card-text"><strong>Estado:</strong>
                                             <%= vehiculo.estado %>
                                         </p>
-                                        <a href="/es-vehiculos/<%= vehiculo.id_vehiculo %>"
-                                            class="btn btn-success mt-auto w-100">
-                                            Ver detalles
-                                        </a>
 
-                                        <% if(usuario && usuario.rol==='admin' ) { %>
-                                            <div class="d-flex gap-2 mt-3">
-                                                <a type="button" class="btn btn-secondary w-100"
-                                                    href="/es-vehiculos/<%= vehiculo.id_vehiculo %>/editar">Editar</a>
+                                        <div class="d-flex gap-2 mt-3">
+                                            <a href="/es-vehiculos/<%= vehiculo.id_vehiculo %>"
+                                                class="btn btn-success mt-auto w-100">
+                                                Ver detalles
+                                            </a>
+
+                                            <% if(usuario && usuario.rol==='admin' ) { %>
+                                                <a class="btn btn-secondary mt-auto"
+                                                    href="/es-vehiculos/<%= vehiculo.id_vehiculo %>/editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
 
                                                 <form action="/es-vehiculos/<%= vehiculo.id_vehiculo %>/eliminar"
                                                     method="post" class="flex-fill">
-                                                    <button class="btn btn-danger w-100" type="submit">Eliminar</button>
+                                                    <button class="btn btn-danger" type="submit">
+                                                        <i class="bi bi-trash-fill"></i>
+                                                    </button>
                                                 </form>
-                                            </div>
-                                            <% } %>
+                                                <% } %>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>

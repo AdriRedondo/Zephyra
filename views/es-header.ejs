@@ -32,46 +32,47 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item me-3">
-                            <a class="nav-link elem-menu p-2" href="/es-inicio" accesskey="i">Inicio</a>
+                            <a class="nav-link elem-menu" href="/es-inicio" accesskey="i">Inicio</a>
                         </li>
                         <li class="nav-item me-3">
-                            <a class="nav-link elem-menu p-2" href="/es-vehiculos" accesskey="v">Vehículos</a>
+                            <a class="nav-link elem-menu" href="/es-vehiculos" accesskey="v">Vehículos</a>
                         </li>
                         <li class="nav-item me-3">
-                            <a class="nav-link elem-menu p-2" href="/es-reservas" accesskey="r">Reservar vehículo</a>
+                            <a class="nav-link elem-menu" href="/es-reservas" accesskey="r">Reservar vehículo</a>
                         </li>
                         <% if(usuario) {%>
                             <li class="nav-item me-3">
-                                <a class="nav-link elem-menu p-2" href="/es-contacto" accesskey="c">Contacto</a>
+                                <a class="nav-link elem-menu" href="/es-contacto" accesskey="c">Contacto</a>
                             </li>
                             <% } %>
                     </ul>
                     <ul class="navbar-nav ms-auto">
                         <% if(!usuario) {%>
                             <li class="nav-item me-3">
-                                <a class="nav-link elem-menu p-2" href="/es-login" accesskey="l">Login</a>
+                                <a class="nav-link elem-menu" href="/es-login" accesskey="l">Login</a>
                             </li>
                             <% } %>
                                 <li class="nav-item me-3">
-                                    <a role="button" class="nav-link elem-menu p-2" accesskey="a" data-bs-toggle="modal"
+                                    <a role="button" class="nav-link elem-menu" accesskey="a" data-bs-toggle="modal"
                                         data-bs-target="#accessModal">Accesibilidad</a>
                                 </li>
                                 <% if(usuario && usuario.rol==='admin' ) {%>
                                     <li class="nav-item me-3">
-                                        <a class="nav-link elem-menu p-2" href="/es-admin"
-                                            accesskey="m">Administrador</a>
+                                        <a class="nav-link elem-menu" href="/es-admin" accesskey="m">Administrador</a>
                                     </li>
                                     <% } %>
                                         <% if(usuario) {%>
                                             <li class="nav-item me-3">
-                                                <a class="nav-link elem-menu p-2" href="/es-logout" accesskey="g">Cerrar
-                                                    sesión</a>
+                                                <a class="menu-icon nav-link" href="/es-logout" accesskey="g">
+                                                    <i class="bi bi-box-arrow-left"></i>
+                                                </a>
                                             </li>
                                             <% }%>
                                                 <% if(usuario) {%>
-                                                    <li class="nav-item me-3">
-                                                        <a class="nav-link elem-menu p-2" href="/es-perfil"
-                                                            accesskey="p">Perfil</a>
+                                                    <li class="nav-item">
+                                                        <a class="menu-icon nav-link" href="/es-perfil" accesskey="p">
+                                                            <i class="profile-icon bi bi-person-circle"></i>
+                                                        </a>
                                                     </li>
                                                     <% } %>
                 </div>

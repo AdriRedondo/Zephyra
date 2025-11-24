@@ -1,3 +1,5 @@
+@import "/bootstrap-icons/font/bootstrap-icons.css";
+
 :root {
     --primary-btn-color: #4D9B5F;
 }
@@ -227,8 +229,6 @@ h2 {
     transition: all 0.3s ease;
 }
 
-
-
 .dropdown-item {
     color: lightgray;
 }
@@ -239,6 +239,11 @@ h2 {
 
 .end-nav-content {
     margin-left: auto;
+}
+
+.menu-icon {
+    font-size: 1.3rem;
+    padding: 0;
 }
 
 footer {
@@ -255,6 +260,7 @@ footer,
 footer p {
     margin: 0;
 }
+
 
 @media (max-width: 1199px) {
     .logo-container {

@@ -37,6 +37,8 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use('/bootstrap-icons', express.static(__dirname + '/node_modules/bootstrap-icons'));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

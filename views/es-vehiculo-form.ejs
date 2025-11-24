@@ -10,7 +10,7 @@
                     <fieldset class="vehicle-fs" name="vehicle">
                         <input type="hidden" name="idioma" value="español">
                         <legend>Datos del vehículo</legend>
-                        <% if (typeof error !=='undefined' ) { %>
+                        <% if (error) { %>
                             <div class="alert alert-danger" role="alert">
                                 <%= error %>
                             </div>
@@ -71,49 +71,61 @@
                                     <span id="autonomia-error" class="error" aria-live="polite"></span>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="imagen" class="form-label">Imagen:
-                                    </label>
-                                    <input type="text" id="imagen" name="imagen" class="form-control"
-                                        value="<%= editar && vehiculo ? vehiculo.imagen : ''  %>"
-                                        placeholder="Por poner la imagen en la BD">
+                                    <label for="imagen" class="form-label">Imagen:</label>
+                                    <input type="file" id="imagen" name="imagen" class="form-control">
+
                                     <span id="imagen-error" class="error" aria-live="polite"></span>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="estado" class="form-label">Estado:</label>
-                                    <select id="estado" name="estado" class="form-select">
-                                        <option value="disponible" <%=editar && vehiculo &&
-                                            vehiculo.estado==='disponible' ? 'selected' : '' %>>Disponible</option>
-                                        <option value="reservado" <%=editar && vehiculo && vehiculo.estado==='reservado'
-                                            ? 'selected' : '' %>>Reservado</option>
-                                        <option value="mantenimiento" <%=editar && vehiculo &&
-                                            vehiculo.estado==='mantenimiento' ? 'selected' : '' %>>En mantenimiento
-                                        </option>
-                                    </select>
-                                    <span id="estado-error" class="error" aria-live="polite"></span>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="concesionario" class="form-label">Concesionario:
-                                    </label>
-                                    <select id="concesionario" name="concesionario" class="form-select" required>
-                                        <option value="">Sin asignar</option>
-                                        <% if (typeof concesionarios !=='undefined' ) { %>
-                                            <% concesionarios.forEach(c=> { %>
-                                                <option value="<%= c.id_concesionario %>" <%=editar && vehiculo &&
-                                                    vehiculo.id_concesionario==c.id_concesionario ? 'selected' : '' %>>
-                                                    <%= c.id_concesionario %> : <%= c.nombre %> - <%= c.ciudad %>
-                                                </option>
-                                                <% }) %>
-                                                    <% } %>
-                                    </select>
-                                    <span id="concesionario-error" class="error" aria-live="polite"></span>
-                                </div>
-                                <% if(editar) { %>
-                                    <input type="hidden" name="id_vehiculo" value="<%= vehiculo.id_vehiculo %>">
+
+                                <% if (editar && vehiculo && vehiculo.imagen) { %>
+                                    <div class="mt-2">
+                                        <label class="form-label">Imagen actual:</label><br>
+                                        <img src="/es-vehiculos/imagen/<%= vehiculo.id_vehiculo %>"
+                                            alt="Imagen del vehículo" style="max-width:150px; border-radius:6px;">
+                                    </div>
                                     <% } %>
-                                        <button type="submit" class="btn btn-success"
-                                            aria-label="Enviar formulario">Enviar</button>
-                                        <button type="reset" class="btn btn-secondary"
-                                            aria-label="Limpiar formulario">Limpiar</button>
+                                        <div class="mb-3">
+                                            <label for="estado" class="form-label">Estado:</label>
+                                            <select id="estado" name="estado" class="form-select">
+                                                <option value="disponible" <%=editar && vehiculo &&
+                                                    vehiculo.estado==='disponible' ? 'selected' : '' %>>Disponible
+                                                </option>
+                                                <option value="reservado" <%=editar && vehiculo &&
+                                                    vehiculo.estado==='reservado' ? 'selected' : '' %>>Reservado
+                                                </option>
+                                                <option value="mantenimiento" <%=editar && vehiculo &&
+                                                    vehiculo.estado==='mantenimiento' ? 'selected' : '' %>>En
+                                                    mantenimiento
+                                                </option>
+                                            </select>
+                                            <span id="estado-error" class="error" aria-live="polite"></span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="concesionario" class="form-label">Concesionario:
+                                            </label>
+                                            <select id="concesionario" name="concesionario" class="form-select"
+                                                required>
+                                                <option value="">Sin asignar</option>
+                                                <% if (typeof concesionarios !=='undefined' ) { %>
+                                                    <% concesionarios.forEach(c=> { %>
+                                                        <option value="<%= c.id_concesionario %>" <%=editar && vehiculo
+                                                            && vehiculo.id_concesionario==c.id_concesionario
+                                                            ? 'selected' : '' %>>
+                                                            <%= c.id_concesionario %> : <%= c.nombre %> - <%= c.ciudad
+                                                                        %>
+                                                        </option>
+                                                        <% }) %>
+                                                            <% } %>
+                                            </select>
+                                            <span id="concesionario-error" class="error" aria-live="polite"></span>
+                                        </div>
+                                        <% if(editar) { %>
+                                            <input type="hidden" name="id_vehiculo" value="<%= vehiculo.id_vehiculo %>">
+                                            <% } %>
+                                                <button type="submit" class="btn btn-success"
+                                                    aria-label="Enviar formulario">Enviar</button>
+                                                <button type="reset" class="btn btn-secondary"
+                                                    aria-label="Limpiar formulario">Limpiar</button>
                     </fieldset>
                 </div>
             </form>
