@@ -30,15 +30,6 @@ body {
     font-size: 16px;
 }
 
-.formularios {
-    max-width: 600px;
-    margin: 0 auto;
-    box-shadow: 0 1px 1px 1px #0003;
-    border-radius: 16px;
-    padding: 2rem 2.5rem;
-}
-
-
 main {
     padding: 2rem 10%;
     background: #F5F7F8;
@@ -244,6 +235,32 @@ h2 {
 .menu-icon {
     font-size: 1.3rem;
     padding: 0;
+}
+
+
+.border-success:hover {
+    background: #198754;
+    color: white;
+}
+
+.border-danger:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.border-secondary:hover {
+    background: #6c757d;
+    color: white;
+}
+
+.form-control:focus,
+.form-select:focus,
+.btn:focus,
+.btn:active,
+.btn.active {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #023A26 !important;
 }
 
 footer {

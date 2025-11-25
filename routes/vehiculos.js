@@ -4,6 +4,9 @@ const router = express.Router();
 const pool = require('../db');
 
 // Configuración de multer para almacenar archivos en memoria con formato BLOB ()
+
+// Usamos memoria para guardar los archivos
+// Se permite únicamente formato PNG
 const multerFactory = multer({
     storage: multer.memoryStorage(),
     fileFilter: (req, file, cb) => {
@@ -15,35 +18,30 @@ const multerFactory = multer({
     }
 });
 
+//GET de la página de vehículos con fitros en español
 router.get('/es-vehiculos', (req, res) => {
-
-    const tipoFiltro = req.query.tipo;
+    //Filtros recibidos
     const marcaFiltro = req.query.marca;
     const modeloFiltro = req.query.modelo;
     const plazasFiltro = req.query.plazas;
     const concesionarioFiltro = req.query.concesionario;
     const estadoFiltro = req.query.estado;
 
-    // JOIN con la tabla Concesionarios para obtener el nombre
+    //Consulta que une vehículos con concesionarios para obtener el nombre
+    //JOIN con la tabla Concesionarios para obtener el nombre
     const consulta = `
         SELECT v.*, c.nombre AS nombre_concesionario
         FROM Vehiculos v
         LEFT JOIN Concesionarios c ON v.id_concesionario = c.id_concesionario
     `;
-
     pool.query(consulta, (err, vehiculos) => {
         if (err) {
             console.error('Error al obtener los vehículos:', err);
             return res.status(500);
         }
 
+        //Filtros aplicados 
         let vehiculosFiltrados = vehiculos;
-
-        if (tipoFiltro) {
-            vehiculosFiltrados = vehiculosFiltrados.filter(
-                v => v.tipo && v.tipo.toLowerCase() === tipoFiltro.toLowerCase()
-            );
-        }
 
         if (marcaFiltro) {
             vehiculosFiltrados = vehiculosFiltrados.filter(
@@ -75,12 +73,13 @@ router.get('/es-vehiculos', (req, res) => {
             );
         }
 
+        //SI todo sale bien se muestra la vista de vehículos
         if (req.body.idioma === 'english')
+            //Vista en inglés
             res.render('en-vehicles', {
                 vehiculos: vehiculos,
                 vehiculosFiltrados: vehiculosFiltrados,
                 filtros: {
-                    tipo: tipoFiltro,
                     marca: marcaFiltro,
                     modelo: modeloFiltro,
                     plazas: plazasFiltro,
@@ -89,11 +88,11 @@ router.get('/es-vehiculos', (req, res) => {
                 }
             });
         else
+            //Vista en español
             res.render('es-vehiculos', {
                 vehiculos: vehiculos,
                 vehiculosFiltrados: vehiculosFiltrados,
                 filtros: {
-                    tipo: tipoFiltro,
                     marca: marcaFiltro,
                     modelo: modeloFiltro,
                     plazas: plazasFiltro,
@@ -101,11 +100,10 @@ router.get('/es-vehiculos', (req, res) => {
                     estado: estadoFiltro
                 }
             });
-
     });
 });
 
-// Ruta para servir imágenes PNG desde la BD
+//GET para obtener la imágen PNG desde la BD según el ID del vehículo
 router.get('/es-vehiculos/imagen/:id', (req, res) => {
     const id = req.params.id;
 
@@ -115,34 +113,39 @@ router.get('/es-vehiculos/imagen/:id', (req, res) => {
             return res.status(404).send('Imagen no encontrada');
         }
 
-        // Siempre es PNG
+        //Siempre es PNG
         res.contentType('image/png');
         res.end(imagen);
     });
 });
 
+//GET del form de crear un nuevo vehículo como administrador
 // Esto lo ponemos antes que /:id porque si no accede antes al get de :id que al de nuevo_vehiculo
 router.get('/es-vehiculos/nuevo-vehiculo', (req, res) => {
-
     const language = req.body.idioma;
+
+    //Cargamos concesionarios para el select del formulario
     obtenerConcesionarios((errConc, concesionarios) => {
         if (errConc) concesionarios = [];
+        //Si todo sale bien se muestra la vista del form para el nuevo vehículo a registrar
         if (language === 'english')
+            //Vista en inglés
             res.render('en-vehicle-form', { concesionarios, editar: false, vehiculo: null, error: null });
         else
+            //Vista en español
             res.render('es-vehiculo-form', { concesionarios, editar: false, vehiculo: null, error: null });
     });
-
 });
 
+//POST para crear un nuevo vehículo como administrador
 router.post('/es-vehiculos/nuevo-vehiculo', multerFactory.single('imagen'), (req, res) => {
-
+    //Validación del formato PNG
     if (req.fileValidationError === 'FORMATO_INVALIDO_PNG' ||
         (req.file && req.file.mimetype !== 'image/png')) {
 
         return obtenerConcesionarios((errConc, concesionarios) => {
             if (errConc) concesionarios = [];
-
+            //Si no es de formato PNG se envía el error a la vista
             return res.render('es-vehiculo-form', {
                 concesionarios,
                 editar: false,
@@ -152,6 +155,7 @@ router.post('/es-vehiculos/nuevo-vehiculo', multerFactory.single('imagen'), (req
         });
     }
 
+    //Datos del formulario
     const matricula = req.body.matricula;
     const marca = req.body.marca;
     const modelo = req.body.modelo;
@@ -162,10 +166,12 @@ router.post('/es-vehiculos/nuevo-vehiculo', multerFactory.single('imagen'), (req
     const estado = req.body.estado;
     const concesionario = req.body.concesionario;
 
+    //Validación de que los valores estén completos
     if (!matricula || !marca || !modelo || !anyoMatri || !numPlazas || !color || !concesionario) {
         return res.status(400);
     }
 
+    //Imagen obliogatoria
     if (!req.file) {
         return res.status(400).send('La imagen es obligatoria');
     }
@@ -173,17 +179,16 @@ router.post('/es-vehiculos/nuevo-vehiculo', multerFactory.single('imagen'), (req
     // El archivo está en memoria como Buffer (siempre PNG)
     const imagenBuffer = req.file.buffer;
 
-
+    //COnsulta para insertar el vehículo nuevo
     const consulta = `
         INSERT INTO Vehiculos 
         (matricula, marca, modelo, anyo_matriculacion, numero_plazas, autonomia_km, color, imagen, estado, id_concesionario)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-
     pool.query(consulta, [matricula, marca, modelo, anyoMatri, numPlazas, autonomia, color, imagenBuffer || null, estado, concesionario], (err, result) => {
         if (err) {
-
             if (err.code === 'ER_DUP_ENTRY') {
+                //Error si la matricula a isnertar ya está registrada en la BD
                 obtenerConcesionarios((errConc, concesionarios) => {
                     if (errConc) concesionarios = [];
 
@@ -196,9 +201,8 @@ router.post('/es-vehiculos/nuevo-vehiculo', multerFactory.single('imagen'), (req
                 });
                 return;
             }
-
+            //Si hay algún error al insertar el vehículo en la BD, se lanza el error a la vista y se muestra por consola
             console.error('Error al crear el vehículo:', err);
-
             return res.status(500);
         }
 
@@ -207,9 +211,11 @@ router.post('/es-vehiculos/nuevo-vehiculo', multerFactory.single('imagen'), (req
     });
 });
 
+//GET de la página de detalles de un vehículo por su ID
 router.get('/es-vehiculos/:id', (req, res) => {
     const id = req.params.id;
 
+    //Consulta para buscar el vehículo con esa ID
     const consulta = `
         SELECT v.*, c.nombre AS nombre_concesionario
         FROM Vehiculos v
@@ -217,14 +223,17 @@ router.get('/es-vehiculos/:id', (req, res) => {
         WHERE v.id_vehiculo = ?
     `;
     pool.query(consulta, [id], (err, resultados) => {
-
         if (err) {
+            //Si hay algún error al buscar el vehículo, se muestra en la vista y por consola
             console.log('Error al obtener un vehículo:');
             return res.status(500);
         }
+
+        //Si no se encuentra un vehículo con esa ID en la BD, se muestra un error404
         if (resultados.length === 0) return res.status(404);
         const vehiculo = resultados[0];
 
+        //Si todo va bien se muestra la página de detalles del vehículo con esa ID
         res.render('es-vehiculo-detalles', { vehiculo });
     });
 });

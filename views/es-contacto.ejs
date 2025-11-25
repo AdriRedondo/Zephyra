@@ -1,38 +1,65 @@
-<%- include('es-header', { title: 'Formulario de contacto' , estilos: ['style', 'form-contact' ],
-    actual_es: 'es-contacto' , actual_en: 'en-contact' }) %>
+<%- include('es-header', { title: 'Formulario de contacto' , estilos: ['style', 'forms' ], actual_es: 'es-contacto' ,
+    actual_en: 'en-contact' }) %>
     <main>
         <section id="Contacto" class="contacto">
-            <h2>Contacto</h2>
-            <form id="contacto-form-id" class="formularios contacto-form" aria-label="Formulario de contacto"
-                method="post" action="/submit_contact">
+            <form id="contacto-form-id" class="formularios" aria-label="Formulario de contacto" method="post"
+                action="/submit_contact">
                 <div class="mb-3">
                     <fieldset class="contact-fs" name="contacto">
                         <input type="hidden" name="idioma" value="español">
-                        <legend>Datos de contacto</legend>
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre:
-                            </label>
-                            <input type="text" id="nombre" name="nombre" class="form-control"
-                                placeholder="Ej: Eustaquio Ramirez">
-                            <span id="nombre-error" class="error" aria-live="polite"></span>
-                        </div>
-                        <div class="mb-3">
-                            <label for="correo" class="form-label">Email:
-                            </label>
-                            <input type="email" id="correo" name="correo" class="form-control"
-                                placeholder="Ej: eusta03@ucm.es">
-                            <span id="correo-error" class="error" aria-live="polite"></span>
-                        </div>
-                        <div class="mb-3">
-                            <label for="mensaje" class="form-label">Mensaje:
-                            </label>
-                            <textarea id="mensaje" name="mensaje" class="form-control" rows="4"
-                                placeholder="Ej: Patata"></textarea>
-                            <span id="mensaje-error" class="error" aria-live="polite"></span>
-                        </div>
+                        <legend>
+                            <h2>Datos de contacto</h2>
+                        </legend>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="nombre" class="form-label">Nombre completo: <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-person"></i>
+                                    </span>
+                                    <input type="text" id="nombre" name="nombre" class="form-control"
+                                        placeholder="Ej: Eustaquio Ramírez" required>
+                                </div>
+                                <span id="nombre-error" class="error-message" aria-live="polite"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="correo" class="form-label">Correo electrónico: <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-envelope"></i>
+                                    </span>
+                                    <input type="email" id="correo" name="correo" class="form-control"
+                                        placeholder="Ej: eusta03@ucm.es" required>
+                                </div>
+                                <span id="correo-error" class="error" aria-live="polite"></span>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="mensaje" class="form-label">Mensaje: <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group align-items-start">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-chat-left-text"></i>
+                                    </span>
+                                    <textarea id="mensaje" name="mensaje" class="form-control" rows="10"
+                                        placeholder="Escribe tu mensaje aquí..." required></textarea>
+                                </div>
+                                <span id="mensaje-error" class="error" aria-live="polite"></span>
+                            </div>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
 
-                        <button type="submit" class="btn btn-success" aria-label="Enviar formulario">Enviar</button>
-                        <button type="reset" class="btn btn-secondary" aria-label="Limpiar formulario">Limpiar</button>
+                                <button type="reset" class="btn border-secondary px-4" aria-label="Limpiar formulario">
+                                    <i class="bi bi-arrow-clockwise me-2"></i> Limpiar
+                                </button>
+                                <button type="submit" class="btn border-success px-4" aria-label="Enviar formulario">
+                                    <i class="bi bi-send me-2"></i> Enviar mensaje
+                                </button>
+
+                            </div>
+                        </div>
                     </fieldset>
                 </div>
             </form>

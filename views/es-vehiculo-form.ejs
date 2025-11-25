@@ -2,14 +2,15 @@
     actual_es: 'es-vehiculo-form' , actual_en: 'en-vehicle-form' }) %>
     <main>
         <section id="vehicle_id" class="vehicle">
-            <h2>Añadir nuevo vehículo</h2>
             <form id="vehicle-form-id" class="formularios vehicle-form" aria-label="Formulario de vehiculo"
                 method="post"
                 action="<%= editar ? `/es-vehiculos/${vehiculo.id_vehiculo}/editar`:`/es-vehiculos/nuevo-vehiculo` %>">
                 <div class="mb-3">
                     <fieldset class="vehicle-fs" name="vehicle">
                         <input type="hidden" name="idioma" value="español">
-                        <legend>Datos del vehículo</legend>
+                        <legend>
+                            <h2>Datos del vehículo</h2>
+                        </legend>
                         <% if (error) { %>
                             <div class="alert alert-danger" role="alert">
                                 <%= error %>
@@ -122,9 +123,9 @@
                                         <% if(editar) { %>
                                             <input type="hidden" name="id_vehiculo" value="<%= vehiculo.id_vehiculo %>">
                                             <% } %>
-                                                <button type="submit" class="btn btn-success"
+                                                <button type="submit" class="btn border-success"
                                                     aria-label="Enviar formulario">Enviar</button>
-                                                <button type="reset" class="btn btn-secondary"
+                                                <button type="reset" class="btn border-secondary"
                                                     aria-label="Limpiar formulario">Limpiar</button>
                     </fieldset>
                 </div>

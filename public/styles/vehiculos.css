@@ -17,7 +17,7 @@
 
 
 .card:hover {
-    outline: 2px #47865a54 solid;
+    outline: 1px #47865a54 solid;
 }
 
 .vehiculo-img {
@@ -28,9 +28,4 @@
 
 p {
     text-transform: capitalize;
-}
-
-.delete-btn {
-    background: transparent;
-    border: none;
 }
