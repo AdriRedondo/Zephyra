@@ -31,10 +31,9 @@ body {
 }
 
 main {
-    padding: 2rem 10%;
+    padding: 100px 2% 5px 2%;
     background: #F5F7F8;
     flex: 1;
-    padding-top: 10rem;
 }
 
 header {

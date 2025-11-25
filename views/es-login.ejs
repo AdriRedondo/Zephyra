@@ -1,45 +1,58 @@
-<%- include('es-header', { title: 'Formulario de login' , estilos: ['style', 'form-login' ], actual_es: 'es-login' ,
+<%- include('es-header', { title: 'Formulario de login' , estilos: ['style', 'forms' ], actual_es: 'es-login' ,
     actual_en: 'en-login' }) %>
     <main>
         <section id="Login" class="login">
-            <h2>Login</h2>
-
-            <form id="login-form-id" class="formularios login-form" aria-label="Formulario de login" method="post"
+            <form id="login-form-id" class="formularios aria-label=" Formulario de login" method="post"
                 action="/submit_login">
                 <div class="mb-3">
                     <fieldset class="login-fs" name="login">
                         <input type="hidden" name="idioma" value="español">
-                        <legend>Datos de usuario</legend>
-                        <div class="mb-3">
-                            <label for="correo" class="form-label">Correo:
-                            </label>
-                            <input type="email" id="correo" name="correo" class="form-control"
-                                placeholder="Ej: eusta03@ucm.es">
-                            <span id="correo-error" class="error" aria-live="polite"></span>
-                        </div>
-                        <div class="mb-3">
-                            <label for="contraseña" class="form-label">Contraseña:
-                            </label>
-                            <input id="contraseña" name="password" class="form-control" type="password"
-                                placeholder="Escriba su contraseña">
-                            <span id="contraseña-error" class="error" aria-live="polite"></span>
-                        </div>
-                        <div class="mb-3">
-                            <label>
-                                <input type="checkbox" name="recordar" value="1">
-                                Recordar sesión
-                            </label>
-                        </div>
-
-                        <% if (typeof error !=='undefined' ) { %>
-                            <div class="alert alert-danger" role="alert">
-                                <%= error %>
+                        <legend>
+                            <h2>Datos de usuario</h2>
+                        </legend>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="correo" class="form-label">Correo: <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-envelope"></i>
+                                    </span>
+                                    <input type="email" id="correo" name="correo" class="form-control" required
+                                        placeholder="Ej: eusta03@ucm.es">
+                                </div>
+                                <span id="correo-error" class="error" aria-live="polite"></span>
                             </div>
-                            <% } %>
-                                <button type="submit" class="btn border-success"
-                                    aria-label="Enviar formulario">Enviar</button>
-                                <button type="reset" class="btn border-secondary"
-                                    aria-label="Limpiar formulario">Limpiar</button>
+                            <div class="col-12">
+                                <label for="contraseña" class="form-label">Contraseña: <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-lock"></i> </span>
+                                    <input id="contraseña" name="password" class="form-control" type="password" required
+                                        placeholder="Escriba su contraseña">
+                                </div>
+                                <span id="contraseña-error" class="error" aria-live="polite"></span>
+                            </div>
+                            <div class="col-12">
+                                <label>
+                                    Recordar sesión
+                                </label>
+                                <input type="checkbox" name="recordar" class="form-check-input" value="1">
+
+                            </div>
+
+                            <% if (typeof error !=='undefined' ) { %>
+                                <div class="alert alert-danger" role="alert">
+                                    <%= error %>
+                                </div>
+                                <% } %>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn border-success w-100"
+                                            aria-label="Enviar formulario">Login</button>
+                                    </div>
+                        </div>
                     </fieldset>
                 </div>
             </form>
