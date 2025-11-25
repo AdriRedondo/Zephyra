@@ -38,57 +38,89 @@
                                         <label for="nombre" class="form-label">Nombre completo: <span
                                                 class="text-danger">*</span>
                                         </label>
-                                        <input type="text" id="nombre" name="nombre" class="form-control" required
-                                            placeholder="Ej: Eustaquio Ramirez">
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-person"></i>
+                                            </span>
+                                            <input type="text" id="nombre" name="nombre" class="form-control" required
+                                                placeholder="Ej: Eustaquio Ramirez">
+                                        </div>
                                         <span id="nombre-error" class="error" aria-live="polite"></span>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="correo" class="form-label">Correo: <span
+                                        <label for="correo" class="form-label">Correo electrónico: <span
                                                 class="text-danger">*</span>
                                         </label>
-                                        <input type="text" id="correo" name="correo" class="form-control" required
-                                            placeholder="Ej: ASDFg7&A">
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-calendar"></i>
+                                            </span>
+                                            <input type="text" id="correo" name="correo" class="form-control" required
+                                                placeholder="Ej: ASDFg7&A">
+                                        </div>
                                         <span id="correo-error" class="error" aria-live="polite"></span>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="contraseña" class="form-label">Contraseña: <span
                                                 class="text-danger">*</span>
                                         </label>
-                                        <input type="text" id="contraseña" name="password" class="form-control" required
-                                            placeholder="Ej: ASDFg7&A">
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-lock"></i>
+                                            </span>
+                                            <input type="text" id="contraseña" name="password" class="form-control"
+                                                required placeholder="Ej: ASDFg7&A">
+                                        </div>
                                         <span id="contraseña-error" class="error" aria-live="polite"></span>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="telefono" class="form-label">Teléfono:
                                         </label>
-                                        <input type="tel" id="telefono" name="telefono" class="form-control"
-                                            placeholder="Ej: 666777888" pattern="^[0-9]{9}$"
-                                            title="Debe contener 9 dígitos">
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-telephone"></i>
+                                            </span>
+                                            <input type="tel" id="telefono" name="telefono" class="form-control"
+                                                placeholder="Ej: 666777888" pattern="^[0-9]{9}$"
+                                                title="Debe contener 9 dígitos">
+                                        </div>
                                         <span id="telefono-error" class="error" aria-live="polite"></span>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="concesionario" class="form-label">Concesionario asignado:
                                         </label>
-                                        <select id="concesionario" name="concesionario" class="form-select" required>
-                                            <option value="">Sin asignar</option>
-                                            <% if (typeof concesionarios !=='undefined' ) { %>
-                                                <% concesionarios.forEach(c=> { %>
-                                                    <option value="<%= c.id_concesionario %>">
-                                                        <%= c.id_concesionario %> : <%= c.nombre %> - <%= c.ciudad %>
-                                                    </option>
-                                                    <% }) %>
-                                                        <% } %>
-                                        </select>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-building"></i>
+                                            </span>
+                                            <select id="concesionario" name="concesionario" class="form-select"
+                                                required>
+                                                <option value="">Sin asignar</option>
+                                                <% if (typeof concesionarios !=='undefined' ) { %>
+                                                    <% concesionarios.forEach(c=> { %>
+                                                        <option value="<%= c.id_concesionario %>">
+                                                            <%= c.id_concesionario %> : <%= c.nombre %> - <%= c.ciudad
+                                                                        %>
+                                                        </option>
+                                                        <% }) %>
+                                                            <% } %>
+                                            </select>
+                                        </div>
                                         <span id="concesionario-error" class="error" aria-live="polite"></span>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="rol" class="form-label">Rol:
+                                        <label for="rol" class="form-label">Rol de usuario:
                                         </label>
-                                        <select id="rol" name="rol" class="form-select">
-                                            <option value="">Sin asignar</option>
-                                            <option value="empleado">Empleado</option>
-                                            <option value="admin">Administrador</option>
-                                        </select>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-briefcase"></i>
+                                            </span>
+                                            <select id="rol" name="rol" class="form-select">
+                                                <option value="">Sin asignar</option>
+                                                <option value="empleado">Empleado</option>
+                                                <option value="admin">Administrador</option>
+                                            </select>
+                                        </div>
                                     </div>
 
                                     <% if (typeof success !=='undefined' && success) { %>
@@ -108,8 +140,7 @@
                                                             <i class="bi bi-arrow-clockwise me-2"></i> Limpiar
                                                             datos</button>
                                                         <button type="submit" class="btn border-success"
-                                                            aria-label="Enviar formulario"> <i
-                                                                class="bi bi-send me-2"></i>
+                                                            aria-label="Enviar formulario">
                                                             Registrar usuario</button>
                                                     </div>
                                 </div>
