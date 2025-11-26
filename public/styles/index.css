@@ -1,42 +1,45 @@
-#Inicio ol,
-#Inicio ul {
+#inicio ol,
+#inicio ul {
     margin: 2rem auto;
     max-width: 600px;
     padding: 0;
 }
 
-#Inicio li {
-    background-color: #eaf1f7;
+#inicio li {
+    background-color: var(--list-bg);
     margin-bottom: 0.75rem;
     padding: 1rem 1.5rem;
 
-    border-left: 5px solid #023A26;
+    border-left: 5px solid var(--primary-color);
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     font-weight: 500;
+    color: var(--text-color);
+
 }
 
 
-#Inicio dl {
+#inicio dl {
     margin: 3rem auto;
     max-width: 600px;
     padding: 1.5rem;
-    border: 1px solid #000000;
+    border: 1px solid var(--border-color);
     border-radius: 5px;
-    background-color: #FAFAFA;
+    background-color: var(--dl-bg);
 }
 
-#Inicio dt {
+#inicio dt {
     font-weight: bold;
-    color: #023A26;
+    color: var(--primary-color);
     margin-top: 0.75rem;
     font-size: 1.1rem;
 }
 
-#Inicio dd {
+#inicio dd {
     margin-left: 20px;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid #818181;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
 }
 
 .lista-beneficios {

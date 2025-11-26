@@ -1,7 +1,28 @@
 @import "/bootstrap-icons/font/bootstrap-icons.css";
 
+/* Variables CSS para tema claro */
 :root {
     --primary-btn-color: #4D9B5F;
+    --bg-color: #F5F7F8;
+    --text-color: #1E1E1E;
+    --card-bg: #ffffff;
+    --border-color: #E8EBED;
+    --primary-color: #023A26;
+    --secondary-color: #4D9B5F;
+    --list-bg: #eaf1f7;
+    --dl-bg: #FAFAFA;
+}
+
+/* Variables CSS para tema oscuro */
+[data-theme="dark"] {
+    --bg-color: #1a1a1a;
+    --text-color: #F5F7F8;
+    --card-bg: #2d2d2d;
+    --border-color: #3a3a3a;
+    --primary-color: #4D9B5F;
+    --secondary-color: #023A26;
+    --list-bg: #2d3d2d;
+    --dl-bg: #252525;
 }
 
 @font-face {
@@ -21,8 +42,8 @@
 html,
 body {
     font-family: 'Montserrat', sans-serif;
-    background: #F5F7F8;
-    color: #1E1E1E;
+    background: var(--bg-color);
+    color: var(--text-color);
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -32,7 +53,7 @@ body {
 
 main {
     padding: 100px 2% 5px 2%;
-    background: #F5F7F8;
+    background: var(--bg-color);
     flex: 1;
 }
 
@@ -42,7 +63,7 @@ header {
     z-index: 1000;
     display: flex;
     flex-direction: column;
-    background: #023A26;
+    background: var(--primary-color);
     padding: 0.5rem 0;
     align-content: center;
     text-align: center;
@@ -74,7 +95,29 @@ h2 {
     box-shadow: none;
 }
 
+/* Estilos del switch */
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
 
+.theme-switch-wrapper span {
+    color: var(--text-color);
+    font-size: 20px;
+}
+
+.theme-switch input[type="checkbox"] {
+    display: none;
+}
+
+.theme-switch {
+    display: inline-block;
+    position: relative;
+    width: 60px;
+    height: 34px;
+}
 
 .div-logo {
     margin-left: 0;
@@ -134,19 +177,27 @@ h2 {
 
 }
 
+/* Creo que se puede quitar
 .elem-menu {
     display: inline-block;
-    border-radius: 3px;
     align-content: normal;
     width: 100%;
     flex: 1;
     text-align: center;
-    color: white;
     padding: 1%;
-    margin-bottom: 2px;
-    font-weight: 600;
+    font-size: 1rem;
+}
+*/
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.644) !important;
+    font-size: 1.1rem;
 }
 
+.nav-link:hover {
+    color: #fff !important;
+
+}
 
 .dropdown-menu {
     border: 1px solid #000;
@@ -179,8 +230,12 @@ h2 {
     background: transparent;
 }
 
+.modal-body h5 {
+    color: var(--text-color);
+}
+
 .modal-content {
-    background: linear-gradient(135deg, #F5F7F8 0%, #E8EBED 100%);
+    background: var(--card-bg);
     border-radius: 20px;
     border: none;
     box-shadow: 0 20px 60px rgba(2, 58, 38, 0.3);
@@ -199,8 +254,8 @@ h2 {
 }
 
 .list-group-item {
-    background: white;
-    border: none;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     text-align: center;
     transition: all 0.3s ease;
@@ -208,19 +263,24 @@ h2 {
     padding: 0;
 }
 
+[data-theme="dark"] .modal-header {
+    background: linear-gradient(135deg, #4D9B5F 0%, #5AAF6F 100%);
+}
+
 .list-group-item a {
     display: block;
-    color: #000;
+    color: var(--text-color);
     text-decoration: none;
     height: 100%;
     width: 100%;
     padding: 1.2rem 1.5rem;
     border-radius: 12px;
-    transition: all 0.3s ease;
 }
 
-.dropdown-item {
-    color: lightgray;
+.card,
+.filtros {
+    background: var(--card-bg) !important;
+    color: var(--text-color)
 }
 
 .dropdown {
@@ -232,24 +292,42 @@ h2 {
 }
 
 .menu-icon {
-    font-size: 1.3rem;
-    padding: 0;
+    font-size: 1.5rem;
 }
 
+.border-success {
+    background: transparent;
+    color: var(--text-color);
+}
+
+.border-danger {
+    background: transparent;
+    color: var(--text-color);
+}
+
+.border-secondary {
+    background: transparent;
+    color: var(--text-color);
+}
 
 .border-success:hover {
     background: #198754;
-    color: white;
+    color: #fff;
 }
 
 .border-danger:hover {
     background: #dc3545;
-    color: white;
+    color: #fff;
 }
 
 .border-secondary:hover {
     background: #6c757d;
-    color: white;
+    color: #fff;
+}
+
+.list-group li {
+    color: var(--text-color);
+    background-color: var(--card-bg);
 }
 
 .form-control:focus,
@@ -263,7 +341,7 @@ h2 {
 }
 
 footer {
-    background: #023A26;
+    background: var(--primary-color);
     color: white;
     text-align: center;
     padding: 0.5rem 0;
@@ -277,8 +355,30 @@ footer p {
     margin: 0;
 }
 
+input {
+    color: var(--text-color)
+}
 
-@media (max-width: 1199px) {
+#custom-navbar .navbar-collapse {
+    display: none !important;
+}
+
+#custom-navbar .navbar-toggler {
+    display: block !important;
+}
+
+/* Expandido a partir de 1300px */
+@media (min-width: 1299px) {
+    #custom-navbar .navbar-collapse {
+        display: flex !important;
+    }
+
+    #custom-navbar .navbar-toggler {
+        display: none !important;
+    }
+}
+
+@media (max-width: 1299px) {
     .logo-container {
         margin-left: auto;
         margin-right: auto;
