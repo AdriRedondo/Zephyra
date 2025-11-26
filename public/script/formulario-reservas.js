@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("reservas-form-id");
     const nombre = document.getElementById("nombre");
     const correo = document.getElementById("correo");
-    const vehiculo = document.getElementById("vehiculos-form");
+    const vehiculo = document.getElementById("vehiculo-seleccionado");
     const inicio = document.getElementById("inicio");
     //const fin = document.getElementById("fin");
     const telefono = document.getElementById("telefono");
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
         //console.log("Fin: ", fin.value);
         console.log("Teléfono: ", telefono.value);
 
-        if (esValidoNombre && esValidoCorreo && esValidoInicio &&
+        if (esValidoNombre && esValidoCorreo && esValidoInicio && esValidoHoras &&
             esValidoVehiculo && esValidoTelefono) {
             form.submit();
 
@@ -109,11 +109,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function validarVehiculo() {
 
         const vehiculoValue = vehiculo.value.trim();
+        const vehiculoId = document.getElementById("vehiculo-id").value; // ⬅️ NUEVO
         const errorElement = document.getElementById("vehículo-error");
         console.log(vehiculoValue);
 
-        if (vehiculoValue == "") {
-            vehiculo.classList.remove("right-input");
+        if (vehiculoValue == "" || vehiculoId === "") {
+            colorearInputs(vehiculo, false);
             errorElement.textContent = "Seleccione uno de los vehículos disponibles";
             return false;
         }
@@ -208,28 +209,35 @@ document.addEventListener("DOMContentLoaded", () => {
         correctInputs += validInput(inicio);
         correctInputs += validInput(horas);
         correctInputs += validInput(telefono);
-
+        const porcentaje_text = document.getElementById('porcentaje-text');
         switch (correctInputs) {
             case 0:
                 progressBar.style.width = "0%"
+                porcentaje_text.value = '0.0%';
                 break;
             case 1:
                 progressBar.style.width = "16.7%";
+                porcentaje_text.value = '16.7%';
                 break;
             case 2:
                 progressBar.style.width = "33.3%";
+                porcentaje_text.value = '33.3%';
                 break;
             case 3:
                 progressBar.style.width = "50%";
+                porcentaje_text.value = '50%';
                 break;
             case 4:
-                progressBar.style.width = "66.7%"
+                progressBar.style.width = "66.7%";
+                porcentaje_text.value = '0.0%';
                 break;
             case 5:
-                progressBar.style.width = "83.3%"
+                progressBar.style.width = "83.3%";
+                porcentaje_text.value = '83.3%';
                 break;
             case 6:
-                progressBar.style.width = "100%"
+                progressBar.style.width = "100%";
+                porcentaje_text.value = '100%';
                 break;
         }
     }
@@ -239,4 +247,137 @@ document.addEventListener("DOMContentLoaded", () => {
         input.classList.remove("wrong-input");
     }
 });
+
+//Gestión del modal de selección de vehículo
+
+let vehiculosData = [];
+let vehiculosFiltrados = [];
+
+document.getElementById('modalVehiculos').addEventListener('show.bs.modal', function () {
+    if (vehiculosData.length === 0) {
+        cargarVehiculos();
+    }
+});
+
+// Función para cargar vehículos desde la API
+async function cargarVehiculos() {
+    try {
+        const response = await fetch('/api/vehiculos');
+        const data = await response.json();
+
+        // Filtrar solo vehículos disponibles
+        vehiculosData = data.filter(v => v.estado === 'disponible');
+        vehiculosFiltrados = [...vehiculosData];
+
+        inicializarFiltros();
+        mostrarVehiculos();
+    } catch (error) {
+        console.error('Error al cargar vehículos:', error);
+        document.getElementById('lista-vehiculos').innerHTML =
+            '<div class="col-12"><p class="text-danger">Error al cargar los vehículos</p></div>';
+    }
+}
+
+// Inicializar opciones de filtros
+function inicializarFiltros() {
+    const marcas = [...new Set(vehiculosData.map(v => v.marca))];
+    const modelos = [...new Set(vehiculosData.map(v => v.modelo))];
+    const plazas = [...new Set(vehiculosData.map(v => v.numero_plazas))].sort((a, b) => a - b);
+    const concesionarios = [...new Set(vehiculosData.map(v => v.nombre_concesionario).filter(Boolean))].sort();
+
+    llenarSelect('filtro-marca', marcas);
+    llenarSelect('filtro-modelo', modelos);
+    llenarSelect('filtro-plazas', plazas, ' plazas');
+    llenarSelect('filtro-concesionario', concesionarios);
+
+    // Event listeners para filtros
+    ['filtro-marca', 'filtro-modelo', 'filtro-plazas', 'filtro-concesionario'].forEach(id => {
+        document.getElementById(id).addEventListener('change', aplicarFiltros);
+    });
+}
+
+// Llenar un select con opciones
+function llenarSelect(id, opciones, sufijo = '') {
+    const select = document.getElementById(id);
+    const valorActual = select.value;
+
+    select.innerHTML = '<option value="">Todos</option>';
+    opciones.forEach(opcion => {
+        const option = document.createElement('option');
+        option.value = opcion;
+        option.textContent = opcion + sufijo;
+        select.appendChild(option);
+    });
+
+    select.value = valorActual;
+}
+
+// Aplicar filtros
+function aplicarFiltros() {
+    const marca = document.getElementById('filtro-marca').value.toLowerCase();
+    const modelo = document.getElementById('filtro-modelo').value.toLowerCase();
+    const plazas = document.getElementById('filtro-plazas').value;
+    const concesionario = document.getElementById('filtro-concesionario').value.toLowerCase();
+
+    vehiculosFiltrados = vehiculosData.filter(v => {
+        return (!marca || v.marca.toLowerCase() === marca) &&
+            (!modelo || v.modelo.toLowerCase() === modelo) &&
+            (!plazas || v.numero_plazas === parseInt(plazas)) &&
+            (!concesionario || v.nombre_concesionario?.toLowerCase() === concesionario);
+    });
+
+    mostrarVehiculos();
+}
+
+// Mostrar vehículos en el modal
+function mostrarVehiculos() {
+    const listaVehiculos = document.getElementById('lista-vehiculos');
+    const sinVehiculos = document.getElementById('sin-vehiculos');
+
+    if (vehiculosFiltrados.length === 0) {
+        listaVehiculos.style.display = 'none';
+        sinVehiculos.style.display = 'block';
+        return;
+    }
+
+    listaVehiculos.style.display = 'flex';
+    sinVehiculos.style.display = 'none';
+
+    listaVehiculos.innerHTML = vehiculosFiltrados.map(v => `
+        <div class="col">
+            <div class="card h-100 vehiculo-card" style="cursor: pointer;" 
+                 onclick="seleccionarVehiculo(${v.id_vehiculo}, '${v.marca}', '${v.modelo}')">
+                <img src="/es-vehiculos/imagen/${v.id_vehiculo}" 
+                     class="card-img-top" 
+                     alt="${v.marca} ${v.modelo}"
+                     style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h6 class="card-title">${v.marca} ${v.modelo}</h6>
+                    <p class="card-text small mb-1">
+                        <i class="bi bi-people-fill"></i> ${v.numero_plazas} plazas
+                    </p>
+                    <p class="card-text small mb-1">
+                        <i class="bi bi-pin-map-fill"></i> ${v.nombre_concesionario}
+                    </p>
+                    <p class="card-text small">
+                    <i class="bi bi-palette"></i> ${v.color}</p>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Seleccionar vehículo
+function seleccionarVehiculo(id, marca, modelo) {
+    const vehiculoSeleccionado = document.getElementById('vehiculo-seleccionado');
+    const vehiculoId = document.getElementById('vehiculo-id');
+
+    vehiculoId.value = id;
+    vehiculoSeleccionado.value = `${marca} ${modelo}`;
+
+    vehiculoSeleccionado.dispatchEvent(new Event('input'));
+
+    const modal = bootstrap.Modal.getInstance(document.getElementById('modalVehiculos'));
+    modal.hide();
+}
 

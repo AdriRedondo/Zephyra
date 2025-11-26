@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const router = express.Router();
 const pool = require('../db');
+const requiredAdminId = require('../autorizaciones').requiredAdminId;
 
 // Configuración de multer para almacenar archivos en memoria con formato BLOB ()
 
@@ -121,7 +122,7 @@ router.get('/es-vehiculos/imagen/:id', (req, res) => {
 
 //GET del form de crear un nuevo vehículo como administrador
 // Esto lo ponemos antes que /:id porque si no accede antes al get de :id que al de nuevo_vehiculo
-router.get('/es-vehiculos/nuevo-vehiculo', (req, res) => {
+router.get('/es-vehiculos/nuevo-vehiculo', requiredAdminId, (req, res) => {
     const language = req.body.idioma;
 
     //Cargamos concesionarios para el select del formulario
@@ -138,7 +139,7 @@ router.get('/es-vehiculos/nuevo-vehiculo', (req, res) => {
 });
 
 //POST para crear un nuevo vehículo como administrador
-router.post('/es-vehiculos/nuevo-vehiculo', multerFactory.single('imagen'), (req, res) => {
+router.post('/es-vehiculos/nuevo-vehiculo', requiredAdminId, multerFactory.single('imagen'), (req, res) => {
     //Validación del formato PNG
     if (req.fileValidationError === 'FORMATO_INVALIDO_PNG' ||
         (req.file && req.file.mimetype !== 'image/png')) {
@@ -238,7 +239,7 @@ router.get('/es-vehiculos/:id', (req, res) => {
     });
 });
 
-router.get('/es-vehiculos/:id/editar', (req, res) => {
+router.get('/es-vehiculos/:id/editar', requiredAdminId, (req, res) => {
     const language = req.body.idioma;
 
     obtenerConcesionarios((errConc, concesionarios) => {
@@ -271,7 +272,7 @@ router.get('/es-vehiculos/:id/editar', (req, res) => {
 
 });
 
-router.post('/es-vehiculos/:id/editar', multerFactory.single('imagen'), (req, res) => {
+router.post('/es-vehiculos/:id/editar', requiredAdminId, multerFactory.single('imagen'), (req, res) => {
 
     if (req.fileValidationError === 'FORMATO_INVALIDO_PNG' ||
         (req.file && req.file.mimetype !== 'image/png')) {
@@ -356,7 +357,7 @@ router.post('/es-vehiculos/:id/editar', multerFactory.single('imagen'), (req, re
     });
 });
 
-router.post('/es-vehiculos/:id/eliminar', (req, res) => {
+router.post('/es-vehiculos/:id/eliminar', requiredAdminId, (req, res) => {
     console.log(`Se elimina el vehículo con matrícula: ${req.params.id}`);
 
     const consulta = 'DELETE FROM Vehiculos WHERE id_vehiculo = ?';

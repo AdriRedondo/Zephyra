@@ -1,5 +1,5 @@
-<%- include('es-header', { title: 'Reservas de coches' , estilos: ['style', 'forms' ], actual_es: 'es-reservas' ,
-    actual_en: 'en-bookings' }) %>
+<%- include('es-header', { title: 'Reservas de coches' , estilos: ['style', 'forms' , 'reservas' ],
+    actual_es: 'es-reservas' , actual_en: 'en-bookings' }) %>
     <main>
         <section id="Reservas" class="reservas">
             <form id="reservas-form-id" class="formularios reservas-form" aria-label="Formulario de reserva"
@@ -39,19 +39,20 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="vehiculos-form" class="form-label">Vehículo a reservar: <span
+                                <label for="vehiculo-seleccionado" class="form-label">Vehículo a reservar: <span
                                         class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text">
                                         <i class="bi bi-ev-front"></i>
                                     </span>
-                                    <select id="vehiculos-form" name="vehiculos_form" class="form-control">
-                                        <option value="">Seleccionar vehículo</option>
-                                        <option value="coche">Coche</option>
-                                        <option value="moto">Moto</option>
-                                        <option value="patinete">Patinete</option>
-                                        <option value="furgoneta">Furgoneta</option>
-                                    </select>
+                                    <input type="text" id="vehiculo-seleccionado" class="form-control"
+                                        placeholder="Haz clic para seleccionar un vehículo" data-bs-toggle="modal"
+                                        data-bs-target="#modalVehiculos" readonly required>
+                                    <input type="hidden" id="vehiculo-id" name="vehiculo">
+                                    <button type="button" class="btn border-secondary" data-bs-toggle="modal"
+                                        data-bs-target="#modalVehiculos">
+                                        <i class="bi bi-search"></i>
+                                    </button>
                                 </div>
                                 <span id="vehículo-error" class="error"></span>
                             </div>
@@ -102,17 +103,76 @@
                                 aria-valuemax="100">
                                 <div class="progress-bar"></div>
                             </div>
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <button type="reset" class="btn border-secondary" aria-label="Limpiar formulario"> <i
-                                        class="bi bi-arrow-clockwise me-2"></i> Limpiar datos</button>
-                                <button type="submit" class="btn border-success" aria-label="Enviar formulario"> <i
-                                        class="bi bi-send me-2"></i> Enviar reserva</button>
+                            <div>
+                                <div id="porcentaje-text">
+                                    0.0%
+                                </div>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button type="reset" class="btn border-secondary" aria-label="Limpiar formulario">
+                                        <i class="bi bi-arrow-clockwise me-2"></i> Limpiar datos</button>
+                                    <button type="submit" class="btn border-success" aria-label="Enviar formulario"> <i
+                                            class="bi bi-send me-2"></i> Enviar reserva</button>
+                                </div>
+
 
                             </div>
                         </div>
                     </fieldset>
                 </div>
+
             </form>
         </section>
     </main>
+    <!-- Modal de selección de vehículos -->
+    <div class="modal fade" id="modalVehiculos" tabindex="-1" aria-labelledby="modalVehiculosLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalVehiculosLabel">Seleccionar Vehículo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Filtros en el modal -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label>Marca:</label>
+                            <select id="filtro-marca" class="form-select form-select-sm">
+                                <option value="">Todas</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Modelo:</label>
+                            <select id="filtro-modelo" class="form-select form-select-sm">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Plazas:</label>
+                            <select id="filtro-plazas" class="form-select form-select-sm">
+                                <option value="">Todas</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Concesionario:</label>
+                            <select id="filtro-concesionario" class="form-select form-select-sm">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Lista de vehículos -->
+                    <div id="lista-vehiculos" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                        <!-- Aquí se cargarán los vehículos desde la BD en el js -->
+                    </div>
+
+                    <div id="sin-vehiculos" class="text-center py-4">
+                        <p class="text-muted">No hay vehículos disponibles con los filtros seleccionados</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <%- include('footer', {scripts: ['formulario-reservas']}) -%>
