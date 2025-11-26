@@ -115,7 +115,8 @@
                                                 </a>
 
                                                 <form action="/es-vehiculos/<%= vehiculo.id_vehiculo %>/eliminar"
-                                                    method="post" class="flex-fill">
+                                                    method="post" class="flex-fill"
+                                                    onsubmit="return confirm('¿Estás seguro de eliminar este vehículo?');">
                                                     <button class="btn border-danger" type="submit">
                                                         <i class="bi bi-trash-fill"></i>
                                                     </button>

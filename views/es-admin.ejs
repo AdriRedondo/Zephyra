@@ -16,137 +16,294 @@
                 <div class="row">
                     <h2>Gestión de concesionarios</h2>
                 </div>
+
+                <!-- Lista de concesionarios existentes -->
                 <div class="row">
-                    Contenido...
+                    <h3>- Concesionarios registrados</h3>
+                    <% if (typeof concesionarios !=='undefined' && concesionarios.length> 0) { %>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Ciudad</th>
+                                        <th>Dirección</th>
+                                        <th>Teléfono</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% concesionarios.forEach(c=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= c.id_concesionario %>
+                                            </td>
+                                            <td>
+                                                <%= c.nombre %>
+                                            </td>
+                                            <td>
+                                                <%= c.ciudad %>
+                                            </td>
+                                            <td>
+                                                <%= c.direccion %>
+                                            </td>
+                                            <td>
+                                                <%= c.telefono_contacto %>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex">
+
+                                                    <a class="btn btn-sm border-secondary me-2"
+                                                        href="/es-dealer/edit/<%= c.id_concesionario %>">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <form action="/dealer-delete/<%= c.id_concesionario %>"
+                                                        method="post"
+                                                        onsubmit="return confirm('¿Estás seguro de eliminar este concesionario?');">
+                                                        <input type="hidden" name="idioma" value="español">
+                                                        <button type="submit" class="btn btn-sm border-danger">
+                                                            <i class="bi bi-trash-fill"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% } else { %>
+                            <div class="alert alert-info">
+                                No hay concesionarios registrados
+                            </div>
+                            <% } %>
+                                <% if (typeof success_lista !=='undefined' && success_lista) { %>
+                                    <div class="alert alert-success" role="alert">
+                                        <%= success_lista %>
+                                    </div>
+                                    <% } %>
+                                        <% if (typeof error_lista !=='undefined' && error_lista) { %>
+                                            <div class="alert alert-danger" role="alert">
+                                                <%= error_ista %>
+                                            </div>
+                                            <% } %>
+                </div>
+                <!-- Formulario de registro -->
+                <div class="row mb-4">
+                    <form id="dealer-form-id" class="formularios" aria-label="Formulario de concesionario" method="post"
+                        action="/dealer-register">
+                        <fieldset>
+                            <input type="hidden" name="idioma" value="español">
+                            <legend>
+                                <h3>- Registrar nuevo concesionario</h3>
+                            </legend>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="dealer-nombre" class="form-label">Nombre: <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-building"></i>
+                                        </span>
+                                        <input type="text" id="dealer-nombre" name="nombre" class="form-control"
+                                            required placeholder="Ej: Zephyra Madrid Centro">
+                                    </div>
+                                    <span id="dealer-nombre-error" class="error" aria-live="polite"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="dealer-ciudad" class="form-label">Ciudad: <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-geo-alt"></i>
+                                        </span>
+                                        <input type="text" id="dealer-ciudad" name="ciudad" class="form-control"
+                                            required placeholder="Ej: Madrid">
+                                    </div>
+                                    <span id="dealer-ciudad-error" class="error" aria-live="polite"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="dealer-direccion" class="form-label">Dirección: <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-pin-map-fill"></i>
+                                        </span>
+                                        <input type="text" id="dealer-direccion" name="direccion" class="form-control"
+                                            required placeholder="Ej: C/Larios de la Rosa, 23">
+                                    </div>
+                                    <span id="dealer-direccion-error" class="error" aria-live="polite"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="dealer-telefono" class="form-label">Teléfono: <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-telephone"></i>
+                                        </span>
+                                        <input type="tel" id="dealer-telefono" name="telefono" class="form-control"
+                                            placeholder="Ej: 666777888" pattern="^[0-9]{9}$"
+                                            title="Debe contener 9 dígitos">
+                                    </div>
+                                    <span id="dealer-telefono-error" class="error" aria-live="polite"></span>
+                                </div>
+
+                                <% if (typeof success !=='undefined' && success) { %>
+                                    <div class="alert alert-success" role="alert">
+                                        <%= success %>
+                                    </div>
+                                    <% } %>
+                                        <% if (typeof error !=='undefined' && error) { %>
+                                            <div class="alert alert-danger" role="alert">
+                                                <%= error %>
+                                            </div>
+                                            <% } %>
+
+                                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                    <button type="reset" class="btn border-secondary"
+                                                        aria-label="Limpiar formulario">
+                                                        <i class="bi bi-arrow-clockwise me-2"></i> Limpiar datos
+                                                    </button>
+                                                    <button type="submit" class="btn border-success"
+                                                        aria-label="Enviar formulario">
+                                                        <i class="bi bi-building me-2"></i> Registrar concesionario
+                                                    </button>
+                                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
                 </div>
             </div>
         </section>
-        <section id="gestor-usuarios" class="admin-section">
+        <section id="gestor-usuarios-id" class="admin-section">
             <div class="container-fluid">
                 <div class="row">
                     <h2>Gestión de usuarios</h2>
                 </div>
                 <div class="row">
-                    <form id="registro-form-id" class="formularios" aria-label="Formulario de registro" method="post"
-                        action="/submit-register">
-                        <div class="mb-3">
-                            <fieldset class="registro-fs">
-                                <input type="hidden" name="idioma" value="español">
-                                <legend>Registrar usuario</legend>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="nombre" class="form-label">Nombre completo: <span
-                                                class="text-danger">*</span>
-                                        </label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">
-                                                <i class="bi bi-person"></i>
-                                            </span>
-                                            <input type="text" id="nombre" name="nombre" class="form-control" required
-                                                placeholder="Ej: Eustaquio Ramirez">
-                                        </div>
-                                        <span id="nombre-error" class="error" aria-live="polite"></span>
+                    <form id="user-form-id" class="formularios" aria-label="Formulario de usuario" method="post"
+                        action="/user-register">
+                        <fieldset>
+                            <input type="hidden" name="idioma" value="español">
+                            <legend>
+                                <h3>- Registrar usuario</h3>
+                            </legend>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="nombre" class="form-label">Nombre completo: <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-person"></i>
+                                        </span>
+                                        <input type="text" id="nombre" name="nombre" class="form-control" required
+                                            placeholder="Ej: Eustaquio Ramirez">
                                     </div>
-                                    <div class="col-md-6">
-                                        <label for="correo" class="form-label">Correo electrónico: <span
-                                                class="text-danger">*</span>
-                                        </label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">
-                                                <i class="bi bi-calendar"></i>
-                                            </span>
-                                            <input type="text" id="correo" name="correo" class="form-control" required
-                                                placeholder="Ej: ASDFg7&A">
-                                        </div>
-                                        <span id="correo-error" class="error" aria-live="polite"></span>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="contraseña" class="form-label">Contraseña: <span
-                                                class="text-danger">*</span>
-                                        </label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">
-                                                <i class="bi bi-lock"></i>
-                                            </span>
-                                            <input type="text" id="contraseña" name="password" class="form-control"
-                                                required placeholder="Ej: ASDFg7&A">
-                                        </div>
-                                        <span id="contraseña-error" class="error" aria-live="polite"></span>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="telefono" class="form-label">Teléfono:
-                                        </label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">
-                                                <i class="bi bi-telephone"></i>
-                                            </span>
-                                            <input type="tel" id="telefono" name="telefono" class="form-control"
-                                                placeholder="Ej: 666777888" pattern="^[0-9]{9}$"
-                                                title="Debe contener 9 dígitos">
-                                        </div>
-                                        <span id="telefono-error" class="error" aria-live="polite"></span>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="concesionario" class="form-label">Concesionario asignado:
-                                        </label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">
-                                                <i class="bi bi-building"></i>
-                                            </span>
-                                            <select id="concesionario" name="concesionario" class="form-select"
-                                                required>
-                                                <option value="">Sin asignar</option>
-                                                <% if (typeof concesionarios !=='undefined' ) { %>
-                                                    <% concesionarios.forEach(c=> { %>
-                                                        <option value="<%= c.id_concesionario %>">
-                                                            <%= c.id_concesionario %> : <%= c.nombre %> - <%= c.ciudad
-                                                                        %>
-                                                        </option>
-                                                        <% }) %>
-                                                            <% } %>
-                                            </select>
-                                        </div>
-                                        <span id="concesionario-error" class="error" aria-live="polite"></span>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="rol" class="form-label">Rol de usuario:
-                                        </label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">
-                                                <i class="bi bi-briefcase"></i>
-                                            </span>
-                                            <select id="rol" name="rol" class="form-select">
-                                                <option value="">Sin asignar</option>
-                                                <option value="empleado">Empleado</option>
-                                                <option value="admin">Administrador</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <% if (typeof success !=='undefined' && success) { %>
-                                        <div class="alert alert-success" role="alert">
-                                            <%= success %>
-                                        </div>
-                                        <% } %>
-                                            <% if (typeof error !=='undefined' && error) { %>
-                                                <div class="alert alert-danger" role="alert">
-                                                    <%= error %>
-                                                </div>
-                                                <% } %>
-                                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-
-                                                        <button type="reset" class="btn border-secondary"
-                                                            aria-label="Limpiar formulario">
-                                                            <i class="bi bi-arrow-clockwise me-2"></i> Limpiar
-                                                            datos</button>
-                                                        <button type="submit" class="btn border-success"
-                                                            aria-label="Enviar formulario">
-                                                            Registrar usuario</button>
-                                                    </div>
+                                    <span id="nombre-error" class="error" aria-live="polite"></span>
                                 </div>
-                        </div>
+                                <div class="col-md-6">
+                                    <label for="correo" class="form-label">Correo electrónico: <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-calendar"></i>
+                                        </span>
+                                        <input type="text" id="correo" name="correo" class="form-control" required
+                                            placeholder="Ej: ASDFg7&A">
+                                    </div>
+                                    <span id="correo-error" class="error" aria-live="polite"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="contraseña" class="form-label">Contraseña: <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-lock"></i>
+                                        </span>
+                                        <input type="text" id="contraseña" name="password" class="form-control" required
+                                            placeholder="Ej: ASDFg7&A">
+                                    </div>
+                                    <span id="contraseña-error" class="error" aria-live="polite"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="telefono" class="form-label">Teléfono:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-telephone"></i>
+                                        </span>
+                                        <input type="tel" id="telefono" name="telefono" class="form-control"
+                                            placeholder="Ej: 666777888" pattern="^[0-9]{9}$"
+                                            title="Debe contener 9 dígitos">
+                                    </div>
+                                    <span id="telefono-error" class="error" aria-live="polite"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="concesionario" class="form-label">Concesionario asignado:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-building"></i>
+                                        </span>
+                                        <select id="concesionario" name="concesionario" class="form-select" required>
+                                            <option value="">Sin asignar</option>
+                                            <% if (typeof concesionarios !=='undefined' ) { %>
+                                                <% concesionarios.forEach(c=> { %>
+                                                    <option value="<%= c.id_concesionario %>">
+                                                        <%= c.id_concesionario %> : <%= c.nombre %> - <%= c.ciudad %>
+                                                    </option>
+                                                    <% }) %>
+                                                        <% } %>
+                                        </select>
+                                    </div>
+                                    <span id="concesionario-error" class="error" aria-live="polite"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="rol" class="form-label">Rol de usuario:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-briefcase"></i>
+                                        </span>
+                                        <select id="rol" name="rol" class="form-select">
+                                            <option value="">Sin asignar</option>
+                                            <option value="empleado">Empleado</option>
+                                            <option value="admin">Administrador</option>
+                                        </select>
+                                    </div>
+                                </div>
 
+                                <% if (typeof success !=='undefined' && success) { %>
+                                    <div class="alert alert-success" role="alert">
+                                        <%= success %>
+                                    </div>
+                                    <% } %>
+                                        <% if (typeof error !=='undefined' && error) { %>
+                                            <div class="alert alert-danger" role="alert">
+                                                <%= error %>
+                                            </div>
+                                            <% } %>
+                                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+
+                                                    <button type="reset" class="btn border-secondary"
+                                                        aria-label="Limpiar formulario">
+                                                        <i class="bi bi-arrow-clockwise me-2"></i> Limpiar
+                                                        datos</button>
+                                                    <button type="submit" class="btn border-success"
+                                                        aria-label="Enviar formulario"><i class="bi bi-person me-2"></i>
+                                                        Registrar usuario</button>
+                                                </div>
+                            </div>
                 </div>
+
                 </fieldset>
             </div>
             </form>
@@ -164,4 +321,5 @@
             </div>
         </section>
     </main>
-    <%- include('footer', {scripts: []}) -%>
+
+    <%- include('footer', {scripts: ['formulario-registro', 'formulario-concesionario' , 'admin' ]}) -%>

@@ -1,0 +1,114 @@
+<%- include('es-header', { title: 'Editar Concesionario' , estilos: ['style', 'forms' ], actual_es: '' , actual_en: ''
+    }) %>
+
+    <main>
+        <section id="EditarConcesionario" class="contacto">
+            <form id="editar-concesionario-form" class="formularios" aria-label="Formulario edición de concesionario"
+                method="post" action="/dealer-edit/<%= concesionario.id_concesionario %>">
+
+                <div class="mb-3">
+                    <fieldset class="contact-fs">
+                        <input type="hidden" name="idioma" value="español">
+                        <input type="hidden" id="edit-id" name="id" value="<%= concesionario.id_concesionario %>">
+
+                        <legend>
+                            <h2>Editar concesionario</h2>
+                        </legend>
+
+                        <div class="row g-3">
+
+                            <!-- Nombre -->
+                            <div class="col-md-6">
+                                <label for="edit-nombre" class="form-label">
+                                    Nombre: <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-building"></i>
+                                    </span>
+                                    <input type="text" id="nombre" name="nombre" class="form-control" required
+                                        value="<%= concesionario.nombre %>">
+                                </div>
+                                <span id="edit-nombre-error" class="error" aria-live="polite"></span>
+                            </div>
+
+                            <!-- Ciudad -->
+                            <div class="col-md-6">
+                                <label for="edit-ciudad" class="form-label">
+                                    Ciudad: <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-geo-alt"></i>
+                                    </span>
+                                    <input type="text" id="ciudad" name="ciudad" class="form-control" required
+                                        value="<%= concesionario.ciudad %>">
+                                </div>
+                                <span id="edit-ciudad-error" class="error" aria-live="polite"></span>
+                            </div>
+
+                            <!-- Dirección -->
+                            <div class="col-md-6">
+                                <label for="edit-direccion" class="form-label">
+                                    Dirección: <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-geo"></i>
+                                    </span>
+                                    <input type="text" id="direccion" name="direccion" class="form-control" required
+                                        value="<%= concesionario.direccion %>">
+                                </div>
+                                <span id="edit-direccion-error" class="error" aria-live="polite"></span>
+                            </div>
+
+                            <!-- Teléfono -->
+                            <div class="col-md-6">
+                                <label for="edit-telefono" class="form-label">
+                                    Teléfono: <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-telephone"></i>
+                                    </span>
+                                    <input type="tel" id="telefono" name="telefono" class="form-control"
+                                        pattern="^[0-9]{9}$" title="Debe contener 9 dígitos" required
+                                        value="<%= concesionario.telefono_contacto %>">
+                                </div>
+                                <span id="edit-telefono-error" class="error" aria-live="polite"></span>
+                            </div>
+
+                            <!-- Mensajes del servidor -->
+                            <% if (typeof success !=='undefined' && success) { %>
+                                <div class="alert alert-success">
+                                    <%= success %>
+                                </div>
+                                <% } %>
+
+                                    <% if (typeof error !=='undefined' && error) { %>
+                                        <div class="alert alert-danger">
+                                            <%= error %>
+                                        </div>
+                                        <% } %>
+
+                                            <!-- Botones -->
+                                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                                                <button type="reset" class="btn border-secondary px-4"
+                                                    aria-label="Limpiar formulario">
+                                                    <i class="bi bi-arrow-clockwise me-2"></i> Limpiar
+                                                </button>
+                                                <button type="submit" class="btn border-success px-4"
+                                                    aria-label="Guardar cambios">
+                                                    <i class="bi bi-save me-2"></i> Guardar cambios
+                                                </button>
+                                            </div>
+
+                        </div>
+                    </fieldset>
+                </div>
+
+            </form>
+        </section>
+    </main>
+
+    <%- include('footer', {scripts: ['formulario-contacto']}) %>

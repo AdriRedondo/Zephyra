@@ -357,7 +357,7 @@ function mostrarVehiculos() {
                         <i class="bi bi-people-fill"></i> ${v.numero_plazas} plazas
                     </p>
                     <p class="card-text small mb-1">
-                        <i class="bi bi-pin-map-fill"></i> ${v.nombre_concesionario}
+                        <i class="bi bi-building"></i> ${v.nombre_concesionario}
                     </p>
                     <p class="card-text small">
                     <i class="bi bi-palette"></i> ${v.color}</p>
