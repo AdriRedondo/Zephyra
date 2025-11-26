@@ -213,31 +213,31 @@ document.addEventListener("DOMContentLoaded", () => {
         switch (correctInputs) {
             case 0:
                 progressBar.style.width = "0%"
-                porcentaje_text.value = '0.0%';
+                porcentaje_text.textContent = '0.0%';
                 break;
             case 1:
                 progressBar.style.width = "16.7%";
-                porcentaje_text.value = '16.7%';
+                porcentaje_text.textContent = '16.7%';
                 break;
             case 2:
                 progressBar.style.width = "33.3%";
-                porcentaje_text.value = '33.3%';
+                porcentaje_text.textContent = '33.3%';
                 break;
             case 3:
                 progressBar.style.width = "50%";
-                porcentaje_text.value = '50%';
+                porcentaje_text.textContent = '50%';
                 break;
             case 4:
                 progressBar.style.width = "66.7%";
-                porcentaje_text.value = '0.0%';
+                porcentaje_text.textContent = '66.7%';
                 break;
             case 5:
                 progressBar.style.width = "83.3%";
-                porcentaje_text.value = '83.3%';
+                porcentaje_text.textContent = '83.3%';
                 break;
             case 6:
                 progressBar.style.width = "100%";
-                porcentaje_text.value = '100%';
+                porcentaje_text.textContent = '100%';
                 break;
         }
     }
