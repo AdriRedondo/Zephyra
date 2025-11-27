@@ -1,63 +1,77 @@
-<%- include('en-header', { title: 'Electric Vehicle Fleet Management' , estilos: ['style', 'index' ],
-    actual_es: 'es-inicio' , actual_en: 'en-home' }) %>
+<%- include('en-header', { title: 'Electric Vehicle Fleet Management' , estilos:
+['style', 'index' ],
+actual_es: 'es-inicio' , actual_en: 'en-home' }) %>
 
-    <main>
-        <section id="Inicio">
-            <h2>Sustainable Mobility Platform</h2>
+<main>
+    <section id="inicio">
 
-            <p>In a world moving towards <strong>sustainable mobility</strong>,
-                &copy;<strong class="zephyra">Zephyra</strong> is not just an electric
-                car company; it is the materialization of an <strong>commitment</strong>
-                to the planet. We offer an <em>innovative, silent
-                    and powerful driving experience</em>, where luxury and design merge
-                with the most advanced <strong>energy
-                    efficiency</strong>. With
-                &copy;<strong class="zephyra">Zephyra</strong>, you don't just acquire
-                a vehicle; you join a <strong>green revolution</strong> that
-                is redefining
-                the future of the road, one kilometer at a time. Get your car
-                from 100 &euro;/ day.
-            </p>
-            <div class="div-visual-content">
-                <a href="./images/coche-electrico-grande.png" class="mb-3 mb-md-0">
-                    <img src="./images/coche-electrico.png" alt="Woman leaning on a charging electric car"
-                        title="Electric Car">
+        <% if(usuario) {%>
+        <% if (typeof login !=='undefined' ) { %>
+        <div class="alert alert-success" role="alert">
+            ¡You have successfully login <%= usuario.nombre %> !
+        </div>
+        <% } %>
+        <% } %>
+        <h2>Sustainable Mobility Platform</h2>
 
-                </a>
-                <video src="./videos/video-coche-2.mp4" autoplay controls></video>
-            </div>
-            <h2>Benefits of Electric Vehicles</h2>
-            <div class="lista-beneficios">
-                <ol type=1>
-                    <li>Zero Emissions</li>
-                    <li>Lower Maintenance Cost</li>
-                    <li>Energy Efficiency</li>
-                </ol>
-                <ul>
-                    <li>Flexible Rental</li>
-                    <li>Centralized Management</li>
-                    <li>Total Transparency</li>
-                    <li>Real-Time Data</li>
-                    <li>Guaranteed Accessibility</li>
-                    <li>Simplified Self-Management</li>
-                </ul>
-            </div>
-            <dl>
-                <dt><strong>HTML</strong></dt>
-                <dd>Markup language for structuring web pages.</dd>
+        <p>In a world moving towards <strong>sustainable mobility</strong>,
+            &copy;<strong class="zephyra">Zephyra</strong> is not just an
+            electric
+            car company; it is the materialization of an
+            <strong>commitment</strong>
+            to the planet. We offer an <em>innovative, silent
+                and powerful driving experience</em>, where luxury and design
+            merge
+            with the most advanced <strong>energy
+                efficiency</strong>. With
+            &copy;<strong class="zephyra">Zephyra</strong>, you don't just
+            acquire
+            a vehicle; you join a <strong>green revolution</strong> that
+            is redefining
+            the future of the road, one kilometer at a time. Get your car
+            from 100 &euro;/ day.
+        </p>
+        <div class="div-visual-content">
+            <a href="./images/coche-electrico-grande.png" class="mb-3 mb-md-0">
+                <img src="./images/coche-electrico.png"
+                    alt="Woman leaning on a charging electric car"
+                    title="Electric Car">
 
-                <dt><strong>CSS</strong></dt>
-                <dd>Style language for formatting content.</dd>
+            </a>
+            <video src="./videos/video-coche-2.mp4" autoplay controls></video>
+        </div>
+        <h2>Benefits of Electric Vehicles</h2>
+        <div class="lista-beneficios">
+            <ol type=1>
+                <li>Zero Emissions</li>
+                <li>Lower Maintenance Cost</li>
+                <li>Energy Efficiency</li>
+            </ol>
+            <ul>
+                <li>Flexible Rental</li>
+                <li>Centralized Management</li>
+                <li>Total Transparency</li>
+                <li>Real-Time Data</li>
+                <li>Guaranteed Accessibility</li>
+                <li>Simplified Self-Management</li>
+            </ul>
+        </div>
+        <dl>
+            <dt><strong>HTML</strong></dt>
+            <dd>Markup language for structuring web pages.</dd>
 
-                <dt><strong>JSON</strong></dt>
-                <dd>Simple text format for data exchange.</dd>
-            </dl>
+            <dt><strong>CSS</strong></dt>
+            <dd>Style language for formatting content.</dd>
 
-            <div class="enlace-footer">
-                <a href="https://www.ucm.es/">Complutense University of
-                    Madrid</a>
-            </div>
-            <br>
-        </section>
-    </main>
-    <%- include('footer', {scripts: []}) -%>
+            <dt><strong>JSON</strong></dt>
+            <dd>Simple text format for data exchange.</dd>
+        </dl>
+
+        <div class="enlace-footer">
+            <a href="https://www.ucm.es/">Complutense University of
+                Madrid</a>
+        </div>
+        <br>
+    </section>
+</main>
+<%- include('footer', {scripts: []}) -%>

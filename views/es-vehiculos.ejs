@@ -1,148 +1,161 @@
-<%- include('es-header', { title: 'Vehículos disponibles' , estilos: ['style', 'vehiculos' ], actual_es: 'es-vehiculos'
-    , actual_en: 'en-vehicles' }) %>
-    <main class="vehiculos-container">
+<%- include('es-header', { title: 'Vehículos disponibles' , estilos: ['style',
+'vehiculos' ], actual_es: 'es-vehiculos'
+, actual_en: 'en-vehicles' }) %>
+<main class="vehiculos-container">
 
-        <aside>
-            <div class="row filtros">
+    <aside>
+        <div class="row filtros">
 
-                <h3>Filtros</h3>
+            <h3>Filtros</h3>
 
-                <form action="/es-vehiculos" method="get">
+            <form action="/es-vehiculos" method="get">
 
-                    <label>Marca:</label>
-                    <select name="marca" class="form-select mb-3">
-                        <option value>Todas</option>
-                        <% const marcas=[...new Set(vehiculos.map(v=> v.marca))];
-                            marcas.forEach(m => {
-                            %>
-                            <option value="<%= m %>" <%=filtros && filtros.marca===m ? 'selected' : '' %>>
-                                <%= m %>
-                            </option>
-                            <% }) %>
-                    </select>
+                <label>Marca:</label>
+                <select name="marca" class="form-select mb-3">
+                    <option value>Todas</option>
+                    <% const marcas=[...new Set(vehiculos.map(v=> v.marca))];
+                    marcas.forEach(m => {
+                    %>
+                    <option value="<%= m %>" <%=filtros && filtros.marca===m ?
+                        'selected' : '' %>>
+                        <%= m %>
+                    </option>
+                    <% }) %>
+                </select>
 
-                    <label>Modelo:</label>
-                    <select name="modelo" class="form-select mb-3">
-                        <option value>Todos</option>
-                        <% const modelos=[...new Set(vehiculos.map(v=> v.modelo))];
-                            modelos.forEach(mod => {
-                            %>
-                            <option value="<%= mod %>" <%=filtros && filtros.modelo===mod ? 'selected' : '' %>>
-                                <%= mod %>
-                            </option>
-                            <% }) %>
-                    </select>
+                <label>Modelo:</label>
+                <select name="modelo" class="form-select mb-3">
+                    <option value>Todos</option>
+                    <% const modelos=[...new Set(vehiculos.map(v=> v.modelo))];
+                    modelos.forEach(mod => {
+                    %>
+                    <option value="<%= mod %>" <%=filtros &&
+                        filtros.modelo===mod ? 'selected' : '' %>>
+                        <%= mod %>
+                    </option>
+                    <% }) %>
+                </select>
 
-                    <label>Número de plazas:</label>
-                    <select name="plazas" class="form-select mb-3">
-                        <option value>Todas</option>
-                        <% const plazas=[...new Set(vehiculos.map(v=>
-                            v.numero_plazas))].sort((a, b) => a - b);
-                            plazas.forEach(p => {
-                            %>
-                            <option value="<%= p %>" <%=filtros && filtros.plazas==p ? 'selected' : '' %>>
-                                <%= p %> plazas
-                            </option>
-                            <% }) %>
-                    </select>
+                <label>Número de plazas:</label>
+                <select name="plazas" class="form-select mb-3">
+                    <option value>Todas</option>
+                    <% const plazas=[...new Set(vehiculos.map(v=>
+                    v.numero_plazas))].sort((a, b) => a - b);
+                    plazas.forEach(p => {
+                    %>
+                    <option value="<%= p %>" <%=filtros && filtros.plazas==p ?
+                        'selected' : '' %>>
+                        <%= p %> plazas
+                    </option>
+                    <% }) %>
+                </select>
 
-                    <label>Concesionario:</label>
-                    <select name="concesionario" class="form-select mb-3">
-                        <option value>Todos</option>
-                        <% const concesionarios=[...new Set(vehiculos.map(v=>
-                            v.nombre_concesionario).filter(Boolean))].sort();
-                            concesionarios.forEach(c => {
-                            %>
-                            <option value="<%= c %>" <%=filtros && filtros.concesionario===c ? 'selected' : '' %>>
-                                <%= c %>
-                            </option>
-                            <% }) %>
-                    </select>
+                <label>Concesionario:</label>
+                <select name="concesionario" class="form-select mb-3">
+                    <option value>Todos</option>
+                    <% const concesionarios=[...new Set(vehiculos.map(v=>
+                    v.nombre_concesionario).filter(Boolean))].sort();
+                    concesionarios.forEach(c => {
+                    %>
+                    <option value="<%= c %>" <%=filtros &&
+                        filtros.concesionario===c ? 'selected' : '' %>>
+                        <%= c %>
+                    </option>
+                    <% }) %>
+                </select>
 
-                    <label>Estado:</label>
-                    <select name="estado" class="form-select mb-3">
-                        <option value>Todos</option>
-                        <% const estados=['disponible', 'reservado' , 'mantenimiento' ]; estados.forEach(e=> {
-                            %>
-                            <option value="<%= e %>" <%=filtros && filtros.estado===e ? 'selected' : '' %>>
-                                <%= e %>
+                <label>Estado:</label>
+                <select name="estado" class="form-select mb-3">
+                    <option value>Todos</option>
+                    <% const estados=['disponible', 'reservado' ,
+                    'mantenimiento' ]; estados.forEach(e=> {
+                    %>
+                    <option value="<%= e %>" <%=filtros && filtros.estado===e ?
+                        'selected' : '' %>>
+                        <%= e %>
 
-                            </option>
-                            <% }) %>
-                    </select>
+                    </option>
+                    <% }) %>
+                </select>
 
-                    <button type="submit" class="btn border-success w-100">Aplicar</button>
+                <button type="submit"
+                    class="btn border-success w-100">Aplicar</button>
 
-                </form>
+            </form>
 
-            </div>
-            <% if(usuario && usuario.rol==='admin' ){ %>
-                <div class="row filtros mt-3">
-                    <a type="button" class="btn border-success" href="/es-vehiculos/nuevo-vehiculo">Nuevo vehículo</a>
-                </div>
-                <% } %>
-        </aside>
+        </div>
+        <% if(usuario && usuario.rol==='admin' ){ %>
+        <div class="row filtros mt-3">
+            <a type="button" class="btn border-success"
+                href="/es-vehiculos/nuevo-vehiculo">Nuevo vehículo</a>
+        </div>
+        <% } %>
+    </aside>
 
-        <section class="col-lg-12">
-            <% if (vehiculosFiltrados && vehiculosFiltrados.length>0) { %>
-                <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-                    <% vehiculosFiltrados.forEach(vehiculo=> { %>
-                        <% if( usuario || ( !usuario && vehiculo.estado==='disponible' )) { %>
-                            <div class="col">
-                                <div class="card h-100">
-                                    <img src="/es-vehiculos/imagen/<%= vehiculo.id_vehiculo %>"
-                                        class="vehiculo-img card-img-top"
-                                        alt="<%= vehiculo.marca %> <%= vehiculo.modelo %>">
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title">
-                                            <%= vehiculo.marca %>
-                                                <%= vehiculo.modelo %>
-                                        </h5>
-                                        <p class="card-text"><strong>Estado:</strong>
-                                            <%= vehiculo.estado %>
-                                        </p>
+    <section class="col-lg-12">
+        <% if (vehiculosFiltrados && vehiculosFiltrados.length>0) { %>
+        <div
+            class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+            <% vehiculosFiltrados.forEach(vehiculo=> { %>
+            <% if( usuario || ( !usuario && vehiculo.estado==='disponible' )) {
+            %>
+            <div class="col">
+                <div class="card h-100">
+                    <img src="/es-vehiculos/imagen/<%= vehiculo.id_vehiculo %>"
+                        class="vehiculo-img card-img-top"
+                        alt="<%= vehiculo.marca %> <%= vehiculo.modelo %>">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">
+                            <%= vehiculo.marca %>
+                            <%= vehiculo.modelo %>
+                        </h5>
+                        <p class="card-text"><strong>Estado:</strong>
+                            <%= vehiculo.estado %>
+                        </p>
 
-                                        <div class="d-flex gap-2 mt-3">
-                                            <a type="button" href="/es-vehiculos/<%= vehiculo.id_vehiculo %>"
-                                                class="btn border-success mt-auto w-100">
-                                                Detalles
-                                            </a>
+                        <div class="d-flex gap-2 mt-3">
+                            <a type="button"
+                                href="/es-vehiculos/<%= vehiculo.id_vehiculo %>"
+                                class="btn border-success mt-auto w-100">
+                                Detalles
+                            </a>
 
-                                            <% if(usuario && usuario.rol==='admin' ) { %>
-                                                <a class="btn border-secondary mt-auto"
-                                                    href="/es-vehiculos/<%= vehiculo.id_vehiculo %>/editar">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
+                            <% if(usuario && usuario.rol==='admin' ) { %>
+                            <a class="btn border-secondary mt-auto"
+                                href="/es-vehiculos/<%= vehiculo.id_vehiculo %>/editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
 
-                                                <form action="/es-vehiculos/<%= vehiculo.id_vehiculo %>/eliminar"
-                                                    method="post" class="flex-fill"
-                                                    onsubmit="return confirm('¿Estás seguro de eliminar este vehículo?');">
-                                                    <button class="btn border-danger" type="submit">
-                                                        <i class="bi bi-trash-fill"></i>
-                                                    </button>
-                                                </form>
-                                                <% } %>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
+                            <form
+                                action="/es-vehiculos/<%= vehiculo.id_vehiculo %>/eliminar"
+                                method="post" class="flex-fill"
+                                onsubmit="return confirm('¿Estás seguro de eliminar este vehículo?');">
+                                <button class="btn border-danger" type="submit">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </form>
                             <% } %>
-
-                                <% }) %>
-                </div>
-                <% } else { %>
-                    <div class="card text-center border-0 shadow-sm p-4">
-                        <div class="card-body">
-                            <h5 class="card-title">No hay vehículos disponibles</h5>
-                            <p class="card-text">No se encontraron vehículos que coincidan
-                                con estos filtros.
-                                <br>Intenta
-                                cambiando los criterios.
-                            </p>
                         </div>
+
                     </div>
-                    <% } %>
-        </section>
-    </main>
-    <%- include('footer', {scripts: []}) -%>
+                </div>
+            </div>
+            <% } %>
+
+            <% }) %>
+        </div>
+        <% } else { %>
+        <div class="card text-center border-0 shadow-sm p-4">
+            <div class="card-body">
+                <h5 class="card-title">No hay vehículos disponibles</h5>
+                <p class="card-text">No se encontraron vehículos que coincidan
+                    con estos filtros.
+                    <br>Intenta
+                    cambiando los criterios.
+                </p>
+            </div>
+        </div>
+        <% } %>
+    </section>
+</main>
+<%- include('footer', {scripts: []}) -%>

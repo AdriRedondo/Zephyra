@@ -1,0 +1,236 @@
+<%- include('en-header', { title: 'Formulario de vehiculo' , estilos: ['style',
+'forms' ], actual_es: 'es-vehiculo-form'
+, actual_en: 'en-vehicle-form' }) %>
+<main>
+    <section id="vehicle_id" class="vehicle">
+        <form id="vehicle-form-id" class="formularios vehicle-form"
+            aria-label="Formulario de vehiculo"
+            method="post"
+            action="<%= editar ? `/es-vehiculos/${vehiculo.id_vehiculo}/editar`:`/es-vehiculos/nuevo-vehiculo` %>">
+            <div class="mb-3">
+                <fieldset class="vehicle-fs" name="vehicle">
+                    <input type="hidden" name="idioma" value="español">
+                    <legend>
+                        <h2>Vehicle data</h2>
+                    </legend>
+                    <% if (error) { %>
+                    <div class="alert alert-danger" role="alert">
+                        <%= error %>
+                    </div>
+                    <% } %>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="matricula" class="form-label">Matrícula:
+                                <span
+                                    class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-car-front"></i>
+                                </span>
+                                <input type="text" id="matricula"
+                                    name="matricula" class="form-control"
+                                    value="<%= editar && vehiculo ? vehiculo.matricula : ''  %>"
+                                    placeholder="ABC-1234">
+                            </div>
+                            <span id="matricula-error" class="error"
+                                aria-live="polite"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="marca" class="form-label">Marca: <span
+                                    class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-tag"></i>
+                                </span>
+                                <input type="text" id="marca" name="marca"
+                                    class="form-control"
+                                    value="<%=editar && vehiculo ? vehiculo.marca : ''  %>"
+                                    placeholder="Toyota">
+                            </div>
+                            <span id="marca-error" class="error"
+                                aria-live="polite"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modelo" class="form-label">Modelo: <span
+                                    class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-gear"></i> </span>
+                                <input type="text" id="modelo" name="modelo"
+                                    value="<%= editar && vehiculo ? vehiculo.modelo : ''  %>"
+                                    class="form-control" placeholder="XRVZ-33">
+                            </div>
+                            <span id="modelo-error" class="error"
+                                aria-live="polite"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="anyoMatri" class="form-label">Año de
+                                matriculación: <span
+                                    class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-calendar"></i> </span>
+                                <input type="text" id="anyo_matri"
+                                    name="anyoMatri"
+                                    value="<%= editar && vehiculo ? vehiculo.anyo_matriculacion : ''  %>"
+                                    class="form-control" placeholder="1999">
+                            </div>
+                            <span id="anyoMatri-error" class="error"
+                                aria-live="polite"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="numPlazas" class="form-label">Número de
+                                plazas: <span
+                                    class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-people"></i> </span>
+                                <input type="text" id="numPlazas"
+                                    name="numPlazas"
+                                    value="<%= editar && vehiculo ? vehiculo.numero_plazas : ''  %>"
+                                    class="form-control" placeholder="5">
+                            </div>
+                            <span id="numPlazas-error" class="error"
+                                aria-live="polite"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="color" class="form-label">Color: <span
+                                    class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-palette"></i> </span>
+                                <input type="text" id="color" name="color"
+                                    value="<%= editar && vehiculo ? vehiculo.color : ''  %>"
+                                    class="form-control" placeholder="Rojo">
+                            </div>
+                            <span id="color-error" class="error"
+                                aria-live="polite"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="autonomia" class="form-label">Autonomía
+                                (km): <span
+                                    class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-battery-half"></i> </span>
+                                <input type="text" id="autonomia"
+                                    name="autonomia" class="form-control"
+                                    value="<%= editar && vehiculo ? vehiculo.autonomia_km : ''  %>"
+                                    placeholder="... km">
+                            </div>
+                            <span id="autonomia-error" class="error"
+                                aria-live="polite"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="concesionario"
+                                class="form-label">Concesionario: <span
+                                    class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-building"></i> </span>
+                                <select id="concesionario" name="concesionario"
+                                    class="form-select"
+                                    required>
+                                    <option value>Sin asignar</option>
+                                    <% if (typeof concesionarios !=='undefined'
+                                    ) { %>
+                                    <% concesionarios.forEach(c=> { %>
+                                    <option value="<%= c.id_concesionario %>"
+                                        <%=editar && vehiculo
+                                        &&
+                                        vehiculo.id_concesionario==c.id_concesionario
+                                        ? 'selected' : '' %>>
+                                        <%= c.id_concesionario %> : <%= c.nombre
+                                        %> - <%= c.ciudad
+                                        %>
+                                    </option>
+                                    <% }) %>
+                                    <% } %>
+                                </select>
+                            </div>
+                            <span id="concesionario-error" class="error"
+                                aria-live="polite"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="estado" class="form-label">Estado: <span
+                                    class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-info-circle"></i> </span>
+                                <select id="estado" name="estado"
+                                    class="form-select">
+                                    <option value="disponible" <%=editar &&
+                                        vehiculo &&
+                                        vehiculo.estado==='disponible' ?
+                                        'selected' : '' %>>Disponible
+                                    </option>
+                                    <option value="reservado" <%=editar &&
+                                        vehiculo &&
+                                        vehiculo.estado==='reservado' ?
+                                        'selected' : '' %>>Reservado
+                                    </option>
+                                    <option value="mantenimiento" <%=editar &&
+                                        vehiculo &&
+                                        vehiculo.estado==='mantenimiento' ?
+                                        'selected' : '' %>>En
+                                        mantenimiento
+                                    </option>
+                                </select>
+                            </div>
+                            <span id="estado-error" class="error"
+                                aria-live="polite"></span>
+                        </div>
+                        <% if (editar && vehiculo && vehiculo.imagen) { %>
+                        <div class="col-md-3">
+                            <label class="form-label">Imagen actual:</label><br>
+                            <img
+                                src="/es-vehiculos/imagen/<%= vehiculo.id_vehiculo %>"
+                                alt="Imagen del vehículo"
+                                style="max-width:150px; border-radius:6px;">
+                        </div>
+                        <% } %>
+                        <div class="col">
+                            <label for="imagen" class="form-label">Imagen:
+                                <% if(!editar) { %>
+                                <span class="text-danger">*</span>
+                                <% } %>
+                            </label>
+
+                            <input type="file" id="imagen" name="imagen"
+                                class="form-control">
+
+                            <span id="imagen-error" class="error"
+                                aria-live="polite"></span>
+                        </div>
+                        <% if(editar) { %>
+                        <input type="hidden" name="id_vehiculo"
+                            value="<%= vehiculo.id_vehiculo %>">
+                        <% } %>
+                        <div
+                            class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="reset" class="btn border-secondary"
+                                aria-label="Limpiar formulario"> <i
+                                    class="bi bi-arrow-clockwise me-2"></i>
+                                Limpiar</button>
+                            <button type="submit" class="btn border-success"
+                                aria-label="Enviar formulario"><i
+                                    class="bi bi-send me-2">
+                                </i>Enviar</button>
+
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </form>
+    </section>
+
+</main>
+<%- include('footer', {scripts: []}) -%>

@@ -17,6 +17,25 @@ const session = require('express-session');
 const mysqlSession = require('express-mysql-session');
 const MySQLStore = mysqlSession(session);
 
+//Mensajes de error tanto en español como en inglés
+const errorMessages = {
+    es: {
+        '404-title': 'Error 404',
+        '404-text1': 'Lo sentimos, no encontramos la página que está buscando.',
+        '404-text2': 'Es posible que hayamos movido o eliminado la página, o que hayas escrito una URL incorrecta.',
+        '500-title': 'Error 500',
+        '500-text1': 'Hemos encontrado un problema inesperado.',
+        '500-text2': 'Por favor, inténtalo de nuevo más tarde.'
+    },
+    en: {
+        '404-title': 'Error 404',
+        '404-text1': 'Sorry, we couldn\'t find the page you are looking for.',
+        '404-text2': 'We may have moved or deleted the page, or you may have typed an incorrect URL.',
+        '500-title': 'Error 500',
+        '500-text1': 'We encountered an unexpected problem.',
+        '500-text2': 'Please try again later.'
+    }
+};
 //Configuración del almacenamiento de sesiones en MySQL
 const sessionStore = new MySQLStore({
     host: 'localhost',
@@ -43,6 +62,31 @@ app.use(middleWareSession);
 app.use((req, res, next) => {
     res.locals.session = req.session;
     res.locals.usuario = req.session.usuario || null;
+
+    // Detectar idioma desde la URL si no está en sesión
+    let lang = req.session.lang || 'es';
+
+    // Si la URL contiene '/en-' o termina con rutas en inglés, usar inglés
+    if (req.path.includes('/en-') || req.path.startsWith('/en/')) {
+        lang = 'en';
+    }
+    // Si la URL contiene '/es-' o termina con rutas en español, usar español
+    else if (req.path.includes('/es-') || req.path.startsWith('/es/')) {
+        lang = 'es';
+    }
+
+    res.locals.lang = lang;
+    next();
+});
+
+// Middleware para establecer el idioma en la sesión si se envía en el body
+app.use((req, res, next) => {
+
+    if (req.method === 'POST' && req.body.idioma) {
+
+        const newLang = req.body.idioma === 'english' ? 'en' : 'es';
+        req.session.lang = newLang;
+    }
     next();
 });
 
@@ -80,20 +124,33 @@ app.get('/en-home', (req, res) => {
     res.render('en-home');
 });
 
+
 //Manejador del error 404
 app.use(function (req, res, next) {
-    const error = 'Error 404';
-    const texto1 = 'Lo sentimos - no encontramos la página que está buscando.';
-    const texto2 = 'Es posible que hayamos movido o eliminado la página que estás buscando, o que hayas escrito una  URL incorrecta.';
-    res.status(404).render("errors", { error, texto1, texto2 });
+
+    const lang = res.locals.lang;
+    const messages = errorMessages[lang];
+
+    const error = messages['404-title'];
+    const texto1 = messages['404-text1'];
+    const texto2 = messages['404-text2'];
+
+    res.status(404).render("errors", { error, texto1, texto2, lang });
 });
 
 //Manejador del error 500
 app.use(function (err, req, res, next) {
-    const error = 'Error 500';
-    const texto1 = 'Hemos encontrado un problema inesperado.';
-    const texto2 = 'Por favor, inténtalo de nuevo más tarde.'
-    res.status(500).render("errors", { error, texto1, texto2 });
+
+    const lang = res.locals.lang;
+    const messages = errorMessages[lang];
+
+    const error = messages['500-title'];
+    const texto1 = messages['500-text1'];
+    const texto2 = messages['500-text2'];
+
+    console.error(err.stack); // Para depuración
+
+    res.status(500).render("errors", { error, texto1, texto2, lang });
 });
 
 module.exports = app;
