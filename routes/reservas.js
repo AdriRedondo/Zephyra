@@ -13,13 +13,38 @@ router.get('/en-bookings', (req, res) => {
 
 router.post('/submit-bookings', (req, res) => {
 
+    const language = req.body.idioma;
+    const nombre = req.body.nombre;
+    const correo = req.body.correo;
+    const vehiculo = req.body.vehiculos_form;
+    const fecha = req.body.fecha;
+    const horas = req.body.horas;
+    const telefono = req.body.telefono;
+
+
+    // Validar campos obligatorios
+    if (!nombre || !correo || !vehiculo || !fecha || !horas || !telefono) {
+        if (language === 'english')
+            return res.render('en-bookings', { error: 'Name, email, vehicle, date and hours are required' });
+        else
+            return res.render('es-reservas', { error: 'El nombre, correo, vehículo, fecha y horas son obligatorios' });
+    }
+
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(req.body.correo.trim())) {
+        if (language === 'english')
+            return res.render('en-bookings', { error: 'Invalid email format' });
+        else
+            return res.render('es-reservas', { error: 'Formato de correo inválido' });
+    }
     const nuevaReserva = {
-        nombre: req.body.nombre,
-        correo: req.body.correo,
-        vehiculo: req.body.vehiculos_form,
-        fecha: req.body.fecha,
-        horas: req.body.horas,
-        telefono: req.body.telefono
+        nombre: nombre,
+        correo: correo,
+        vehiculo: vehiculo,
+        fecha: fecha,
+        horas: horas,
+        telefono: telefono
     };
 
     reservas.push(nuevaReserva);

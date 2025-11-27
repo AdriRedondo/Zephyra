@@ -32,6 +32,24 @@ router.post('/submit_login', (req, res) => {
         const email = req.body.correo;
         const password = req.body.password;
 
+
+        // Validar campos obligatorios
+        if (!email || !password || email.trim() === '' || password.trim() === '') {
+            if (language === 'english')
+                return res.render('en-login', { error: 'Email and password are required' });
+            else
+                return res.render('es-login', { error: 'El correo y la contraseña son obligatorios' });
+        }
+
+        // Validar formato de email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.trim())) {
+            if (language === 'english')
+                return res.render('en-login', { error: 'Invalid email format' });
+            else
+                return res.render('es-login', { error: 'Formato de correo inválido' });
+        }
+
         //Consulta para obtener el usuario según el correo único
         const consulta = 'SELECT * FROM Usuarios WHERE correo = ?';
         pool.query(consulta, [email], async (err, results) => {

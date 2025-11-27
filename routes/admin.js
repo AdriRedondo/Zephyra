@@ -62,6 +62,69 @@ router.post('/user-register', (req, res) => {
         const role = req.body.rol;
         const idConcesionario = req.body.concesionario;
 
+
+        //Validamos los campos obligatorios
+        if (!name || !email || !password) {
+            return obtenerConcesionarios((err, concesionarios) => {
+                if (err) concesionarios = [];
+
+                if (language === 'english')
+                    return res.render('en-admin', {
+                        error: 'Name, email and password are required',
+                        success: undefined,
+                        concesionarios
+                    });
+                else
+                    return res.render('es-admin', {
+                        error: 'El nombre, correo y contraseña son obligatorios',
+                        success: undefined,
+                        concesionarios
+                    });
+            });
+        }
+
+        //Validamos el formato del correo electrónico
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.trim)) {
+
+            return obtenerConcesionarios((err, concesionarios) => {
+                if (err) concesionarios = [];
+                if (language === 'english')
+                    return res.render('en-admin', {
+                        error: 'Invalid email format',
+                        success: undefined,
+                        concesionarios
+                    });
+                else
+                    return res.render('es-admin', {
+                        error: 'Formato de correo inválido',
+                        success: undefined,
+                        concesionarios
+                    });
+            });
+        }
+
+        // Validar longitud mínima de contraseña
+        if (password.trim().length < 8) {
+            return obtenerConcesionarios((error, concesionarios) => {
+                if (error) concesionarios = [];
+
+                if (language === 'english')
+                    return res.render('en-admin', {
+                        error: 'Password must be at least 8 characters long',
+                        success: undefined,
+                        concesionarios
+                    });
+                else
+                    return res.render('es-admin', {
+                        error: 'La contraseña debe tener al menos 8 caracteres',
+                        success: undefined,
+                        concesionarios
+                    });
+            });
+        }
+
+
         //Consultamos si el correo existe ya en la BD
         const consulta1 = 'SELECT * FROM Usuarios WHERE correo = ?';
         pool.query(consulta1, [email], (err, results) => {
@@ -185,6 +248,18 @@ router.get('/es-user/edit/:id', requiredAdminId, (req, res) => {
 router.post('/user-edit/:id', requiredAdminId, (req, res) => {
     const id = req.params.id;
     const { nombre, correo, password, telefono, rol, concesionario } = req.body;
+
+
+    // Validar campos obligatorios
+    if (!nombre || !correo || nombre.trim() === '' || correo.trim() === '') {
+        return res.status(400).send('El nombre y correo son obligatorios');
+    }
+
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(correo.trim())) {
+        return res.status(400).send('Formato de correo inválido');
+    }
 
     const telefonoValue = telefono || null;
     const concesionarioValue = concesionario || null;
