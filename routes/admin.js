@@ -9,21 +9,23 @@ router.get('/es-admin', requiredAdminId, (req, res) => {
 
     //Cargamos loos cencesionarios
     obtenerConcesionarios((err, concesionarios) => {
-        if (err) {
-            // Si falla la consulta, mostramos la vista con el error y registramos el error en consola
-            console.error('Error al cargar concesionarios:', err);
-            res.render('es-admin', {
-                error: 'Error al cargar concesionarios',
-                success: undefined,
-                concesionarios: []
-            });
-        }
 
-        // Mostramos la vista de administrador con los concesionarios disponibles
-        res.render('es-admin', {
-            error: undefined,
-            success: undefined,
-            concesionarios: concesionarios
+        obtenerUsuarios((errU, usuarios) => {
+
+            obtenerVehiculos((errV, vehiculos) => {
+
+                // Si falla la consulta, mostramos la vista con el error y registramos el error en consola
+                if (err) concesionarios = [];
+                // Si falla la consulta, mostramos la vista con el error y registramos el error en consola
+                if (errU) usuarios = [];
+                // Si falla la consulta, mostramos la vista con el error y registramos el error en consola
+                if (errV) vehiculos = [];
+                res.render('es-admin', {
+                    concesionarios,
+                    vehiculos,
+                    usuarios
+                });
+            });
         });
     });
 
@@ -32,6 +34,19 @@ router.get('/es-admin', requiredAdminId, (req, res) => {
 // GET de la página de administrador en inglés, con su middleware de verificación de acceso
 router.get('/en-admin', (req, res) => {
     res.render('en-admin');
+});
+
+// GET para mostrar el formulario de registro de usuario
+router.get('/es-user/register', requiredAdminId, (req, res) => {
+    const language = req.query.idioma || 'español';
+    obtenerConcesionarios((err, concesionarios) => {
+        if (err) concesionarios = [];
+        if (language === 'english') {
+            res.render('en-usuario-form', { concesionarios, error: null });
+        } else {
+            res.render('es-usuario-form', { concesionarios, error: null });
+        }
+    });
 });
 
 // POST del registro de un nuevo usuario
@@ -143,6 +158,91 @@ router.post('/user-register', (req, res) => {
         res.status(500);
     }
 
+});
+
+router.get('/es-user/edit/:id', requiredAdminId, (req, res) => {
+    const id = req.params.id;
+
+    const qUser = `SELECT * FROM Usuarios WHERE id_usuario = ?`;
+
+    pool.query(qUser, [id], (err, results) => {
+        if (err) return res.status(500);
+        if (results.length === 0) return res.status(404);
+
+        const user = results[0];
+
+        obtenerConcesionarios((errConc, concesionarios) => {
+            if (errConc) concesionarios = [];
+
+            res.render('es-usuario-form', {
+                user,
+                concesionarios
+            });
+        });
+    });
+});
+
+router.post('/user-edit/:id', requiredAdminId, (req, res) => {
+    const id = req.params.id;
+    const { nombre, correo, password, telefono, rol, concesionario } = req.body;
+
+    const telefonoValue = telefono || null;
+    const concesionarioValue = concesionario || null;
+    const roleValue = (rol === 'admin') ? 'admin' : 'empleado';
+
+    const actualizar = (hashedPass = null) => {
+        const consultaUpdate = `
+            UPDATE Usuarios
+            SET nombre = ?, correo = ?, telefono = ?, rol = ?, id_concesionario = ?
+            ${hashedPass ? ', contraseña = ?' : ''}
+            WHERE id_usuario = ?
+        `;
+
+        const parametros = hashedPass
+            ? [nombre, correo, telefonoValue, roleValue, concesionarioValue, hashedPass, id]
+            : [nombre, correo, telefonoValue, roleValue, concesionarioValue, id];
+
+        pool.query(consultaUpdate, parametros, (errUpdate) => {
+            if (errUpdate) return res.status(500);
+            res.redirect('/es-admin');
+        });
+    };
+
+    // Si el admin no cambia la contraseña → no actualizarla
+    if (!password || password.trim() === "") {
+        actualizar();
+    } else {
+        bcrypt.hash(password, 10, (err, hashedPassword) => {
+            actualizar(hashedPassword);
+        });
+    }
+});
+
+router.post('/user-delete/:id', requiredAdminId, (req, res) => {
+    const id = req.params.id;
+
+    const consulta = 'DELETE FROM Usuarios WHERE id_usuario = ?';
+
+    pool.query(consulta, [id], (errDelete) => {
+        if (errDelete) {
+            console.error(errDelete);
+            return res.status(500);
+        }
+
+        res.redirect('/es-admin');
+    });
+});
+
+
+// GET para registrar un nuevo concesionario
+router.get('/es-dealer/register', requiredAdminId, (req, res) => {
+    const language = req.body.idioma;
+
+
+    if (language === 'english')
+        res.render('en-dealer-form', { error: null });
+    else
+        res.render('es-dealer-form', { error: null });
 });
 
 // POST para registrar un nuevo concesionario
@@ -426,13 +526,55 @@ router.post('/dealer-delete/:id', requiredAdminId, (req, res) => {
     }
 });
 
-
 //Función auxiliar para obtener los concesionarios disponibles en la BD
 const obtenerConcesionarios = (callback) => {
     const consulta = 'SELECT id_concesionario, nombre, ciudad, direccion, telefono_contacto FROM Concesionarios';
     pool.query(consulta, (err, results) => {
         if (err) return callback(err, null)
         callback(null, results)
+    });
+};
+
+
+//Función auxiliar para obtener los usuarios
+const obtenerUsuarios = (callback) => {
+    const consulta = `
+            SELECT u.id_usuario, u.nombre, u.correo, u.rol, u.telefono, u.id_concesionario,
+                   c.nombre as nombre_concesionario
+            FROM Usuarios u
+            LEFT JOIN Concesionarios c ON u.id_concesionario = c.id_concesionario
+            ORDER BY u.id_usuario DESC
+        `;
+    pool.query(consulta, (err, results) => {
+        if (err) return callback(err, null);
+        callback(null, results);
+    });
+};
+
+//Función auxiliar para obtener los vehículos
+const obtenerVehiculos = (callback) => {
+    const consulta = `
+    SELECT 
+        v.id_vehiculo,
+        v.matricula,
+        v.marca,
+        v.modelo,
+        v.anyo_matriculacion,
+        v.numero_plazas,
+        v.autonomia_km,
+        v.color,
+        v.imagen,
+        v.estado,
+        v.id_concesionario,
+        c.nombre AS nombre_concesionario
+    FROM Vehiculos v
+    LEFT JOIN Concesionarios c 
+        ON v.id_concesionario = c.id_concesionario
+    ORDER BY v.id_vehiculo ASC
+`;
+    pool.query(consulta, (err, results) => {
+        if (err) return callback(err, null);
+        callback(null, results);
     });
 };
 

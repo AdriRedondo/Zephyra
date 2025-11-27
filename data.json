@@ -261,7 +261,8 @@
             "correo": "admin@zephyra.com",
             "contraseña": "Admin123!",
             "rol": "admin",
-            "telefono": "600000001"
+            "telefono": "600000001",
+            "id_concesionario": 1
         },
         {
             "nombre": "María García",
@@ -269,7 +270,8 @@
             "contraseña": "Maria123!",
             "rol": "empleado",
             "telefono": "600111222",
-            "concesionario_nombre": "Zephyra Madrid Centro"
+            "concesionario_nombre": "Zephyra Madrid Centro",
+            "id_concesionario": 2
         },
         {
             "nombre": "Carlos López",
@@ -277,7 +279,8 @@
             "contraseña": "Carlos123!",
             "rol": "empleado",
             "telefono": "600333444",
-            "concesionario_nombre": "Zephyra Barcelona Norte"
+            "concesionario_nombre": "Zephyra Barcelona Norte",
+            "id_concesionario": 2
         },
         {
             "nombre": "Ana Martínez",
@@ -285,7 +288,8 @@
             "contraseña": "Ana123!",
             "rol": "empleado",
             "telefono": "607555666",
-            "concesionario_nombre": "Zephyra Valencia Sur"
+            "concesionario_nombre": "Zephyra Valencia Sur",
+            "id_concesionario": 3
         }
     ]
 }

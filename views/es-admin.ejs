@@ -7,7 +7,103 @@
                     <h2>Gestión de vehículos</h2>
                 </div>
                 <div class="row">
-                    Contenido...
+                    <% if (typeof vehiculos !=='undefined' && vehiculos.length> 0) { %>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Matrícula</th>
+                                        <th>Marca</th>
+                                        <th>Modelo</th>
+                                        <th>Año Matriculación</th>
+                                        <th>Plazas</th>
+                                        <th>Autonomía (km)</th>
+                                        <th>Color</th>
+                                        <th>Estado</th>
+                                        <th>Concesionario</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% vehiculos.forEach(v=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= v.id_vehiculo %>
+                                            </td>
+                                            <td>
+                                                <%= v.matricula %>
+                                            </td>
+                                            <td>
+                                                <%= v.marca %>
+                                            </td>
+                                            <td>
+                                                <%= v.modelo %>
+                                            </td>
+                                            <td>
+                                                <%= v.anyo_matriculacion %>
+                                            </td>
+                                            <td>
+                                                <%= v.numero_plazas %>
+                                            </td>
+                                            <td>
+                                                <%= v.autonomia_km %>
+                                            </td>
+                                            <td>
+                                                <%= v.color %>
+                                            </td>
+
+                                            <td>
+                                                <%= v.estado %>
+                                            </td>
+
+                                            <td>
+                                                <%= v.nombre_concesionario || 'Sin asignar' %>
+                                            </td>
+
+                                            <td>
+                                                <div class="d-flex">
+                                                    <a class="btn btn-sm border-secondary me-2"
+                                                        href="/es-vehiculos/<%= v.id_vehiculo %>/editar">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+
+                                                    <form action="/es-vehiculos/<%= v.id_vehiculo %>/eliminar"
+                                                        method="post"
+                                                        onsubmit="return confirm('¿Estás seguro de eliminar este vehículo?');">
+                                                        <input type="hidden" name="idioma" value="español">
+                                                        <button type="submit" class="btn btn-sm border-danger">
+                                                            <i class="bi bi-trash-fill"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% } else { %>
+                            <div class="alert alert-info">
+                                No hay vehículos registrados
+                            </div>
+                            <% } %>
+                                <% if (typeof success_lista_vehiculos !=='undefined' && success_lista_vehiculos) { %>
+                                    <div class="alert alert-success" role="alert">
+                                        <%= success_lista_vehiculos %>
+                                    </div>
+                                    <% } %>
+                                        <% if (typeof error_lista_vehiculos !=='undefined' && error_lista_vehiculos) {
+                                            %>
+                                            <div class="alert alert-danger" role="alert">
+                                                <%= error_lista_vehiculos %>
+                                            </div>
+                                            <% } %>
+                </div>
+                <div class="col-auto">
+                    <a href="/es-vehiculos/nuevo-vehiculo" class="btn border-success">
+                        <i class="bi bi-plus-lg"></i> Añadir vehículo
+                    </a>
                 </div>
             </div>
         </section>
@@ -17,9 +113,7 @@
                     <h2>Gestión de concesionarios</h2>
                 </div>
 
-                <!-- Lista de concesionarios existentes -->
                 <div class="row">
-                    <h3>- Concesionarios registrados</h3>
                     <% if (typeof concesionarios !=='undefined' && concesionarios.length> 0) { %>
                         <div class="table-responsive">
                             <table class="table table-hover">
@@ -85,98 +179,14 @@
                                     <% } %>
                                         <% if (typeof error_lista !=='undefined' && error_lista) { %>
                                             <div class="alert alert-danger" role="alert">
-                                                <%= error_ista %>
+                                                <%= error_lista %>
                                             </div>
                                             <% } %>
                 </div>
-                <!-- Formulario de registro -->
-                <div class="row mb-4">
-                    <form id="dealer-form-id" class="formularios" aria-label="Formulario de concesionario" method="post"
-                        action="/dealer-register">
-                        <fieldset>
-                            <input type="hidden" name="idioma" value="español">
-                            <legend>
-                                <h3>- Registrar nuevo concesionario</h3>
-                            </legend>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label for="dealer-nombre" class="form-label">Nombre: <span
-                                            class="text-danger">*</span>
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="bi bi-building"></i>
-                                        </span>
-                                        <input type="text" id="dealer-nombre" name="nombre" class="form-control"
-                                            required placeholder="Ej: Zephyra Madrid Centro">
-                                    </div>
-                                    <span id="dealer-nombre-error" class="error" aria-live="polite"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="dealer-ciudad" class="form-label">Ciudad: <span
-                                            class="text-danger">*</span>
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="bi bi-geo-alt"></i>
-                                        </span>
-                                        <input type="text" id="dealer-ciudad" name="ciudad" class="form-control"
-                                            required placeholder="Ej: Madrid">
-                                    </div>
-                                    <span id="dealer-ciudad-error" class="error" aria-live="polite"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="dealer-direccion" class="form-label">Dirección: <span
-                                            class="text-danger">*</span>
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="bi bi-pin-map-fill"></i>
-                                        </span>
-                                        <input type="text" id="dealer-direccion" name="direccion" class="form-control"
-                                            required placeholder="Ej: C/Larios de la Rosa, 23">
-                                    </div>
-                                    <span id="dealer-direccion-error" class="error" aria-live="polite"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="dealer-telefono" class="form-label">Teléfono: <span
-                                            class="text-danger">*</span>
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="bi bi-telephone"></i>
-                                        </span>
-                                        <input type="tel" id="dealer-telefono" name="telefono" class="form-control"
-                                            placeholder="Ej: 666777888" pattern="^[0-9]{9}$"
-                                            title="Debe contener 9 dígitos">
-                                    </div>
-                                    <span id="dealer-telefono-error" class="error" aria-live="polite"></span>
-                                </div>
-
-                                <% if (typeof success !=='undefined' && success) { %>
-                                    <div class="alert alert-success" role="alert">
-                                        <%= success %>
-                                    </div>
-                                    <% } %>
-                                        <% if (typeof error !=='undefined' && error) { %>
-                                            <div class="alert alert-danger" role="alert">
-                                                <%= error %>
-                                            </div>
-                                            <% } %>
-
-                                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                                    <button type="reset" class="btn border-secondary"
-                                                        aria-label="Limpiar formulario">
-                                                        <i class="bi bi-arrow-clockwise me-2"></i> Limpiar datos
-                                                    </button>
-                                                    <button type="submit" class="btn border-success"
-                                                        aria-label="Enviar formulario">
-                                                        <i class="bi bi-building me-2"></i> Registrar concesionario
-                                                    </button>
-                                                </div>
-                            </div>
-                        </fieldset>
-                    </form>
+                <div class="col-auto">
+                    <a href="/es-dealer/register" class="btn border-success">
+                        <i class="bi bi-plus-lg"></i> Añadir concesionario
+                    </a>
                 </div>
             </div>
         </section>
@@ -185,129 +195,90 @@
                 <div class="row">
                     <h2>Gestión de usuarios</h2>
                 </div>
-                <div class="row">
-                    <form id="user-form-id" class="formularios" aria-label="Formulario de usuario" method="post"
-                        action="/user-register">
-                        <fieldset>
-                            <input type="hidden" name="idioma" value="español">
-                            <legend>
-                                <h3>- Registrar usuario</h3>
-                            </legend>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label for="nombre" class="form-label">Nombre completo: <span
-                                            class="text-danger">*</span>
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="bi bi-person"></i>
-                                        </span>
-                                        <input type="text" id="nombre" name="nombre" class="form-control" required
-                                            placeholder="Ej: Eustaquio Ramirez">
-                                    </div>
-                                    <span id="nombre-error" class="error" aria-live="polite"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="correo" class="form-label">Correo electrónico: <span
-                                            class="text-danger">*</span>
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="bi bi-calendar"></i>
-                                        </span>
-                                        <input type="text" id="correo" name="correo" class="form-control" required
-                                            placeholder="Ej: ASDFg7&A">
-                                    </div>
-                                    <span id="correo-error" class="error" aria-live="polite"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="contraseña" class="form-label">Contraseña: <span
-                                            class="text-danger">*</span>
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="bi bi-lock"></i>
-                                        </span>
-                                        <input type="text" id="contraseña" name="password" class="form-control" required
-                                            placeholder="Ej: ASDFg7&A">
-                                    </div>
-                                    <span id="contraseña-error" class="error" aria-live="polite"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="telefono" class="form-label">Teléfono:
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="bi bi-telephone"></i>
-                                        </span>
-                                        <input type="tel" id="telefono" name="telefono" class="form-control"
-                                            placeholder="Ej: 666777888" pattern="^[0-9]{9}$"
-                                            title="Debe contener 9 dígitos">
-                                    </div>
-                                    <span id="telefono-error" class="error" aria-live="polite"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="concesionario" class="form-label">Concesionario asignado:
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="bi bi-building"></i>
-                                        </span>
-                                        <select id="concesionario" name="concesionario" class="form-select" required>
-                                            <option value="">Sin asignar</option>
-                                            <% if (typeof concesionarios !=='undefined' ) { %>
-                                                <% concesionarios.forEach(c=> { %>
-                                                    <option value="<%= c.id_concesionario %>">
-                                                        <%= c.id_concesionario %> : <%= c.nombre %> - <%= c.ciudad %>
-                                                    </option>
-                                                    <% }) %>
-                                                        <% } %>
-                                        </select>
-                                    </div>
-                                    <span id="concesionario-error" class="error" aria-live="polite"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="rol" class="form-label">Rol de usuario:
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="bi bi-briefcase"></i>
-                                        </span>
-                                        <select id="rol" name="rol" class="form-select">
-                                            <option value="">Sin asignar</option>
-                                            <option value="empleado">Empleado</option>
-                                            <option value="admin">Administrador</option>
-                                        </select>
-                                    </div>
-                                </div>
 
-                                <% if (typeof success !=='undefined' && success) { %>
+                <div class="row">
+
+                </div>
+                <!-- Lista de usuarios existentes -->
+                <div class="row">
+                    <% if (typeof usuarios !=='undefined' && usuarios.length> 0) { %>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Correo</th>
+                                        <th>Rol</th>
+                                        <th>Teléfono</th>
+                                        <th>Concesionario</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% usuarios.forEach(u=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= u.id_usuario %>
+                                            </td>
+                                            <td>
+                                                <%= u.nombre %>
+                                            </td>
+                                            <td>
+                                                <%= u.correo %>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-<%= u.rol === 'admin' ? 'danger' : 'primary' %>">
+                                                    <%= u.rol %>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <%= u.telefono || '-' %>
+                                            </td>
+                                            <td>
+                                                <%= u.nombre_concesionario || 'Sin asignar' %>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex">
+                                                    <a class="btn btn-sm border-secondary me-2"
+                                                        href="/es-user/edit/<%= u.id_usuario %>">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <form action="/user-delete/<%= u.id_usuario %>" method="post"
+                                                        onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
+                                                        <input type="hidden" name="idioma" value="español">
+                                                        <button type="submit" class="btn btn-sm border-danger">
+                                                            <i class="bi bi-trash-fill"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% } else { %>
+                            <div class="alert alert-info">
+                                No hay usuarios registrados
+                            </div>
+                            <% } %>
+                                <% if (typeof success_lista_usuarios !=='undefined' && success_lista_usuarios) { %>
                                     <div class="alert alert-success" role="alert">
-                                        <%= success %>
+                                        <%= success_lista_usuarios %>
                                     </div>
                                     <% } %>
-                                        <% if (typeof error !=='undefined' && error) { %>
+                                        <% if (typeof error_lista_usuarios !=='undefined' && error_lista_usuarios) { %>
                                             <div class="alert alert-danger" role="alert">
-                                                <%= error %>
+                                                <%= error_lista_usuarios %>
                                             </div>
                                             <% } %>
-                                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-
-                                                    <button type="reset" class="btn border-secondary"
-                                                        aria-label="Limpiar formulario">
-                                                        <i class="bi bi-arrow-clockwise me-2"></i> Limpiar
-                                                        datos</button>
-                                                    <button type="submit" class="btn border-success"
-                                                        aria-label="Enviar formulario"><i class="bi bi-person me-2"></i>
-                                                        Registrar usuario</button>
-                                                </div>
-                            </div>
                 </div>
-
-                </fieldset>
-            </div>
-            </form>
-            </div>
+                <div class="col-auto">
+                    <a href="/es-user/register" class="btn border-success">
+                        <i class="bi bi-plus-lg"></i> Añadir usuario
+                    </a>
+                </div>
             </div>
         </section>
         <section id="estadisticas" class="admin-section">
@@ -322,4 +293,4 @@
         </section>
     </main>
 
-    <%- include('footer', {scripts: ['formulario-registro', 'formulario-concesionario' , 'admin' ]}) -%>
+    <%- include('footer', {scripts: ['formulario-usuario', 'formulario-concesionario' ]}) -%>
