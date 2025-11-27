@@ -79,6 +79,15 @@ app.use((req, res, next) => {
     next();
 });
 
+
+
+//Para poder usar bootstrap-icons desde el node-modules
+app.use('/bootstrap-icons', express.static(__dirname + '/node_modules/bootstrap-icons'));
+
+//Middlewares para leer JSON y formularios POST
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 // Middleware para establecer el idioma en la sesión si se envía en el body
 app.use((req, res, next) => {
 
@@ -89,13 +98,6 @@ app.use((req, res, next) => {
     }
     next();
 });
-
-//Para poder usar bootstrap-icons desde el node-modules
-app.use('/bootstrap-icons', express.static(__dirname + '/node_modules/bootstrap-icons'));
-
-//Middlewares para leer JSON y formularios POST
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
 //Para usar los archivos estáticos desde public
 app.use(express.static(path.join(__dirname, 'public')));
