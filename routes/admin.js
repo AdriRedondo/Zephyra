@@ -543,7 +543,7 @@ const obtenerUsuarios = (callback) => {
                    c.nombre as nombre_concesionario
             FROM Usuarios u
             LEFT JOIN Concesionarios c ON u.id_concesionario = c.id_concesionario
-            ORDER BY u.id_usuario DESC
+            ORDER BY u.id_usuario ASC
         `;
     pool.query(consulta, (err, results) => {
         if (err) return callback(err, null);
