@@ -3,7 +3,7 @@ let vehiculosCache = [];
 // Cache de elementos DOM
 const elementos = {};
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
 
     //Cachear elementos una sola vez
     elementos.formulario = document.querySelector('.filtros form');
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
     elementos.selectPlazas = document.querySelector('select[name="plazas"]');
     elementos.selectConcesionario = document.querySelector('select[name="concesionario"]');
     elementos.selectEstado = document.querySelector('select[name="estado"]');
-    elementos.contenedor = document.querySelector('.row.row-cols-sm-1');
+    elementos.contenedor = document.querySelector('.contenedor-vehiculos');
 
     // Verificar que existen los elementos
     if (!elementos.formulario || !elementos.contenedor) {
@@ -36,41 +36,77 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // CAMBIO 2: Cargar vehículos una sola vez al inicio
-    cargarVehiculos();
+    cargarVehiculos((err, vehiculos) => {
+        if (err) {
+            console.error('Error inicial:', err);
+        } else {
+            console.log('Vehículos cargados correctamente:', vehiculos.length);
+        }
+    });
 });
 
+//Carga los vehículos desde el servidor usando fetch()
+function cargarVehiculos(callback) {
+    mostrarCargando();
 
-//Carga los vehículos una sola vez del servidor
+    fetch('/api/vehiculos')
+        .then((response) => {
+            console.log('Respuesta recibida:', response.status, response.statusText);
 
-async function cargarVehiculos() {
-    try {
-        mostrarCargando();
+            // Verificar si la respuesta es exitosa
+            if (!response.ok) {
+                throw new Error('Error HTTP ' + response.status + ': ' + response.statusText);
+            }
 
-        const response = await fetch('/api/vehiculos');
+            // Parsear JSON
+            return response.json();
+        })
+        .then((json) => {
+            console.log('JSON parseado:', json);
 
-        // CAMBIO 4: Mejor manejo de errores
-        if (!response.ok) {
-            throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
-        }
+            // Manejar formato {success, data, count} o array directo
+            if (json.data) {
+                vehiculosCache = json.data;
+            } else if (Array.isArray(json)) {
+                vehiculosCache = json;
+            } else {
+                throw new Error('Formato de respuesta inválido');
+            }
 
-        vehiculosCache = await response.json();
+            // Aplicar filtros iniciales
+            aplicarFiltros();
 
-        // Mostrar todos los vehículos inicialmente
-        aplicarFiltros();
+            // Llamar callback sin error
+            if (callback) {
+                callback(null, vehiculosCache);
+            }
+        })
+        .catch(function (error) {
+            console.error('Error en fetch:', error);
 
-    } catch (error) {
-        console.error('❌ Error al cargar vehículos:', error);
+            let mensajeError;
 
-        // Mensaje más específico según el tipo de error
-        if (error.message.includes('Failed to fetch')) {
-            mostrarError('No se puede conectar con el servidor. Verifica tu conexión.');
-        } else {
-            mostrarError(`Error al cargar vehículos: ${error.message}`);
-        }
-    }
+            // Mensajes específicos según el tipo de error
+            if (error.message.includes('Failed to fetch')) {
+                mensajeError = 'No se puede conectar con el servidor. Verifica tu conexión.';
+            } else if (error.message.includes('NetworkError')) {
+                mensajeError = 'Error de red. Verifica tu conexión a internet.';
+            } else if (error.message.includes('404')) {
+                mensajeError = 'Endpoint no encontrado (Error 404)';
+            } else if (error.message.includes('500')) {
+                mensajeError = 'Error interno del servidor (Error 500)';
+            } else {
+                mensajeError = 'Error al cargar vehículos: ' + error.message;
+            }
+
+            mostrarError(mensajeError);
+
+            // Llamar callback con error
+            if (callback) {
+                callback(error);
+            }
+        });
 }
-
 
 //Filtra los vehículos ya cargados en memoria
 function aplicarFiltros() {

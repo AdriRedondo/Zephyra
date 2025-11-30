@@ -6,7 +6,6 @@ function requiredAdminId(req, res, next) {
     }
     else {
         //Si no está autorizado, lanza error 401
-        console.log('No estás autorizado');
         const error = 'Error 401';
         const texto1 = 'Acceso no autorizado.';
         const texto2 = 'Se ha intentado acceder a una página a la que no se tiene autorización.'
@@ -22,7 +21,6 @@ function requiredEmployeeId(req, res, next) {
     }
     else {
         //Si no está autorizado, lanza error 401
-        console.log('No estás autorizado');
         const error = 'Error 401';
         const texto1 = 'Acceso no autorizado.';
         const texto2 = 'Se ha intentado acceder a una página a la que no se tiene autorización.'

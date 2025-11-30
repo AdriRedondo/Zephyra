@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const pool = require('./db');
+const apiRouter = require('./routes/api');
 
 
 //Importación de routers
@@ -106,7 +107,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+
 //Rutas principales de la app
+app.use('/api', apiRouter);
+
 app.use('/', vehiculosRouter);
 app.use('/', reservasRouter);
 app.use('/', contactoRouter);
