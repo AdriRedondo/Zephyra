@@ -253,29 +253,79 @@ document.addEventListener("DOMContentLoaded", () => {
 let vehiculosData = [];
 let vehiculosFiltrados = [];
 
-document.getElementById('modalVehiculos').addEventListener('show.bs.modal', function () {
-    if (vehiculosData.length === 0) {
-        cargarVehiculos();
-    }
-});
+// Verificar que el modal existe antes de agregar el evento
+const modalVehiculos = document.getElementById('modalVehiculos');
+if (modalVehiculos) {
+    modalVehiculos.addEventListener('show.bs.modal', function () {
+        console.log('Modal abierto. Vehículos en cache:', vehiculosData.length);
+
+        if (vehiculosData.length === 0) {
+            // Mostrar mensaje de carga
+            const listaVehiculos = document.getElementById('lista-vehiculos');
+            if (listaVehiculos) {
+                listaVehiculos.innerHTML = '<div class="col-12"><p class="text-center">Cargando vehículos...</p></div>';
+            }
+
+            cargarVehiculos(function (error, data) {
+                if (error) {
+                    console.error('Error al cargar vehículos:', error);
+                    const listaVehiculos = document.getElementById('lista-vehiculos');
+                    if (listaVehiculos) {
+                        listaVehiculos.innerHTML =
+                            '<div class="col-12"><p class="text-danger text-center">Error al cargar los vehículos. Por favor, intenta de nuevo.</p></div>';
+                    }
+                } else {
+                    console.log('Vehículos cargados exitosamente:', data.length);
+                }
+            });
+        } else {
+            // Ya hay vehículos cargados, solo mostrarlos
+            mostrarVehiculos();
+        }
+    });
+} else {
+    console.error('No se encontró el modal con id "modalVehiculos"');
+}
 
 // Función para cargar vehículos desde la API
-async function cargarVehiculos() {
-    try {
-        const response = await fetch('/api/vehiculos');
-        const data = await response.json();
+function cargarVehiculos(callback) {
+    fetch('/api/vehiculos')
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Error HTTP ' + response.status);
+            }
+            return response.json();
+        })
+        .then(function (json) {
+            console.log('Datos JSON recibidos:', json);
 
-        // Filtrar solo vehículos disponibles
-        vehiculosData = data.filter(v => v.estado === 'disponible');
-        vehiculosFiltrados = [...vehiculosData];
+            // El API devuelve {success: true, data: [...], count: N}
+            // Extraer el array de vehículos
+            let vehiculos = [];
+            if (json.success && json.data) {
+                vehiculos = json.data;
+            } else if (Array.isArray(json)) {
+                vehiculos = json;
+            } else {
+                throw new Error('Formato de respuesta inválido');
+            }
 
-        inicializarFiltros();
-        mostrarVehiculos();
-    } catch (error) {
-        console.error('Error al cargar vehículos:', error);
-        document.getElementById('lista-vehiculos').innerHTML =
-            '<div class="col-12"><p class="text-danger">Error al cargar los vehículos</p></div>';
-    }
+            // Filtrar solo vehículos disponibles
+            vehiculosData = vehiculos.filter(function (v) {
+                return v.estado === 'disponible';
+            });
+
+            vehiculosFiltrados = vehiculosData.slice(); // Copia del array
+
+            inicializarFiltros();
+            mostrarVehiculos();
+
+            callback(null, vehiculosData);
+        })
+        .catch(function (error) {
+            console.error('Error al cargar vehículos:', error);
+            callback(error);
+        });
 }
 
 // Inicializar opciones de filtros
