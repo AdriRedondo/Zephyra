@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Prevenir el comportamiento por defecto del formulario
-    elementos.formulario.addEventListener('submit', function (e) {
+    elementos.formulario.addEventListener('submit', (e) => {
         e.preventDefault();
         aplicarFiltros();
     });
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     [elementos.selectMarca, elementos.selectModelo, elementos.selectPlazas,
     elementos.selectConcesionario, elementos.selectEstado].forEach(select => {
         if (select) {
-            select.addEventListener('change', function () {
+            select.addEventListener('change', () => {
                 aplicarFiltros();
             });
         }
@@ -81,7 +81,7 @@ function cargarVehiculos(callback) {
                 callback(null, vehiculosCache);
             }
         })
-        .catch(function (error) {
+        .catch((error) => {
             console.error('Error en fetch:', error);
 
             let mensajeError;

@@ -1,5 +1,5 @@
-<%- include('es-header', { title: 'Formulario de login' , estilos: ['style', 'forms' ], actual_es: 'es-login' ,
-    actual_en: 'en-login' }) %>
+<%- include('es-header', { title: 'Formulario de login' , estilos: ['style', 'forms' , 'login' ], actual_es: 'es-login'
+    , actual_en: 'en-login' }) %>
     <main>
         <section id="Login" class="login">
             <form id="login-form-id" class="formularios aria-label=" Formulario de login" method="post"
@@ -28,10 +28,13 @@
                                         class="text-danger">*</span>
                                 </label>
                                 <div class="input-group">
-                                    <span class="input-group-text">
+                                    <span class="input-group-text position-relative">
                                         <i class="bi bi-lock"></i> </span>
                                     <input id="contraseña" name="password" class="form-control" type="password" required
                                         placeholder="Escriba su contraseña">
+                                    <button id="btn-eye" type="button">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
                                 </div>
                                 <span id="contraseña-error" class="error" aria-live="polite"></span>
                             </div>

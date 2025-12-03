@@ -1,0 +1,16 @@
+#btn-eye {
+    background: transparent;
+    border: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    font-size: 1.5rem;
+    padding-right: 0.5rem;
+    color: #6c757d;
+}
+
+#btn-eye:hover {
+    color: #023A26;
+}

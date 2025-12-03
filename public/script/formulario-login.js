@@ -74,3 +74,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 });
+
+const contrasenya = document.getElementById('contraseña');
+const btnEye = document.getElementById('btn-eye');
+
+btnEye.addEventListener('click', () => {
+    if (contrasenya.type === 'password') {
+        contrasenya.type = 'text';
+        btnEye.innerHTML = '<i class="bi bi-eye-slash"></i>';
+    }
+    else {
+        contrasenya.type = 'password';
+        btnEye.innerHTML = '<i class="bi bi-eye"></i>';
+    }
+});

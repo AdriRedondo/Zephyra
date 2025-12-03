@@ -59,12 +59,6 @@ function obtenerImagen(id, callback) {
 
 //GET de la página de vehículos con filtros en español
 router.get('/es-vehiculos', (req, res) => {
-    //Filtros recibidos
-    const marcaFiltro = req.query.marca;
-    const modeloFiltro = req.query.modelo;
-    const plazasFiltro = req.query.plazas;
-    const concesionarioFiltro = req.query.concesionario;
-    const estadoFiltro = req.query.estado;
 
     //Consulta que une vehículos con concesionarios para obtener el nombre
     //JOIN con la tabla Concesionarios para obtener el nombre
@@ -79,51 +73,10 @@ router.get('/es-vehiculos', (req, res) => {
             return res.status(500);
         }
 
-        //Filtros aplicados 
-        let vehiculosFiltrados = vehiculos;
-
-        if (marcaFiltro) {
-            vehiculosFiltrados = vehiculosFiltrados.filter(
-                v => v.marca.toLowerCase() === marcaFiltro.toLowerCase()
-            );
-        }
-
-        if (modeloFiltro) {
-            vehiculosFiltrados = vehiculosFiltrados.filter(
-                v => v.modelo.toLowerCase() === modeloFiltro.toLowerCase()
-            );
-        }
-
-        if (plazasFiltro) {
-            vehiculosFiltrados = vehiculosFiltrados.filter(
-                v => v.numero_plazas === parseInt(plazasFiltro)
-            );
-        }
-
-        if (concesionarioFiltro) {
-            vehiculosFiltrados = vehiculosFiltrados.filter(
-                v => v.nombre_concesionario && v.nombre_concesionario.toLowerCase() === concesionarioFiltro.toLowerCase()
-            );
-        }
-
-        if (estadoFiltro) {
-            vehiculosFiltrados = vehiculosFiltrados.filter(
-                v => v.estado && v.estado.toLowerCase() === estadoFiltro.toLowerCase()
-            );
-        }
-
-        //SI todo sale bien se muestra la vista de vehículos
+        //Si todo sale bien se muestra la vista de vehículos
         //Vista en español
         res.render('es-vehiculos', {
-            vehiculos: vehiculos,
-            vehiculosFiltrados: vehiculosFiltrados,
-            filtros: {
-                marca: marcaFiltro,
-                modelo: modeloFiltro,
-                plazas: plazasFiltro,
-                concesionario: concesionarioFiltro,
-                estado: estadoFiltro
-            }
+            vehiculos: vehiculos
         });
     });
 });
@@ -389,12 +342,6 @@ router.post('/es-vehiculos/:id/eliminar', requiredAdminId, (req, res) => {
 
 //GET de la página de vehículos con filtros en inglés
 router.get('/en-vehicles', (req, res) => {
-    //Filtros recibidos
-    const marcaFiltro = req.query.marca;
-    const modeloFiltro = req.query.modelo;
-    const plazasFiltro = req.query.plazas;
-    const concesionarioFiltro = req.query.concesionario;
-    const estadoFiltro = req.query.estado;
 
     //Consulta que une vehículos con concesionarios para obtener el nombre
     //JOIN con la tabla Concesionarios para obtener el nombre
@@ -409,51 +356,10 @@ router.get('/en-vehicles', (req, res) => {
             return res.status(500);
         }
 
-        //Filtros aplicados 
-        let vehiculosFiltrados = vehiculos;
-
-        if (marcaFiltro) {
-            vehiculosFiltrados = vehiculosFiltrados.filter(
-                v => v.marca.toLowerCase() === marcaFiltro.toLowerCase()
-            );
-        }
-
-        if (modeloFiltro) {
-            vehiculosFiltrados = vehiculosFiltrados.filter(
-                v => v.modelo.toLowerCase() === modeloFiltro.toLowerCase()
-            );
-        }
-
-        if (plazasFiltro) {
-            vehiculosFiltrados = vehiculosFiltrados.filter(
-                v => v.numero_plazas === parseInt(plazasFiltro)
-            );
-        }
-
-        if (concesionarioFiltro) {
-            vehiculosFiltrados = vehiculosFiltrados.filter(
-                v => v.nombre_concesionario && v.nombre_concesionario.toLowerCase() === concesionarioFiltro.toLowerCase()
-            );
-        }
-
-        if (estadoFiltro) {
-            vehiculosFiltrados = vehiculosFiltrados.filter(
-                v => v.estado && v.estado.toLowerCase() === estadoFiltro.toLowerCase()
-            );
-        }
-
         //SI todo sale bien se muestra la vista de vehículos
         //Vista en inglés
         res.render('en-vehicles', {
-            vehiculos: vehiculos,
-            vehiculosFiltrados: vehiculosFiltrados,
-            filtros: {
-                marca: marcaFiltro,
-                modelo: modeloFiltro,
-                plazas: plazasFiltro,
-                concesionario: concesionarioFiltro,
-                estado: estadoFiltro
-            }
+            vehiculos: vehiculos
         });
     });
 });

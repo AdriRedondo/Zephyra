@@ -89,6 +89,10 @@ h2 {
     margin-top: 2rem;
 }
 
+select {
+    cursor: pointer;
+}
+
 .navbar-toggler,
 .navbar-toggler:focus {
     border: none;
