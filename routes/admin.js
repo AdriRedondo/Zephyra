@@ -36,6 +36,15 @@ router.get('/en-admin', (req, res) => {
     res.render('en-admin');
 });
 
+// GET de la página de estadísticas (solo admin)
+router.get('/es-estadisticas', requiredAdminId, (req, res) => {
+    res.render('es-estadisticas');
+});
+
+router.get('/en-statistics', requiredAdminId, (req, res) => {
+    res.render('en-statistics');
+});
+
 // GET para mostrar el formulario de registro de usuario
 router.get('/es-user/register', requiredAdminId, (req, res) => {
     const language = req.query.idioma || 'español';

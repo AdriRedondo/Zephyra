@@ -65,6 +65,21 @@
                             <% }) %>
                     </select>
 
+                    <label>Autonomía mínima (km):</label>
+                    <input type="number" name="autonomia_min" class="form-control mb-3" placeholder="Ej: 200" min="0">
+
+                    <label>Color:</label>
+                    <select name="color" class="form-select mb-3">
+                        <option value>Todos</option>
+                        <% const colores=[...new Set(vehiculos.map(v=>
+                            v.color).filter(Boolean))].sort();
+                            colores.forEach(c => { %>
+                            <option value="<%= c %>">
+                                <%= c %>
+                            </option>
+                            <% }) %>
+                    </select>
+
                 </form>
 
             </div>

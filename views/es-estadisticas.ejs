@@ -1,0 +1,191 @@
+<%- include('es-header', { title: 'Estadísticas', estilos: ['style'], actual_es: 'es-estadisticas', actual_en: 'en-statistics' }) %>
+
+<main class="container my-5">
+    <h2 class="mb-4">Estadísticas del Sistema</h2>
+
+    <% if (!usuario || usuario.rol !== 'admin') { %>
+        <div class="alert alert-danger">
+            Acceso denegado. Solo los administradores pueden ver estadísticas.
+        </div>
+    <% } else { %>
+
+    <!-- Tarjetas de resumen -->
+    <div class="row mb-4" id="resumen-cards">
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Reservas</h5>
+                    <p class="card-text display-4" id="total-reservas">-</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Vehículos</h5>
+                    <p class="card-text display-4" id="total-vehiculos">-</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Concesionarios</h5>
+                    <p class="card-text display-4" id="total-concesionarios">-</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Usuarios</h5>
+                    <p class="card-text display-4" id="total-usuarios">-</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vehículo más usado -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Vehículo Más Reservado</h5>
+                </div>
+                <div class="card-body">
+                    <p class="lead" id="vehiculo-mas-usado">Cargando...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reservas por concesionario -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Reservas por Concesionario</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Concesionario</th>
+                                    <th>Ciudad</th>
+                                    <th>Total Reservas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reservas-concesionario">
+                                <tr>
+                                    <td colspan="3" class="text-center">Cargando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top 10 vehículos más usados -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Top 10 Vehículos Más Usados</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Marca</th>
+                                    <th>Modelo</th>
+                                    <th>Matrícula</th>
+                                    <th>Total Reservas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="top-vehiculos">
+                                <tr>
+                                    <td colspan="5" class="text-center">Cargando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <% } %>
+
+    <div class="mt-4">
+        <a href="/es-admin" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left"></i> Volver al panel de administración
+        </a>
+    </div>
+</main>
+
+<script>
+    // Cargar estadísticas generales
+    fetch('/api/estadisticas/resumen-general')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('total-reservas').textContent = data.data.total_reservas;
+                document.getElementById('total-vehiculos').textContent = data.data.total_vehiculos;
+                document.getElementById('total-concesionarios').textContent = data.data.total_concesionarios;
+                document.getElementById('total-usuarios').textContent = data.data.total_usuarios;
+                document.getElementById('vehiculo-mas-usado').textContent = data.data.vehiculo_mas_usado;
+            }
+        })
+        .catch(err => console.error('Error al cargar resumen:', err));
+
+    // Cargar reservas por concesionario
+    fetch('/api/estadisticas/reservas-por-concesionario')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                const tbody = document.getElementById('reservas-concesionario');
+                if (data.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="text-center">No hay datos</td></tr>';
+                } else {
+                    tbody.innerHTML = data.data.map(c => `
+                        <tr>
+                            <td>${c.concesionario}</td>
+                            <td>${c.ciudad}</td>
+                            <td><span class="badge bg-primary">${c.total_reservas}</span></td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        })
+        .catch(err => console.error('Error al cargar reservas por concesionario:', err));
+
+    // Cargar top vehículos
+    fetch('/api/estadisticas/vehiculo-mas-usado')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                const tbody = document.getElementById('top-vehiculos');
+                if (data.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay datos</td></tr>';
+                } else {
+                    tbody.innerHTML = data.data.map((v, i) => `
+                        <tr>
+                            <td>${i + 1}</td>
+                            <td>${v.marca}</td>
+                            <td>${v.modelo}</td>
+                            <td>${v.matricula}</td>
+                            <td><span class="badge bg-success">${v.total_reservas}</span></td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        })
+        .catch(err => console.error('Error al cargar top vehículos:', err));
+</script>
+
+<%- include('footer', { scripts: [] }) %>

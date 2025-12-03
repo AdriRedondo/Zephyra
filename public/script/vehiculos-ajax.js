@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     elementos.selectPlazas = document.querySelector('select[name="plazas"]');
     elementos.selectConcesionario = document.querySelector('select[name="concesionario"]');
     elementos.selectEstado = document.querySelector('select[name="estado"]');
+    elementos.inputAutonomia = document.querySelector('input[name="autonomia_min"]');
+    elementos.selectColor = document.querySelector('select[name="color"]');
     elementos.contenedor = document.querySelector('.contenedor-vehiculos');
 
     // Verificar que existen los elementos
@@ -28,13 +30,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Escuchar cambios en los select para filtrar automáticamente
     [elementos.selectMarca, elementos.selectModelo, elementos.selectPlazas,
-    elementos.selectConcesionario, elementos.selectEstado].forEach(select => {
+    elementos.selectConcesionario, elementos.selectEstado, elementos.selectColor].forEach(select => {
         if (select) {
             select.addEventListener('change', () => {
                 aplicarFiltros();
             });
         }
     });
+
+    // Escuchar cambios en el input de autonomía
+    if (elementos.inputAutonomia) {
+        elementos.inputAutonomia.addEventListener('input', () => {
+            aplicarFiltros();
+        });
+    }
 
     cargarVehiculos((err, vehiculos) => {
         if (err) {
@@ -115,7 +124,9 @@ function aplicarFiltros() {
         modelo: elementos.selectModelo.value,
         plazas: elementos.selectPlazas.value,
         concesionario: elementos.selectConcesionario.value,
-        estado: elementos.selectEstado.value
+        estado: elementos.selectEstado.value,
+        autonomia_min: elementos.inputAutonomia ? elementos.inputAutonomia.value : '',
+        color: elementos.selectColor ? elementos.selectColor.value : ''
     };
 
     const vehiculosFiltrados = vehiculosCache.filter(vehiculo => {
@@ -137,6 +148,14 @@ function aplicarFiltros() {
         }
         // Filtro por estado
         if (filtros.estado && vehiculo.estado !== filtros.estado) {
+            return false;
+        }
+        // Filtro por autonomía mínima
+        if (filtros.autonomia_min && vehiculo.autonomia_km < parseFloat(filtros.autonomia_min)) {
+            return false;
+        }
+        // Filtro por color
+        if (filtros.color && vehiculo.color !== filtros.color) {
             return false;
         }
         return true;

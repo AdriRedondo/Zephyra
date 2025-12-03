@@ -295,7 +295,7 @@ router.post('/reservas', (req, res) => {
                 // Insertar reserva
                 const consultaInsert = `
                     INSERT INTO Reservas (id_vehiculo, id_usuario, fecha_inicio, fecha_fin, observaciones, estado)
-                    VALUES (?, ?, ?, ?, ?, 'pendiente')
+                    VALUES (?, ?, ?, ?, ?, 'activa')
                 `;
 
                 pool.query(consultaInsert,
@@ -309,17 +309,25 @@ router.post('/reservas', (req, res) => {
                             });
                         }
 
-                        res.status(201).json({
-                            success: true,
-                            message: 'Reserva creada correctamente',
-                            data: {
-                                id_reserva: result.insertId,
-                                id_vehiculo,
-                                id_usuario,
-                                fecha_inicio,
-                                fecha_fin,
-                                estado: 'pendiente'
+                        // Actualizar el estado del vehículo a 'reservado'
+                        const actualizarVehiculo = 'UPDATE Vehiculos SET estado = ? WHERE id_vehiculo = ?';
+                        pool.query(actualizarVehiculo, ['reservado', id_vehiculo], (errUpdate) => {
+                            if (errUpdate) {
+                                console.error('Error al actualizar estado del vehículo:', errUpdate);
                             }
+
+                            res.status(201).json({
+                                success: true,
+                                message: 'Reserva creada correctamente',
+                                data: {
+                                    id_reserva: result.insertId,
+                                    id_vehiculo,
+                                    id_usuario,
+                                    fecha_inicio,
+                                    fecha_fin,
+                                    estado: 'activa'
+                                }
+                            });
                         });
                     }
                 );
@@ -331,7 +339,7 @@ router.post('/reservas', (req, res) => {
 // PUT /api/reservas/:id - Actualizar una reserva
 router.put('/reservas/:id', (req, res) => {
     const id = req.params.id;
-    const { fecha_inicio, fecha_fin, observaciones, estado } = req.body;
+    const { fecha_inicio, fecha_fin, observaciones, estado, kilometros_recorridos, incidencias_reportadas } = req.body;
 
     const campos = [];
     const valores = [];
@@ -347,6 +355,14 @@ router.put('/reservas/:id', (req, res) => {
     if (observaciones !== undefined) {
         campos.push('observaciones = ?');
         valores.push(observaciones);
+    }
+    if (kilometros_recorridos !== undefined) {
+        campos.push('kilometros_recorridos = ?');
+        valores.push(kilometros_recorridos);
+    }
+    if (incidencias_reportadas !== undefined) {
+        campos.push('incidencias_reportadas = ?');
+        valores.push(incidencias_reportadas);
     }
     if (estado) {
         campos.push('estado = ?');
@@ -376,6 +392,23 @@ router.put('/reservas/:id', (req, res) => {
             return res.status(404).json({
                 success: false,
                 message: 'Reserva no encontrada'
+            });
+        }
+
+        // Si se finaliza o cancela la reserva, liberar el vehículo
+        if (estado === 'finalizada' || estado === 'cancelada') {
+            // Obtener el id_vehiculo de la reserva
+            pool.query('SELECT id_vehiculo FROM Reservas WHERE id_reserva = ?', [id], (errVehiculo, reserva) => {
+                if (!errVehiculo && reserva.length > 0) {
+                    const id_vehiculo = reserva[0].id_vehiculo;
+
+                    // Actualizar el estado del vehículo a 'disponible'
+                    pool.query('UPDATE Vehiculos SET estado = ? WHERE id_vehiculo = ?', ['disponible', id_vehiculo], (errUpdate) => {
+                        if (errUpdate) {
+                            console.error('Error al liberar vehículo:', errUpdate);
+                        }
+                    });
+                }
             });
         }
 
@@ -415,6 +448,71 @@ router.delete('/reservas/:id', (req, res) => {
 });
 
 /* ============================================
+   ENDPOINTS DE ACCESIBILIDAD
+   ============================================ */
+
+// POST /api/accesibilidad/preferencias - Guardar preferencias de accesibilidad en sesión
+router.post('/accesibilidad/preferencias', (req, res) => {
+    const { fontSize, theme, colorblind } = req.body;
+
+    // Guardar en sesión
+    if (!req.session.preferencias) {
+        req.session.preferencias = {};
+    }
+
+    if (fontSize) req.session.preferencias.fontSize = fontSize;
+    if (theme) req.session.preferencias.theme = theme;
+    if (colorblind !== undefined) req.session.preferencias.colorblind = colorblind;
+
+    // Si el usuario está loggeado, también guardar en la BD
+    if (req.session.usuario && req.session.usuario.id_usuario) {
+        const prefsJSON = JSON.stringify(req.session.preferencias);
+        const consulta = 'UPDATE Usuarios SET preferencias_accesibilidad = ? WHERE id_usuario = ?';
+
+        pool.query(consulta, [prefsJSON, req.session.usuario.id_usuario], (err) => {
+            if (err) {
+                console.error('Error al guardar preferencias en BD:', err);
+            }
+        });
+    }
+
+    res.json({
+        success: true,
+        message: 'Preferencias guardadas correctamente',
+        data: req.session.preferencias
+    });
+});
+
+// GET /api/accesibilidad/preferencias - Obtener preferencias de accesibilidad
+router.get('/accesibilidad/preferencias', (req, res) => {
+    if (req.session.usuario && req.session.usuario.id_usuario) {
+        const consulta = 'SELECT preferencias_accesibilidad FROM Usuarios WHERE id_usuario = ?';
+
+        pool.query(consulta, [req.session.usuario.id_usuario], (err, results) => {
+            if (err || results.length === 0) {
+                return res.json({
+                    success: true,
+                    data: req.session.preferencias || {}
+                });
+            }
+
+            const prefs = results[0].preferencias_accesibilidad;
+            const preferencias = prefs ? JSON.parse(prefs) : (req.session.preferencias || {});
+
+            res.json({
+                success: true,
+                data: preferencias
+            });
+        });
+    } else {
+        res.json({
+            success: true,
+            data: req.session.preferencias || {}
+        });
+    }
+});
+
+/* ============================================
    ENDPOINTS DE ESTADÍSTICAS
    ============================================ */
 
@@ -447,11 +545,10 @@ router.get('/estadisticas/vehiculos', (req, res) => {
 // GET /api/estadisticas/reservas
 router.get('/estadisticas/reservas', (req, res) => {
     const consulta = `
-        SELECT 
+        SELECT
             COUNT(*) as total,
-            SUM(CASE WHEN estado = 'pendiente' THEN 1 ELSE 0 END) as pendientes,
-            SUM(CASE WHEN estado = 'confirmada' THEN 1 ELSE 0 END) as confirmadas,
-            SUM(CASE WHEN estado = 'completada' THEN 1 ELSE 0 END) as completadas,
+            SUM(CASE WHEN estado = 'activa' THEN 1 ELSE 0 END) as activas,
+            SUM(CASE WHEN estado = 'finalizada' THEN 1 ELSE 0 END) as finalizadas,
             SUM(CASE WHEN estado = 'cancelada' THEN 1 ELSE 0 END) as canceladas
         FROM Reservas
     `;
@@ -467,6 +564,115 @@ router.get('/estadisticas/reservas', (req, res) => {
         res.status(200).json({
             success: true,
             data: results[0]
+        });
+    });
+});
+
+// GET /api/estadisticas/reservas-por-concesionario
+router.get('/estadisticas/reservas-por-concesionario', (req, res) => {
+    const consulta = `
+        SELECT
+            c.nombre as concesionario,
+            c.ciudad,
+            COUNT(r.id_reserva) as total_reservas
+        FROM Concesionarios c
+        LEFT JOIN Vehiculos v ON c.id_concesionario = v.id_concesionario
+        LEFT JOIN Reservas r ON v.id_vehiculo = r.id_vehiculo
+        GROUP BY c.id_concesionario, c.nombre, c.ciudad
+        ORDER BY total_reservas DESC
+    `;
+
+    pool.query(consulta, (err, results) => {
+        if (err) {
+            return res.status(500).json({
+                success: false,
+                message: 'Error al obtener estadísticas por concesionario'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: results
+        });
+    });
+});
+
+// GET /api/estadisticas/vehiculo-mas-usado
+router.get('/estadisticas/vehiculo-mas-usado', (req, res) => {
+    const consulta = `
+        SELECT
+            v.id_vehiculo,
+            v.marca,
+            v.modelo,
+            v.matricula,
+            COUNT(r.id_reserva) as total_reservas
+        FROM Vehiculos v
+        LEFT JOIN Reservas r ON v.id_vehiculo = r.id_vehiculo
+        GROUP BY v.id_vehiculo, v.marca, v.modelo, v.matricula
+        ORDER BY total_reservas DESC
+        LIMIT 10
+    `;
+
+    pool.query(consulta, (err, results) => {
+        if (err) {
+            return res.status(500).json({
+                success: false,
+                message: 'Error al obtener vehículo más usado'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: results
+        });
+    });
+});
+
+// GET /api/estadisticas/resumen-general
+router.get('/estadisticas/resumen-general', (req, res) => {
+    const consultas = [
+        // Total de reservas
+        'SELECT COUNT(*) as total_reservas FROM Reservas',
+        // Total de vehículos
+        'SELECT COUNT(*) as total_vehiculos FROM Vehiculos',
+        // Total de concesionarios
+        'SELECT COUNT(*) as total_concesionarios FROM Concesionarios',
+        // Total de usuarios
+        'SELECT COUNT(*) as total_usuarios FROM Usuarios',
+        // Vehículo más reservado
+        `SELECT v.marca, v.modelo, COUNT(r.id_reserva) as veces_reservado
+         FROM Vehiculos v
+         LEFT JOIN Reservas r ON v.id_vehiculo = r.id_vehiculo
+         GROUP BY v.id_vehiculo, v.marca, v.modelo
+         ORDER BY veces_reservado DESC
+         LIMIT 1`
+    ];
+
+    Promise.all(consultas.map(q => {
+        return new Promise((resolve, reject) => {
+            pool.query(q, (err, results) => {
+                if (err) reject(err);
+                else resolve(results[0]);
+            });
+        });
+    }))
+    .then(results => {
+        res.status(200).json({
+            success: true,
+            data: {
+                total_reservas: results[0].total_reservas,
+                total_vehiculos: results[1].total_vehiculos,
+                total_concesionarios: results[2].total_concesionarios,
+                total_usuarios: results[3].total_usuarios,
+                vehiculo_mas_usado: results[4] ? `${results[4].marca} ${results[4].modelo} (${results[4].veces_reservado} reservas)` : 'N/A'
+            }
+        });
+    })
+    .catch(err => {
+        console.error('Error al obtener estadísticas:', err);
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener estadísticas generales'
         });
     });
 });
