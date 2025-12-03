@@ -51,6 +51,12 @@
                             </li>
                         </ul>
                         <ul class="navbar-nav ms-auto">
+                            <% if(usuario) {%>
+                            <li class="nav-item me-3">
+                                <a class="nav-link" href="/en-history"
+                                    accesskey="h">My Bookings</a>
+                            </li>
+                            <% } %>
                             <% if(!usuario) {%>
                             <li class="nav-item me-3">
                                 <a class="nav-link pt-auto" href="/en-login"
@@ -140,6 +146,7 @@
                                         <li> Alt + V → Available Vehicles</li>
                                         <li> Alt + R → Reserve a Vehicle</li>
                                         <li> Alt + C → Contact Us</li>
+                                        <li> Alt + H → Booking History</li>
                                         <li> Alt + L → Login Page</li>
                                         <li> Alt + A → Accessibility
                                             Options</li>

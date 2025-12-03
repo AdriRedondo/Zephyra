@@ -28,7 +28,21 @@ function requiredEmployeeId(req, res, next) {
     }
 }
 
+//Función que revisa si el usuario está loggeado (empleado o admin)
+function requiredLoggedIn(req, res, next) {
+    if (req.session.usuario) {
+        console.log('Usuario loggeado');
+        next();
+    }
+    else {
+        //Si no está loggeado, redirigir a login
+        const lang = res.locals.lang || 'es';
+        return res.redirect(`/${lang}-login`);
+    }
+}
+
 module.exports = {
     requiredAdminId,
-    requiredEmployeeId
+    requiredEmployeeId,
+    requiredLoggedIn
 };

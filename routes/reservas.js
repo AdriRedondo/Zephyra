@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const pool = require('../db');
+const { requiredLoggedIn } = require('../autorizaciones');
 
 const reservas = [];   // <-- ARRAY EN MEMORIA
 
@@ -57,6 +59,96 @@ router.post('/submit-bookings', (req, res) => {
 
 router.get('/listareservas', (req, res) => {
     res.render('es-listareservas', { reservas });
+});
+
+// Ruta para el histórico de reservas del usuario loggeado
+router.get('/es-historial', requiredLoggedIn, (req, res) => {
+    const id_usuario = req.session.usuario.id_usuario;
+
+    const query = `
+        SELECT
+            r.id_reserva,
+            r.fecha_inicio,
+            r.fecha_fin,
+            r.estado,
+            r.kilometros_recorridos,
+            r.incidencias_reportadas,
+            v.marca,
+            v.modelo,
+            v.matricula,
+            v.imagen
+        FROM Reservas r
+        INNER JOIN Vehiculos v ON r.id_vehiculo = v.id_vehiculo
+        WHERE r.id_usuario = ?
+        ORDER BY r.fecha_inicio DESC
+    `;
+
+    pool.query(query, [id_usuario], (err, results) => {
+        if (err) {
+            console.error('Error al obtener el histórico de reservas:', err);
+            return res.status(500).render('errors', {
+                error: 'Error 500',
+                texto1: 'Error al cargar el histórico de reservas',
+                texto2: 'Por favor, inténtalo de nuevo más tarde.',
+                lang: 'es'
+            });
+        }
+
+        // Separar reservas activas y finalizadas
+        const reservasActivas = results.filter(r => r.estado === 'activa');
+        const reservasFinalizadas = results.filter(r => r.estado === 'finalizada' || r.estado === 'cancelada');
+
+        res.render('es-historial', {
+            reservasActivas,
+            reservasFinalizadas,
+            usuario: req.session.usuario
+        });
+    });
+});
+
+// Ruta en inglés para el histórico de reservas
+router.get('/en-history', requiredLoggedIn, (req, res) => {
+    const id_usuario = req.session.usuario.id_usuario;
+
+    const query = `
+        SELECT
+            r.id_reserva,
+            r.fecha_inicio,
+            r.fecha_fin,
+            r.estado,
+            r.kilometros_recorridos,
+            r.incidencias_reportadas,
+            v.marca,
+            v.modelo,
+            v.matricula,
+            v.imagen
+        FROM Reservas r
+        INNER JOIN Vehiculos v ON r.id_vehiculo = v.id_vehiculo
+        WHERE r.id_usuario = ?
+        ORDER BY r.fecha_inicio DESC
+    `;
+
+    pool.query(query, [id_usuario], (err, results) => {
+        if (err) {
+            console.error('Error al obtener el histórico de reservas:', err);
+            return res.status(500).render('errors', {
+                error: 'Error 500',
+                texto1: 'Error loading booking history',
+                texto2: 'Please try again later.',
+                lang: 'en'
+            });
+        }
+
+        // Separar reservas activas y finalizadas
+        const activeBookings = results.filter(r => r.estado === 'activa');
+        const completedBookings = results.filter(r => r.estado === 'finalizada' || r.estado === 'cancelada');
+
+        res.render('en-history', {
+            activeBookings,
+            completedBookings,
+            usuario: req.session.usuario
+        });
+    });
 });
 
 module.exports = router;

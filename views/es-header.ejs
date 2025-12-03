@@ -52,6 +52,12 @@
                             </li>
                         </ul>
                         <ul class="navbar-nav ms-auto">
+                            <% if(usuario) {%>
+                            <li class="nav-item me-3">
+                                <a class="nav-link" href="/es-historial"
+                                    accesskey="h">Mis Reservas</a>
+                            </li>
+                            <% } %>
                             <% if(!usuario) {%>
                             <li class="nav-item me-3">
                                 <a class="nav-link pt-auto" href="/es-login"
@@ -142,6 +148,7 @@
                                             disponibles</li>
                                         <li> Alt + R → Reservar un vehículo</li>
                                         <li> Alt + C → Guardar un contacto</li>
+                                        <li> Alt + H → Historial de reservas</li>
                                         <li> Alt + L → Página de Login</li>
                                         <li> Alt + A → Opciones de
                                             accesibilidad</li>

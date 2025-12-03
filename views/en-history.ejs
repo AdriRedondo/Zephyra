@@ -1,0 +1,132 @@
+<%- include('en-header', { title: 'Booking History', estilos: ['style'],
+actual_es: 'es-historial', actual_en: 'en-history' }) %>
+
+<main class="container my-5">
+    <h2 class="mb-4">My Booking History</h2>
+
+    <!-- Active Bookings -->
+    <section class="mb-5">
+        <h3 class="mb-3">Active Bookings</h3>
+        <% if (activeBookings.length === 0) { %>
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> You have no active bookings at the
+            moment.
+        </div>
+        <% } else { %>
+        <div class="row">
+            <% activeBookings.forEach(booking => { %>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <% if (booking.imagen) { %>
+                    <img
+                        src="data:image/jpeg;base64,<%= booking.imagen.toString('base64') %>"
+                        class="card-img-top"
+                        alt="<%= booking.marca %> <%= booking.modelo %>"
+                        style="height: 200px; object-fit: cover;">
+                    <% } else { %>
+                    <div
+                        class="card-img-top bg-secondary d-flex align-items-center justify-content-center"
+                        style="height: 200px;">
+                        <i class="bi bi-car-front-fill text-white"
+                            style="font-size: 3rem;"></i>
+                    </div>
+                    <% } %>
+                    <div class="card-body">
+                        <h5 class="card-title"><%= booking.marca %> <%=
+                            booking.modelo %></h5>
+                        <p class="card-text">
+                            <strong>License Plate:</strong> <%=
+                            booking.matricula %><br>
+                            <strong>Start Date:</strong> <%= new
+                            Date(booking.fecha_inicio).toLocaleString('en-US')
+                            %><br>
+                            <strong>End Date:</strong> <%= new
+                            Date(booking.fecha_fin).toLocaleString('en-US') %>
+                        </p>
+                        <span class="badge bg-success">Active</span>
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+        <% } %>
+    </section>
+
+    <!-- Completed Bookings -->
+    <section>
+        <h3 class="mb-3">Completed Bookings History</h3>
+        <% if (completedBookings.length === 0) { %>
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> You have no completed bookings
+            yet.
+        </div>
+        <% } else { %>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Vehicle</th>
+                        <th>License Plate</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                        <th>Kilometers</th>
+                        <th>Incidents</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% completedBookings.forEach(booking => { %>
+                    <tr>
+                        <td><%= booking.marca %> <%= booking.modelo %></td>
+                        <td><%= booking.matricula %></td>
+                        <td><%= new
+                            Date(booking.fecha_inicio).toLocaleDateString('en-US')
+                            %></td>
+                        <td><%= new
+                            Date(booking.fecha_fin).toLocaleDateString('en-US')
+                            %></td>
+                        <td>
+                            <% if (booking.estado === 'finalizada') { %>
+                            <span class="badge bg-secondary">Completed</span>
+                            <% } else if (booking.estado === 'cancelada') { %>
+                            <span class="badge bg-danger">Cancelled</span>
+                            <% } %>
+                        </td>
+                        <td><%= booking.kilometros_recorridos || 'N/A' %></td>
+                        <td>
+                            <% if (booking.incidencias_reportadas) { %>
+                            <button class="btn btn-sm btn-outline-info"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#incident-<%= booking.id_reserva %>">
+                                View
+                            </button>
+                            <div class="collapse mt-2"
+                                id="incident-<%= booking.id_reserva %>">
+                                <div class="card card-body">
+                                    <%= booking.incidencias_reportadas %>
+                                </div>
+                            </div>
+                            <% } else { %>
+                            None
+                            <% } %>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+        <% } %>
+    </section>
+
+    <div class="mt-4">
+        <a href="/en-home" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left"></i> Back to home
+        </a>
+        <a href="/en-bookings" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> New booking
+        </a>
+    </div>
+</main>
+
+<%- include('footer', { scripts: ['bootstrap.bundle.min'] }) %>
