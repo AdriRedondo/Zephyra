@@ -1,7 +1,6 @@
 //Función que revisa si el usuario tiene autorización de administrador
 function requiredAdminId(req, res, next) {
     if (req.session.usuario && req.session.usuario.rol === 'admin') {
-        console.log('Si estás autorizado');
         next();
     }
     else {
@@ -16,7 +15,6 @@ function requiredAdminId(req, res, next) {
 //Función que revisa si el usuario tiene autorización de administrador o empleado
 function requiredEmployeeId(req, res, next) {
     if (req.session.usuario && req.session.usuario.rol === 'empleado') {
-        console.log('Si estás autorizado');
         next();
     }
     else {
@@ -31,7 +29,6 @@ function requiredEmployeeId(req, res, next) {
 //Función que revisa si el usuario está loggeado (empleado o admin)
 function requiredLoggedIn(req, res, next) {
     if (req.session.usuario) {
-        console.log('Usuario loggeado');
         next();
     }
     else {
