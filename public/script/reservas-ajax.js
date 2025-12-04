@@ -50,10 +50,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-/**
- * Cargar reservas desde el servidor con fetch() y callbacks
- * @param {Function} callback - Función callback(error, data)
- */
 function cargarReservas(callback) {
     mostrarLoader(true);
     ocultarMensajes();
@@ -114,10 +110,7 @@ function cargarReservas(callback) {
         });
 }
 
-/**
- * Mostrar reservas en la tabla
- * @param {Array} reservas - Array de reservas
- */
+
 function mostrarReservas(reservas) {
     if (!elementos.tablaBody) {
         console.error('No se encontró el tbody de la tabla');
@@ -156,11 +149,6 @@ function mostrarReservas(reservas) {
     });
 }
 
-/**
- * Crear fila HTML de una reserva
- * @param {Object} reserva - Objeto con datos de la reserva
- * @returns {string} - HTML de la fila
- */
 function crearFilaReserva(reserva) {
     const estadoBadge = obtenerBadgeEstado(reserva.estado);
 
@@ -182,9 +170,6 @@ function crearFilaReserva(reserva) {
         '    ';
 }
 
-/**
- * Crear nueva reserva con fetch() y callbacks
- */
 function crearReserva() {
     const datos = {
         id_vehiculo: document.getElementById('id_vehiculo').value,
@@ -265,10 +250,6 @@ function crearReserva() {
         });
 }
 
-/**
- * Eliminar reserva con fetch() y callbacks
- * @param {number} id - ID de la reserva a eliminar
- */
 function eliminarReserva(id) {
     if (!confirm('¿Estás seguro de que deseas eliminar esta reserva?')) {
         return;
@@ -329,9 +310,6 @@ function eliminarReserva(id) {
         });
 }
 
-/**
- * Validar que fecha_fin sea posterior a fecha_inicio
- */
 function validarFechas() {
     const fechaInicioInput = document.getElementById('fecha_inicio');
     const fechaFinInput = document.getElementById('fecha_fin');
@@ -350,22 +328,12 @@ function validarFechas() {
     }
 }
 
-/**
- * Formatear fecha a formato español
- * @param {string} fecha - Fecha en formato ISO
- * @returns {string} - Fecha formateada
- */
 function formatearFecha(fecha) {
     if (!fecha) return '-';
     const date = new Date(fecha);
     return date.toLocaleDateString('es-ES');
 }
 
-/**
- * Obtener badge según estado
- * @param {string} estado - Estado de la reserva
- * @returns {string} - HTML del badge
- */
 function obtenerBadgeEstado(estado) {
     let badgeClass;
 
@@ -389,11 +357,6 @@ function obtenerBadgeEstado(estado) {
     return '<span class="badge ' + badgeClass + '">' + escaparHTML(estado) + '</span>';
 }
 
-/**
- * Escapar HTML para prevenir XSS
- * @param {string} texto - Texto a escapar
- * @returns {string} - Texto escapado
- */
 function escaparHTML(texto) {
     if (texto === null || texto === undefined) return '';
     const div = document.createElement('div');
@@ -401,10 +364,6 @@ function escaparHTML(texto) {
     return div.innerHTML;
 }
 
-/**
- * Mostrar/ocultar loader
- * @param {boolean} mostrar - true para mostrar, false para ocultar
- */
 function mostrarLoader(mostrar) {
     let loader = document.getElementById('loader');
 
@@ -439,27 +398,14 @@ function mostrarLoader(mostrar) {
     }
 }
 
-/**
- * Mostrar mensaje de éxito
- * @param {string} mensaje - Mensaje a mostrar
- */
 function mostrarExito(mensaje) {
     mostrarMensaje(mensaje, 'success');
 }
 
-/**
- * Mostrar mensaje de error
- * @param {string} mensaje - Mensaje a mostrar
- */
 function mostrarError(mensaje) {
     mostrarMensaje(mensaje, 'danger');
 }
 
-/**
- * Mostrar mensaje temporal
- * @param {string} mensaje - Mensaje a mostrar
- * @param {string} tipo - Tipo de alerta (success, danger, warning, info)
- */
 function mostrarMensaje(mensaje, tipo) {
     const contenedor = document.querySelector('main .container .row');
 
@@ -509,9 +455,6 @@ function mostrarMensaje(mensaje, tipo) {
     }
 }
 
-/**
- * Ocultar todos los mensajes
- */
 function ocultarMensajes() {
     const mensajes = document.querySelectorAll('#successMessage, #errorMessage');
     mensajes.forEach(function (msg) {

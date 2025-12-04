@@ -610,7 +610,6 @@ router.get('/estadisticas/vehiculo-mas-usado', (req, res) => {
         LEFT JOIN Reservas r ON v.id_vehiculo = r.id_vehiculo
         GROUP BY v.id_vehiculo, v.marca, v.modelo, v.matricula
         ORDER BY total_reservas DESC
-        LIMIT 10
     `;
 
     pool.query(consulta, (err, results) => {
@@ -638,14 +637,7 @@ router.get('/estadisticas/resumen-general', (req, res) => {
         // Total de concesionarios
         'SELECT COUNT(*) as total_concesionarios FROM Concesionarios',
         // Total de usuarios
-        'SELECT COUNT(*) as total_usuarios FROM Usuarios',
-        // Vehículo más reservado
-        `SELECT v.marca, v.modelo, COUNT(r.id_reserva) as veces_reservado
-         FROM Vehiculos v
-         LEFT JOIN Reservas r ON v.id_vehiculo = r.id_vehiculo
-         GROUP BY v.id_vehiculo, v.marca, v.modelo
-         ORDER BY veces_reservado DESC
-         LIMIT 1`
+        'SELECT COUNT(*) as total_usuarios FROM Usuarios'
     ];
 
     Promise.all(consultas.map(q => {
@@ -656,30 +648,25 @@ router.get('/estadisticas/resumen-general', (req, res) => {
             });
         });
     }))
-    .then(results => {
-        res.status(200).json({
-            success: true,
-            data: {
-                total_reservas: results[0].total_reservas,
-                total_vehiculos: results[1].total_vehiculos,
-                total_concesionarios: results[2].total_concesionarios,
-                total_usuarios: results[3].total_usuarios,
-                vehiculo_mas_usado: results[4] ? `${results[4].marca} ${results[4].modelo} (${results[4].veces_reservado} reservas)` : 'N/A'
-            }
+        .then(results => {
+            res.status(200).json({
+                success: true,
+                data: {
+                    total_reservas: results[0].total_reservas,
+                    total_vehiculos: results[1].total_vehiculos,
+                    total_concesionarios: results[2].total_concesionarios,
+                    total_usuarios: results[3].total_usuarios
+                }
+            });
+        })
+        .catch(err => {
+            console.error('Error al obtener estadísticas:', err);
+            res.status(500).json({
+                success: false,
+                message: 'Error al obtener estadísticas generales'
+            });
         });
-    })
-    .catch(err => {
-        console.error('Error al obtener estadísticas:', err);
-        res.status(500).json({
-            success: false,
-            message: 'Error al obtener estadísticas generales'
-        });
-    });
 });
-
-/* ============================================
-   ENDPOINTS DE MARCAS Y MODELOS (Para filtros)
-   ============================================ */
 
 // GET /api/marcas - Obtener todas las marcas disponibles
 router.get('/marcas', (req, res) => {
