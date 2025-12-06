@@ -5,9 +5,10 @@ const bcrypt = require('bcrypt');
 const Usuario = require('../models/Usuario');
 const Concesionario = require('../models/Concesionario');
 
+const { validateUser } = require('../middleware/validations');
 
 // GET para mostrar el formulario de registro de usuario
-router.get('/es-user/register', requiredAdminId, (req, res) => {
+router.get('/es-user/register', requiredAdminId, validateUser, (req, res) => {
     const language = req.query.idioma || 'español';
     Concesionario.obtenerTodos((err, concesionarios) => {
         if (err) concesionarios = [];
@@ -17,76 +18,15 @@ router.get('/es-user/register', requiredAdminId, (req, res) => {
 });
 
 // POST del registro de un nuevo usuario
-router.post('/user-register', requiredAdminId, (req, res) => {
+router.post('/user-register', requiredAdminId, validateUser, (req, res) => {
     try {
-        //Datos enviados desde el form
-        console.log(req.body);
         const language = req.body.idioma;
-        const name = req.body.nombre;
-        const email = req.body.correo;
-        const password = req.body.password;
-        const telephone = req.body.telefono;
-        const role = req.body.rol;
-        const idConcesionario = req.body.concesionario;
 
-
-        //Validamos los campos obligatorios
-        if (!name || !email || !password) {
-            return Concesionario.obtenerTodos((err, concesionarios) => {
-                if (err) {
-                    console.error('Error al obtener los concesionarios:', err);
-                    return res.status(500).send('Error al obtener los concesionarios');
-                }
-                const vista = language === 'english' ? 'en-usuario-form' : 'es-usuario-form';
-                const errorMsg = language === 'english' ? 'Name, email and password are required' : 'El nombre, correo y contraseña son obligatorios';
-
-                return res.render(vista, {
-                    error: errorMsg,
-                    concesionarios
-                });
-            });
-        }
-
-        //Validamos el formato del correo electrónico
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email.trim())) {
-
-            return Concesionario.obtenerTodos((err, concesionarios) => {
-                if (err) {
-                    console.error('Error al obtener los concesionarios:', err);
-                    return res.status(500).send('Error al obtener los concesionarios');
-                }
-
-                const vista = language === 'english' ? 'en-usuario-form' : 'es-usuario-form';
-                const errorMsg = language === 'english' ? 'Invalid email format' : 'Formato del correo incorrecto';
-
-                return res.render(vista, {
-                    error: errorMsg,
-                    concesionarios
-                });
-            });
-        }
-
-        // Validar longitud mínima de contraseña
-        if (password.trim().length < 8) {
-            return Concesionario.obtenerTodos((error, concesionarios) => {
-                if (error) {
-                    console.error('Error al obtener los concesionarios:', err);
-                    return res.status(500).send('Error al obtener los concesionarios');
-                }
-                const vista = language === 'english' ? 'en-usuario-form' : 'es-usuario-form';
-                const errorMsg = language === 'english' ? 'Password must be at least 8 characters long' : 'La contraseña debe tener al menos 8 caracteres';
-
-                return res.render(vista, {
-                    error: errorMsg,
-                    concesionarios
-                });
-            });
-        }
-
+        // Usar datos validados del middleware
+        const { nombre, correo, password, telefono, rol, id_concesionario } = req.validatedData;
 
         //Consultamos si el correo existe ya en la BD
-        Usuario.obtenerPorCorreo(email, (err, userCorreo) => {
+        Usuario.obtenerPorCorreo(correo, (err, userCorreo) => {
             if (err) {
                 console.error('Error al verificar el correo:', err);
                 return res.status(500).send('Error al verificar el correo');
@@ -110,14 +50,6 @@ router.post('/user-register', requiredAdminId, (req, res) => {
                 });
             }
 
-
-            //Gestionamos los valores opcionales
-            const telephoneValue = telephone === '' ? null : telephone;
-            const concesionarioValue = idConcesionario === '' ? null : idConcesionario;
-
-            //El rol por defecto será el empleado
-            const roleValue = (role && role.trim() === 'admin') ? 'admin' : 'empleado';
-
             //Gestionamos la encriptación de la contraseña antes de guardala en la BD
             const saltRounds = 10;
             bcrypt.hash(password, saltRounds, (errEncriptacion, hashedPassword) => {
@@ -126,12 +58,12 @@ router.post('/user-register', requiredAdminId, (req, res) => {
                     return res.status(500), send('Error al encriptar la contraseña');
                 }
                 Usuario.crear({
-                    nombre: name,
-                    correo: email,
+                    nombre,
+                    correo,
                     contrasenya: hashedPassword,
-                    rol: roleValue,
-                    telefono: telephoneValue,
-                    id_concesionario: concesionarioValue
+                    rol,
+                    telefono,
+                    id_concesionario
                 }, (errInsert, nuevoId) => {
                     if (errInsert) {
                         console.error('Error al insertar usuario:', errInsert);
@@ -182,35 +114,19 @@ router.get('/es-user/edit/:id', requiredAdminId, (req, res) => {
     });
 });
 
-router.post('/user-edit/:id', requiredAdminId, (req, res) => {
+router.post('/user-edit/:id', requiredAdminId, validateUser, (req, res) => {
     const id = req.params.id;
-    const { nombre, correo, password, telefono, rol, concesionario } = req.body;
-
-
-    // Validar campos obligatorios
-    if (!nombre || !correo || nombre.trim() === '' || correo.trim() === '') {
-        return res.status(400).send('El nombre y correo son obligatorios');
-    }
-
-    // Validar formato de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(correo.trim())) {
-        return res.status(400).send('Formato de correo inválido');
-    }
-
-    const telefonoValue = telefono || null;
-    const concesionarioValue = concesionario || null;
-    const roleValue = (rol === 'admin') ? 'admin' : 'empleado';
+    const { nombre, correo, password, telefono, rol, id_concesionario } = req.validatedData;
 
     const actualizar = (hashedPass = null) => {
         Usuario.actualizar(
             id,
             {
-                nombre: nombre.trim(),
-                correo: correo.trim(),
-                telefono: telefonoValue,
-                rol: roleValue,
-                id_concesionario: concesionarioValue,
+                nombre,
+                correo,
+                telefono,
+                rol,
+                id_concesionario,
                 contrasenya: hashedPass
             },
             (err, filasAfectadas) => {
@@ -228,11 +144,15 @@ router.post('/user-edit/:id', requiredAdminId, (req, res) => {
         );
     };
 
-    // Si el admin no cambia la contraseña → no actualizarla
-    if (!password || password.trim() === "") {
+    // Si el admin no cambia la contraseña -> no actualizarla
+    if (!password) {
         actualizar();
     } else {
         bcrypt.hash(password, 10, (err, hashedPassword) => {
+            if (err) {
+                console.error('Error al encriptar contraseña:', err);
+                return res.status(500).send('Error al encriptar contraseña');
+            }
             actualizar(hashedPassword);
         });
     }

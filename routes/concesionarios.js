@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../db');
 const requiredAdminId = require('../middleware/autorizaciones').requiredAdminId;
 const Concesionario = require('../models/Concesionario');
 
+const { validateDealer, checkDealerDependencies } = require('../middleware/validations');
 
 // GET para registrar un nuevo concesionario
 router.get('/es-dealer/register', requiredAdminId, (req, res) => {
     const language = req.body.idioma;
-
 
     if (language === 'english')
         res.render('en-dealer-form', { error: null });
@@ -17,38 +16,22 @@ router.get('/es-dealer/register', requiredAdminId, (req, res) => {
 });
 
 // POST para registrar un nuevo concesionario
-router.post('/dealer-register', requiredAdminId, (req, res) => {
+router.post('/dealer-register', requiredAdminId, validateDealer, (req, res) => {
     const language = req.body.idioma;
-    const nombre = req.body.nombre;
-    const ciudad = req.body.ciudad;
-    const direccion = req.body.direccion;
-    const telefono = req.body.telefono;
 
-    // Validación de campos obligatorios
-    if (!nombre || !ciudad || !direccion || nombre.trim() || ciudad.trim() || direccion.trim()) {
-        const vista = language === 'english' ? 'en-dealer-form' : 'es-dealer-form';
-        const errorMsg = language === 'english' ? 'Name, city and address are required' : 'El nombre, ciudad y dirección son obligatorios';
-
-        return res.render(vista, {
-            error: errorMsg
-        });
-    }
-
-    // Gestionar teléfono opcional
-    const telefonoValue = telefono === '' ? null : telefono;
+    // Usar datos validados
+    const { nombre, ciudad, direccion, telefono_contacto } = req.validatedData;
 
     Concesionario.crear({
-        nombre: nombre.trim(),
-        ciudad: ciudad.trim(),
-        direccion: direccion.trim(),
-        telefono: telefonoValue
+        nombre,
+        ciudad,
+        direccion,
+        telefono: telefono_contacto
     }, (err, nuevoId) => {
         if (err) {
-            console.error('Error al insertar concesionario:', errInsert);
-
+            console.error('Error al insertar concesionario:', err);
             return res.status(500).send('Error al insertar usuario');
         }
-
 
         // Registro exitoso
         const vista = language === 'english' ? 'en-admin' : 'es-admin';
@@ -58,7 +41,7 @@ router.post('/dealer-register', requiredAdminId, (req, res) => {
     });
 });
 
-router.get('/es-dealer/edit/:id', requiredAdminId, (req, res) => {
+router.get('/es-dealer/edit/:id', requiredAdminId, validateDealer, (req, res) => {
     const language = req.body.idioma;
     const id = req.params.id;
 
@@ -79,28 +62,19 @@ router.get('/es-dealer/edit/:id', requiredAdminId, (req, res) => {
     });
 });
 
-
 // POST para editar un concesionario existente
 router.post('/dealer-edit/:id', requiredAdminId, (req, res) => {
     const id = req.params.id;
-
     const language = req.body.idioma;
-    const nombre = req.body.nombre;
-    const ciudad = req.body.ciudad;
-    const direccion = req.body.direccion;
-    const telefono = req.body.telefono;
 
-    // Validación de campos obligatorios
-    if (!nombre || !ciudad || !direccion || !telefono || nombre.trim() === ''
-        || ciudad.trim() === '' || direccion.trim() === '' || telefono.trim() === '') {
-        return res.status(400).send('El nombre, la ciudad, la dirección y el teléfono son obligatorios');
-    }
+    // Usar datos validados
+    const { nombre, ciudad, direccion, telefono_contacto } = req.validatedData;
 
     Concesionario.actualizar(id, {
-        nombre: nombre.trim(),
-        ciudad: ciudad.trim(),
-        direccion: direccion.trim(),
-        telefono: telefono.trim(),
+        nombre,
+        ciudad,
+        direccion,
+        telefono: telefono_contacto
     }, (err, filasAfectadas) => {
         if (err) {
             console.error(`Error al actualizar el concesionario con ID ${id}`, err);
@@ -119,7 +93,7 @@ router.post('/dealer-edit/:id', requiredAdminId, (req, res) => {
 });
 
 // POST para eliminar un concesionario
-router.post('/dealer-delete/:id', requiredAdminId, (req, res) => {
+router.post('/dealer-delete/:id', requiredAdminId, checkDealerDependencies, (req, res) => {
     const id = req.params.id;
 
     Concesionario.eliminar(id, (err, filasAfectadas) => {

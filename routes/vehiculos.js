@@ -6,6 +6,8 @@ const requiredAdminId = require('../middleware/autorizaciones').requiredAdminId;
 const Concesionario = require('../models/Concesionario');
 const Vehiculo = require('../models/Vehiculo');
 
+const { validateVehicle } = require('../middleware/validations');
+
 // Configuración de multer para almacenar archivos en memoria con formato BLOB ()
 
 // Usamos memoria para guardar los archivos
@@ -20,66 +22,17 @@ const multerFactory = multer({
         cb(null, true);
     }
 });
-/*
-// Función auxiliar para obtener concesionarios
-const obtenerConcesionarios = (callback) => {
-    const consulta = 'SELECT * FROM Concesionarios';
-    pool.query(consulta, (err, results) => {
-        if (err) return callback(err, null)
-        callback(null, results)
-    });
-};
-*/
-// Función auxiliar para obtener imágenes PNG de la BD
-function obtenerImagen(id, callback) {
-    pool.getConnection((err, con) => {
-        if (err) {
-            return callback(err);
-        }
-
-        const sql = 'SELECT imagen FROM Vehiculos WHERE id_vehiculo = ?';
-        con.query(sql, [id], (err, result) => {
-            con.release();
-
-            if (err) {
-                return callback(err);
-            }
-
-            // Comprobar si existe un vehículo con el ID dado
-            if (result.length === 0) {
-                return callback(new Error('No existe el vehículo'));
-            }
-
-            callback(null, result[0].imagen);
-        });
-    });
-}
-
-// ============================================
-// VERSIÓN EN ESPAÑOL
-// ============================================
 
 //GET de la página de vehículos con filtros en español
 router.get('/es-vehiculos', (req, res) => {
 
-    //Consulta que une vehículos con concesionarios para obtener el nombre
-    //JOIN con la tabla Concesionarios para obtener el nombre
-    const consulta = `
-        SELECT v.*, c.nombre AS nombre_concesionario
-        FROM Vehiculos v
-        LEFT JOIN Concesionarios c ON v.id_concesionario = c.id_concesionario
-    `;
-    pool.query(consulta, (err, vehiculos) => {
+    Vehiculo.obtenerTodos((err, vehiculos) => {
         if (err) {
             console.error('Error al obtener los vehículos:', err);
-            return res.status(500);
+            return res.status(500).send('Error al cargar vehículos');
         }
 
-        //Si todo sale bien se muestra la vista de vehículos
-        //Vista en español
-        res.render('es-vehiculos', {
-            vehiculos: vehiculos
-        });
+        res.render('es-vehiculos', { vehiculos });
     });
 });
 
@@ -87,13 +40,12 @@ router.get('/es-vehiculos', (req, res) => {
 router.get('/es-vehiculos/imagen/:id', (req, res) => {
     const id = req.params.id;
 
-    obtenerImagen(id, (err, imagen) => {
+    Vehiculo.obtenerImagen(id, (err, imagen) => {
         if (err || !imagen) {
             console.error('Error al obtener imagen:', err);
             return res.status(404).send('Imagen no encontrada');
         }
 
-        //Siempre es PNG
         res.contentType('image/png');
         res.end(imagen);
     });
@@ -107,12 +59,17 @@ router.get('/es-vehiculos/nuevo-vehiculo', requiredAdminId, (req, res) => {
         if (errConc) concesionarios = [];
         //Si todo sale bien se muestra la vista del form para el nuevo vehículo a registrar
         //Vista en español
-        res.render('es-vehiculo-form', { concesionarios, editar: false, vehiculo: null, error: null });
+        res.render('es-vehiculo-form', {
+            concesionarios,
+            editar: false,
+            vehiculo: null,
+            error: null
+        });
     });
 });
 
 //POST para crear un nuevo vehículo como administrador
-router.post('/es-vehiculos/nuevo-vehiculo', requiredAdminId, multerFactory.single('imagen'), (req, res) => {
+router.post('/es-vehiculos/nuevo-vehiculo', requiredAdminId, validateVehicle, multerFactory.single('imagen'), (req, res) => {
     //Validación del formato PNG
     if (req.fileValidationError === 'FORMATO_INVALIDO_PNG' ||
         (req.file && req.file.mimetype !== 'image/png')) {
@@ -129,41 +86,31 @@ router.post('/es-vehiculos/nuevo-vehiculo', requiredAdminId, multerFactory.singl
         });
     }
 
-    //Datos del formulario
-    const matricula = req.body.matricula;
-    const marca = req.body.marca;
-    const modelo = req.body.modelo;
-    const anyoMatri = req.body.anyoMatri;
-    const numPlazas = req.body.numPlazas;
-    const autonomia = req.body.autonomia;
-    const color = req.body.color;
-    const estado = req.body.estado;
-    const concesionario = req.body.concesionario;
-
-    //Validación de que los valores estén completos
-    if (!matricula || !marca || !modelo || !anyoMatri || !numPlazas || !color || !concesionario) {
-        return res.status(400);
-    }
+    // Usar datos validados
+    const { matricula, marca, modelo, anyo_matriculacion, numero_plazas, autonomia_km, color, estado, id_concesionario } = req.validatedData;
 
     //Imagen obligatoria
     if (!req.file) {
         return res.status(400).send('La imagen es obligatoria');
     }
 
-    // El archivo está en memoria como Buffer (siempre PNG)
-    const imagenBuffer = req.file.buffer;
-
-    //Consulta para insertar el vehículo nuevo
-    const consulta = `
-        INSERT INTO Vehiculos 
-        (matricula, marca, modelo, anyo_matriculacion, numero_plazas, autonomia_km, color, imagen, estado, id_concesionario)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    pool.query(consulta, [matricula, marca, modelo, anyoMatri, numPlazas, autonomia, color, imagenBuffer || null, estado, concesionario], (err, result) => {
+    // Crear vehículo usando el modelo
+    Vehiculo.crear({
+        matricula,
+        marca,
+        modelo,
+        anyo_matriculacion,
+        numero_plazas,
+        autonomia_km,
+        color,
+        imagen: req.file.buffer,
+        estado,
+        id_concesionario
+    }, (err, insertId) => {
         if (err) {
+            // Manejar error de matrícula duplicada
             if (err.code === 'ER_DUP_ENTRY') {
-                //Error si la matricula a insertar ya está registrada en la BD
-                Concesionario.obtenerTodos((errConc, concesionarios) => {
+                return Concesionario.obtenerTodos((errConc, concesionarios) => {
                     if (errConc) concesionarios = [];
 
                     return res.render('es-vehiculo-form', {
@@ -173,14 +120,13 @@ router.post('/es-vehiculos/nuevo-vehiculo', requiredAdminId, multerFactory.singl
                         error: `La matrícula ${matricula} ya existe en el sistema`
                     });
                 });
-                return;
             }
-            //Si hay algún error al insertar el vehículo en la BD, se lanza el error a la vista y se muestra por consola
+
             console.error('Error al crear el vehículo:', err);
-            return res.status(500);
+            return res.status(500).send('Error al crear el vehículo');
         }
 
-        console.log(`Vehículo creado con ID: ${result.insertId}`);
+        console.log(`Vehículo creado con ID: ${insertId}`);
         res.redirect('/es-vehiculos');
     });
 });
@@ -189,23 +135,17 @@ router.post('/es-vehiculos/nuevo-vehiculo', requiredAdminId, multerFactory.singl
 router.get('/es-vehiculos/:id', (req, res) => {
     const id = req.params.id;
 
-    //Consulta para buscar el vehículo con esa ID
-    const consulta = `
-        SELECT v.*, c.nombre AS nombre_concesionario
-        FROM Vehiculos v
-        LEFT JOIN Concesionarios c ON v.id_concesionario = c.id_concesionario
-        WHERE v.id_vehiculo = ?
-    `;
-    pool.query(consulta, [id], (err, resultados) => {
+    Vehiculo.obtenerPorId(id, (err, vehiculo) => {
         if (err) {
             //Si hay algún error al buscar el vehículo, se muestra en la vista y por consola
             console.log('Error al obtener un vehículo:');
-            return res.status(500);
+            return res.status(500).send('Error al cargar el vehículo');
         }
 
         //Si no se encuentra un vehículo con esa ID en la BD, se muestra un error404
-        if (resultados.length === 0) return res.status(404);
-        const vehiculo = resultados[0];
+        if (!vehiculo) {
+            return res.status(404).send('Vehículo no encontrado');
+        }
 
         //Si todo va bien se muestra la página de detalles del vehículo con esa ID
         res.render('es-vehiculo-detalles', { vehiculo });
@@ -213,34 +153,36 @@ router.get('/es-vehiculos/:id', (req, res) => {
 });
 
 router.get('/es-vehiculos/:id/editar', requiredAdminId, (req, res) => {
+    const id = req.params.id;
+
     Concesionario.obtenerTodos((errConc, concesionarios) => {
         if (errConc) concesionarios = [];
-        const consulta = `
-            SELECT v.*, c.nombre AS nombre_concesionario, c.ciudad AS ciudad_concesionario
-            FROM Vehiculos v
-            LEFT JOIN Concesionarios c ON v.id_concesionario = c.id_concesionario
-            WHERE v.id_vehiculo = ?
-        `;
-        pool.query(consulta, [req.params.id], (err, resultados) => {
+
+        Vehiculo.obtenerPorId(id, (err, vehiculo) => {
             if (err) {
                 console.error('Error al eliminar un vehículo:', err);
-                return res.status(500);
+                return res.status(500).send('Error al cargar el vehículo');
             }
-
-            const vehiculo = resultados[0];
 
             if (!vehiculo) {
-                return res.status(404);
+                return res.status(404).send('Vehículo no encontrado');
             }
-            console.log(vehiculo);
 
-            res.render('es-vehiculo-form', { concesionarios, editar: true, vehiculo, error: null });
+            console.log(`Vehículo con ID ${id} modificado`);
+
+            res.render('es-vehiculo-form', {
+                concesionarios,
+                editar: true,
+                vehiculo,
+                error: null
+            });
         });
     });
 
 });
 
-router.post('/es-vehiculos/:id/editar', requiredAdminId, multerFactory.single('imagen'), (req, res) => {
+router.post('/es-vehiculos/:id/editar', requiredAdminId, validateVehicle, multerFactory.single('imagen'), (req, res) => {
+    const id = req.params.id;
 
     if (req.fileValidationError === 'FORMATO_INVALIDO_PNG' ||
         (req.file && req.file.mimetype !== 'image/png')) {
@@ -257,72 +199,52 @@ router.post('/es-vehiculos/:id/editar', requiredAdminId, multerFactory.single('i
         });
     }
 
-    const id = req.params.id;
-    const matricula = req.body.matricula;
-    const marca = req.body.marca;
-    const modelo = req.body.modelo;
-    const anyoMatri = req.body.anyoMatri;
-    const numPlazas = req.body.numPlazas;
-    const color = req.body.color;
-    const autonomia = req.body.autonomia;
-    const estado = req.body.estado;
-    const concesionario = req.body.concesionario;
+    // Usar datos validados
+    const { matricula, marca, modelo, anyo_matriculacion, numero_plazas, autonomia_km, color, estado, id_concesionario } = req.validatedData;
 
-    if (!matricula || !marca || !modelo || !anyoMatri || !numPlazas || !color || !autonomia || !estado || !concesionario) {
-        return res.status(400);
-    }
-
-    // Si hay nueva imagen, actualizarla; si no, mantener la existente
-    let consulta, params;
-
+    // Si hay nueva imagen, usar actualizarConImagen, sino actualizar sin imagen
     if (req.file) {
-        const imagenBuffer = req.file.buffer;
+        Vehiculo.actualizarConImagen(id, {
+            matricula,
+            marca,
+            modelo,
+            anyo_matriculacion,
+            numero_plazas,
+            autonomia_km,
+            color,
+            imagen: req.file.buffer,
+            estado,
+            id_concesionario
+        }, (err, filasAfectadas) => {
+            if (err) {
+                console.error('Error al actualizar el vehículo:', err);
+                return res.status(500).send('Error al actualizar');
+            }
 
-        console.log(`Nueva imagen PNG subida: ${req.file.originalname}`);
-        console.log(`Tamaño: ${req.file.size} bytes`);
-
-        consulta = `
-            UPDATE Vehiculos 
-            SET matricula = ?,
-                marca = ?,
-                modelo = ?,
-                anyo_matriculacion = ?,
-                numero_plazas = ?,
-                autonomia_km = ?,
-                color = ?,
-                imagen = ?,
-                estado = ?,
-                id_concesionario = ?
-            WHERE id_vehiculo = ?
-        `;
-        params = [matricula, marca, modelo, anyoMatri, numPlazas, autonomia, color, imagenBuffer, estado, concesionario, id];
+            console.log(`Vehículo actualizado con ID: ${id}`);
+            res.redirect('/es-vehiculos');
+        });
     } else {
-        // No se actualiza la imagen
-        consulta = `
-            UPDATE Vehiculos 
-            SET matricula = ?,
-                marca = ?,
-                modelo = ?,
-                anyo_matriculacion = ?,
-                numero_plazas = ?,
-                autonomia_km = ?,
-                color = ?,
-                estado = ?,
-                id_concesionario = ?
-            WHERE id_vehiculo = ?
-        `;
-        params = [matricula, marca, modelo, anyoMatri, numPlazas, autonomia, color, estado, concesionario, id];
+        Vehiculo.actualizar(id, {
+            matricula,
+            marca,
+            modelo,
+            anyo_matriculacion,
+            numero_plazas,
+            autonomia_km,
+            color,
+            estado,
+            id_concesionario
+        }, (err, filasAfectadas) => {
+            if (err) {
+                console.error('Error al actualizar el vehículo:', err);
+                return res.status(500).send('Error al actualizar');
+            }
+
+            console.log(`Vehículo actualizado con ID: ${id}`);
+            res.redirect('/es-vehiculos');
+        });
     }
-
-    pool.query(consulta, params, (err, result) => {
-        if (err) {
-            console.error('Error al actualizar el vehículo:', err);
-            return res.status(500).send('Error al actualizar');
-        }
-
-        console.log(`Vehículo actualizado con ID: ${id}`);
-        res.redirect('/es-vehiculos');
-    });
 });
 
 router.post('/es-vehiculos/:id/eliminar', requiredAdminId, (req, res) => {
@@ -641,25 +563,13 @@ router.post('/en-vehicles/:id/delete', requiredAdminId, (req, res) => {
 
 router.get('/api/vehiculos', (req, res) => {
 
-    const consulta = `
-        SELECT v.*, c.nombre AS nombre_concesionario
-        FROM Vehiculos v
-        LEFT JOIN Concesionarios c ON v.id_concesionario = c.id_concesionario
-    `;
-
-    pool.query(consulta, (err, vehiculos) => {
+    Vehiculo.obtenerTodosSinImagen((err, vehiculos) => {
         if (err) {
             console.error('Error al obtener vehículos JSON:', err);
             return res.status(500).json({ error: 'Error interno del servidor' });
         }
-
-
-        const vehiculosSinImagen = vehiculos.map(v => {
-            const { imagen, ...resto } = v;
-            return resto;
-        });
-
-        res.json(vehiculosSinImagen);
+        res.json(vehiculos);
     });
 });
+
 module.exports = router;
