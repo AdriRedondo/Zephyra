@@ -9,6 +9,33 @@
 
                 <form action="/es-vehiculos" method="get">
 
+                    <label>Autonomía mínima (km):</label>
+                    <input type="number" name="autonomia_min" class="form-control mb-3" value="0" min="0">
+
+                    <label>Número de plazas:</label>
+                    <select name="plazas" class="form-select mb-3">
+                        <option value>Todas</option>
+                        <% const plazas=[...new Set(vehiculos.map(v=>
+                            v.numero_plazas))].sort((a, b) => a - b);
+                            plazas.forEach(p => { %>
+                            <option value="<%= p %>">
+                                <%= p %> plazas
+                            </option>
+                            <% }) %>
+                    </select>
+
+                    <label>Color:</label>
+                    <select name="color" class="form-select mb-3">
+                        <option value>Todos</option>
+                        <% const colores=[...new Set(vehiculos.map(v=>
+                            v.color).filter(Boolean))].sort();
+                            colores.forEach(c => { %>
+                            <option value="<%= c %>">
+                                <%= c %>
+                            </option>
+                            <% }) %>
+                    </select>
+
                     <label>Marca:</label>
                     <select name="marca" class="form-select mb-3">
                         <option value>Todas</option>
@@ -31,18 +58,6 @@
                             <% }) %>
                     </select>
 
-                    <label>Número de plazas:</label>
-                    <select name="plazas" class="form-select mb-3">
-                        <option value>Todas</option>
-                        <% const plazas=[...new Set(vehiculos.map(v=>
-                            v.numero_plazas))].sort((a, b) => a - b);
-                            plazas.forEach(p => { %>
-                            <option value="<%= p %>">
-                                <%= p %> plazas
-                            </option>
-                            <% }) %>
-                    </select>
-
                     <label>Concesionario:</label>
                     <select name="concesionario" class="form-select mb-3">
                         <option value>Todos</option>
@@ -61,21 +76,6 @@
                         <% const estados=['disponible', 'reservado' , 'mantenimiento' ]; estados.forEach(e=> { %>
                             <option value="<%= e %>">
                                 <%= e %>
-                            </option>
-                            <% }) %>
-                    </select>
-
-                    <label>Autonomía mínima (km):</label>
-                    <input type="number" name="autonomia_min" class="form-control mb-3" placeholder="Ej: 200" min="0">
-
-                    <label>Color:</label>
-                    <select name="color" class="form-select mb-3">
-                        <option value>Todos</option>
-                        <% const colores=[...new Set(vehiculos.map(v=>
-                            v.color).filter(Boolean))].sort();
-                            colores.forEach(c => { %>
-                            <option value="<%= c %>">
-                                <%= c %>
                             </option>
                             <% }) %>
                     </select>

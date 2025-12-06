@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-const { requiredLoggedIn } = require('../autorizaciones');
+const { requiredLoggedIn } = require('../middleware/autorizaciones');
 
 const reservas = [];   // <-- ARRAY EN MEMORIA
 

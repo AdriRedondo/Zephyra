@@ -45,6 +45,7 @@ function cargarDatosIniciales() {
             }
         });
     }
+
     // Carga de vehículos si está vacía su tabla
     function cargarVehiculosSiNecesario() {
         const consultaV = 'SELECT COUNT(*) AS hayDatosV FROM Vehiculos';
@@ -63,6 +64,7 @@ function cargarDatosIniciales() {
         });
     }
 
+    // Carga de clientes si está vacía su tabla
     function cargarClientesSiNecesario() {
         const consulta = 'SELECT COUNT(*) AS hayDatos FROM Cliente';
         pool.query(consulta, (err, res) => {
@@ -80,6 +82,7 @@ function cargarDatosIniciales() {
 
 }
 
+// Carga de concesionarios
 function cargarConcesionarios(concesionarios, callback) {
     if (!concesionarios || concesionarios.length === 0) {
         console.log('No hay concesionarios que cargar');
@@ -102,6 +105,7 @@ function cargarConcesionarios(concesionarios, callback) {
     });
 }
 
+// Carga de usuarios
 function cargarUsuarios(usuarios, callback) {
     if (!usuarios || usuarios.length === 0) {
         console.log('No hay usuarios que cargar');
@@ -140,6 +144,7 @@ function cargarUsuarios(usuarios, callback) {
     });
 }
 
+// Carga de vehículos
 function cargarVehiculos(vehiculos, callback) {
 
     if (!vehiculos || vehiculos.length === 0) {
@@ -182,6 +187,7 @@ function cargarVehiculos(vehiculos, callback) {
     });
 }
 
+// Carga de clientes
 function cargarClientes(clientes, callback) {
     if (!clientes || clientes.length === 0) {
         console.log('No hay clientes que cargar');

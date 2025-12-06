@@ -1,11 +1,12 @@
 const express = require('express');
 const path = require('path');
-const pool = require('./db');
 const apiRouter = require('./routes/api');
 
 
 //Importación de routers
 const vehiculosRouter = require('./routes/vehiculos');
+const concesionariosRouter = require('./routes/concesionarios');
+const usuariosRouter = require('./routes/usuarios');
 const reservasRouter = require('./routes/reservas');
 const contactoRouter = require('./routes/contacto');
 const loginRouter = require('./routes/login').router;
@@ -37,6 +38,23 @@ const errorMessages = {
         '500-text2': 'Please try again later.'
     }
 };
+//Inicialización de express
+const app = express();
+
+//Para poder usar bootstrap-icons desde el node-modules
+app.use('/bootstrap-icons', express.static(__dirname + '/node_modules/bootstrap-icons'));
+
+//Middlewares para leer JSON y formularios POST
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+//Para usar los archivos estáticos desde public
+app.use(express.static(path.join(__dirname, 'public')));
+
+//Para usar las plantillas 'EJS'
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
 //Configuración del almacenamiento de sesiones en MySQL
 const sessionStore = new MySQLStore({
     host: 'localhost',
@@ -52,9 +70,6 @@ const middleWareSession = session({
     resave: false,
     store: sessionStore
 });
-
-//Inicialización de express
-const app = express();
 
 //Se aplica el middleware de la sesión
 app.use(middleWareSession);
@@ -80,15 +95,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
-
-//Para poder usar bootstrap-icons desde el node-modules
-app.use('/bootstrap-icons', express.static(__dirname + '/node_modules/bootstrap-icons'));
-
-//Middlewares para leer JSON y formularios POST
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
 // Middleware para establecer el idioma en la sesión si se envía en el body
 app.use((req, res, next) => {
 
@@ -100,18 +106,12 @@ app.use((req, res, next) => {
     next();
 });
 
-//Para usar los archivos estáticos desde public
-app.use(express.static(path.join(__dirname, 'public')));
-
-//Para usar las plantillas 'EJS'
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
-
 //Rutas principales de la app
 app.use('/api', apiRouter);
 
 app.use('/', vehiculosRouter);
+app.use('/', concesionariosRouter);
+app.use('/', usuariosRouter);
 app.use('/', reservasRouter);
 app.use('/', contactoRouter);
 app.use('/', loginRouter);
@@ -124,7 +124,10 @@ app.get('/', (req, res) => {
     res.redirect('es-inicio');
 });
 app.get('/es-inicio', (req, res) => {
-    res.render('es-inicio');
+    res.render('es-inicio', {
+        usuario: req.session.usuario || null,
+        lang: res.locals.lang || 'es'
+    });
 });
 app.get('/en-home', (req, res) => {
     res.render('en-home');
@@ -134,29 +137,42 @@ app.get('/en-home', (req, res) => {
 //Manejador del error 404
 app.use(function (req, res, next) {
 
-    const lang = res.locals.lang;
-    const messages = errorMessages[lang];
+    const lang = res.locals.lang || 'es';
+    const messages = errorMessages[lang] || errorMessages['es'];
 
     const error = messages['404-title'];
     const texto1 = messages['404-text1'];
     const texto2 = messages['404-text2'];
 
-    res.status(404).render("errors", { error, texto1, texto2, lang });
+    res.status(404).render("errors", {
+        error,
+        texto1,
+        texto2,
+        lang,
+        usuario: (req.session && req.session.usuario) || null
+    });
 });
 
 //Manejador del error 500
 app.use(function (err, req, res, next) {
 
-    const lang = res.locals.lang;
-    const messages = errorMessages[lang];
+    const lang = res.locals.lang || 'es';
+    const messages = errorMessages[lang] || errorMessages['es'];
 
     const error = messages['500-title'];
     const texto1 = messages['500-text1'];
     const texto2 = messages['500-text2'];
 
-    console.error(err.stack); // Para depuración
+    console.error('Error 500:', err); // Registrar el error
 
-    res.status(500).render("errors", { error, texto1, texto2, lang });
+
+    res.status(500).render("errors", {
+        error,
+        texto1,
+        texto2,
+        lang,
+        usuario: (req.session && req.session.usuario) || null
+    });
 });
 
 module.exports = app;

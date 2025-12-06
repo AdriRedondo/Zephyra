@@ -2,7 +2,9 @@ const express = require('express');
 const multer = require('multer');
 const router = express.Router();
 const pool = require('../db');
-const requiredAdminId = require('../autorizaciones').requiredAdminId;
+const requiredAdminId = require('../middleware/autorizaciones').requiredAdminId;
+const Concesionario = require('../models/Concesionario');
+const Vehiculo = require('../models/Vehiculo');
 
 // Configuración de multer para almacenar archivos en memoria con formato BLOB ()
 
@@ -18,16 +20,16 @@ const multerFactory = multer({
         cb(null, true);
     }
 });
-
+/*
 // Función auxiliar para obtener concesionarios
 const obtenerConcesionarios = (callback) => {
-    const consulta = 'SELECT id_concesionario, nombre, ciudad FROM Concesionarios';
+    const consulta = 'SELECT * FROM Concesionarios';
     pool.query(consulta, (err, results) => {
         if (err) return callback(err, null)
         callback(null, results)
     });
 };
-
+*/
 // Función auxiliar para obtener imágenes PNG de la BD
 function obtenerImagen(id, callback) {
     pool.getConnection((err, con) => {
@@ -101,7 +103,7 @@ router.get('/es-vehiculos/imagen/:id', (req, res) => {
 // Esto lo ponemos antes que /:id porque si no accede antes al get de :id que al de nuevo_vehiculo
 router.get('/es-vehiculos/nuevo-vehiculo', requiredAdminId, (req, res) => {
     //Cargamos concesionarios para el select del formulario
-    obtenerConcesionarios((errConc, concesionarios) => {
+    Concesionario.obtenerTodos((errConc, concesionarios) => {
         if (errConc) concesionarios = [];
         //Si todo sale bien se muestra la vista del form para el nuevo vehículo a registrar
         //Vista en español
@@ -115,7 +117,7 @@ router.post('/es-vehiculos/nuevo-vehiculo', requiredAdminId, multerFactory.singl
     if (req.fileValidationError === 'FORMATO_INVALIDO_PNG' ||
         (req.file && req.file.mimetype !== 'image/png')) {
 
-        return obtenerConcesionarios((errConc, concesionarios) => {
+        return Concesionario.obtenerTodos((errConc, concesionarios) => {
             if (errConc) concesionarios = [];
             //Si no es de formato PNG se envía el error a la vista
             return res.render('es-vehiculo-form', {
@@ -161,7 +163,7 @@ router.post('/es-vehiculos/nuevo-vehiculo', requiredAdminId, multerFactory.singl
         if (err) {
             if (err.code === 'ER_DUP_ENTRY') {
                 //Error si la matricula a insertar ya está registrada en la BD
-                obtenerConcesionarios((errConc, concesionarios) => {
+                Concesionario.obtenerTodos((errConc, concesionarios) => {
                     if (errConc) concesionarios = [];
 
                     return res.render('es-vehiculo-form', {
@@ -211,7 +213,7 @@ router.get('/es-vehiculos/:id', (req, res) => {
 });
 
 router.get('/es-vehiculos/:id/editar', requiredAdminId, (req, res) => {
-    obtenerConcesionarios((errConc, concesionarios) => {
+    Concesionario.obtenerTodos((errConc, concesionarios) => {
         if (errConc) concesionarios = [];
         const consulta = `
             SELECT v.*, c.nombre AS nombre_concesionario, c.ciudad AS ciudad_concesionario
@@ -243,7 +245,7 @@ router.post('/es-vehiculos/:id/editar', requiredAdminId, multerFactory.single('i
     if (req.fileValidationError === 'FORMATO_INVALIDO_PNG' ||
         (req.file && req.file.mimetype !== 'image/png')) {
 
-        return obtenerConcesionarios((errConc, concesionarios) => {
+        return Concesionario.obtenerTodos((errConc, concesionarios) => {
             if (errConc) concesionarios = [];
 
             return res.render('es-vehiculo-form', {
@@ -324,15 +326,22 @@ router.post('/es-vehiculos/:id/editar', requiredAdminId, multerFactory.single('i
 });
 
 router.post('/es-vehiculos/:id/eliminar', requiredAdminId, (req, res) => {
-    console.log(`Se elimina el vehículo con matrícula: ${req.params.id}`);
+    const id = req.params.id;
 
-    const consulta = 'DELETE FROM Vehiculos WHERE id_vehiculo = ?';
-    pool.query(consulta, [req.params.id], (err, result) => {
+    Vehiculo.eliminar(id, (err, filasAfectadas) => {
         if (err) {
-            console.error('Error al eliminar un vehículo:', err);
-            return res.status(500);
+            console.error(`Error al eliminar el vehículo con ID ${id}: `, err);
+            return res.status(500).send(`Error al eliminar el vehículo con ID ${id}: `);
         }
-        res.redirect('/es-vehiculos');
+
+        if (filasAfectadas === 0) {
+            return res.status(404).send(`Vehículo con ID ${id} no encontrado`);
+        }
+
+        console.log(`vehículo eliminado con ID: ${id}`);
+
+        //Hay que cambiarlo con ajax ??
+        res.redirect('/es-admin');
     });
 });
 
@@ -384,7 +393,7 @@ router.get('/en-vehicles/imagen/:id', (req, res) => {
 // Esto lo ponemos antes que /:id porque si no accede antes al get de :id que al de nuevo_vehiculo
 router.get('/en-vehicles/new-vehicle', requiredAdminId, (req, res) => {
     //Cargamos concesionarios para el select del formulario
-    obtenerConcesionarios((errConc, concesionarios) => {
+    Concesionario.obtenerTodos((errConc, concesionarios) => {
         if (errConc) concesionarios = [];
         //Si todo sale bien se muestra la vista del form para el nuevo vehículo a registrar
         //Vista en inglés
@@ -398,7 +407,7 @@ router.post('/en-vehicles/new-vehicle', requiredAdminId, multerFactory.single('i
     if (req.fileValidationError === 'FORMATO_INVALIDO_PNG' ||
         (req.file && req.file.mimetype !== 'image/png')) {
 
-        return obtenerConcesionarios((errConc, concesionarios) => {
+        return Concesionario.obtenerTodos((errConc, concesionarios) => {
             if (errConc) concesionarios = [];
             //Si no es de formato PNG se envía el error a la vista
             return res.render('en-vehicle-form', {
@@ -444,7 +453,7 @@ router.post('/en-vehicles/new-vehicle', requiredAdminId, multerFactory.single('i
         if (err) {
             if (err.code === 'ER_DUP_ENTRY') {
                 //Error si la matricula a insertar ya está registrada en la BD
-                obtenerConcesionarios((errConc, concesionarios) => {
+                Concesionario.obtenerTodos((errConc, concesionarios) => {
                     if (errConc) concesionarios = [];
 
                     return res.render('en-vehicle-form', {
@@ -494,7 +503,7 @@ router.get('/en-vehicles/:id', (req, res) => {
 });
 
 router.get('/en-vehicles/:id/edit', requiredAdminId, (req, res) => {
-    obtenerConcesionarios((errConc, concesionarios) => {
+    Concesionario.obtenerTodos((errConc, concesionarios) => {
         if (errConc) concesionarios = [];
         const consulta = `
             SELECT v.*, c.nombre AS nombre_concesionario, c.ciudad AS ciudad_concesionario
@@ -526,7 +535,7 @@ router.post('/en-vehicles/:id/edit', requiredAdminId, multerFactory.single('imag
     if (req.fileValidationError === 'FORMATO_INVALIDO_PNG' ||
         (req.file && req.file.mimetype !== 'image/png')) {
 
-        return obtenerConcesionarios((errConc, concesionarios) => {
+        return Concesionario.obtenerTodos((errConc, concesionarios) => {
             if (errConc) concesionarios = [];
 
             return res.render('en-vehicle-form', {
@@ -607,15 +616,25 @@ router.post('/en-vehicles/:id/edit', requiredAdminId, multerFactory.single('imag
 });
 
 router.post('/en-vehicles/:id/delete', requiredAdminId, (req, res) => {
-    console.log(`Deleting vehicle with license plate: ${req.params.id}`);
+    const id = req.params.id;
 
-    const consulta = 'DELETE FROM Vehiculos WHERE id_vehiculo = ?';
-    pool.query(consulta, [req.params.id], (err, result) => {
+    Vehiculo.eliminar(id, (err, filasAfectadas) => {
         if (err) {
-            console.error('Error deleting vehicle:', err);
-            return res.status(500);
+            console.error(`Error al eliminar el vehículo con ID ${id}: `, err);
+            return res.status(500).send(`Error al eliminar el vehículo con ID ${id}: `);
         }
-        res.redirect('/en-vehicles');
+
+        if (filasAfectadas === 0) {
+            return res.status(404).send(`Vehículo con ID ${id} no encontrado`);
+        }
+
+        console.log(`vehículo eliminado con ID: ${id}`);
+
+        //Hay que cambiarlo con ajax ??
+        // Redirigir a la página anterior
+        const previousPage = req.get('Referer') || '/'; // fallback a home
+        res.redirect(previousPage);
+
     });
 });
 
