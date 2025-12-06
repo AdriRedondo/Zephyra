@@ -62,10 +62,10 @@ function obtenerImagen(id, callback) {
 //GET de la página de vehículos con filtros en español
 router.get('/es-vehiculos', (req, res) => {
 
-    //Consulta que une vehículos con concesionarios para obtener el nombre y ciudad
-    //JOIN con la tabla Concesionarios para obtener el nombre y ciudad
+    //Consulta que une vehículos con concesionarios para obtener el nombre
+    //JOIN con la tabla Concesionarios para obtener el nombre
     const consulta = `
-        SELECT v.*, c.nombre AS nombre_concesionario, c.ciudad AS ciudad_concesionario
+        SELECT v.*, c.nombre AS nombre_concesionario
         FROM Vehiculos v
         LEFT JOIN Concesionarios c ON v.id_concesionario = c.id_concesionario
     `;
