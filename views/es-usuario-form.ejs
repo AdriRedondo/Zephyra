@@ -33,7 +33,7 @@
                                                 <i class="bi bi-person"></i>
                                             </span>
                                             <input type="text" id="nombre" name="nombre" class="form-control" required
-                                                placeholder="Ej: Eustaquio Ramirez"
+                                                placeholder="Ej: Eustaquio Ramirez" tabindex="1"
                                                 value="<%= typeof user !== 'undefined' ? user.nombre : '' %>">
                                         </div>
                                         <span id="nombre-error" class="error" aria-live="polite"></span>
@@ -49,7 +49,7 @@
                                                 <i class="bi bi-envelope"></i>
                                             </span>
                                             <input type="email" id="correo" name="correo" class="form-control" required
-                                                placeholder="Ej: usuario@example.com"
+                                                placeholder="Ej: usuario@example.com" tabindex="2"
                                                 value="<%= typeof user !== 'undefined' ? user.correo : '' %>">
                                         </div>
                                         <span id="correo-error" class="error" aria-live="polite"></span>
