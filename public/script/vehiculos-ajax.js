@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     elementos.selectModelo = document.querySelector('select[name="modelo"]');
     elementos.selectPlazas = document.querySelector('select[name="plazas"]');
     elementos.selectConcesionario = document.querySelector('select[name="concesionario"]');
+    elementos.selectCiudad = document.querySelector('select[name="ciudad"]');
     elementos.selectEstado = document.querySelector('select[name="estado"]');
     elementos.inputAutonomia = document.querySelector('input[name="autonomia_min"]');
     elementos.selectColor = document.querySelector('select[name="color"]');
@@ -30,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Escuchar cambios en los select para filtrar automáticamente
     [elementos.selectMarca, elementos.selectModelo, elementos.selectPlazas,
-    elementos.selectConcesionario, elementos.selectEstado, elementos.selectColor].forEach(select => {
+    elementos.selectConcesionario, elementos.selectCiudad, elementos.selectEstado, elementos.selectColor].forEach(select => {
         if (select) {
             select.addEventListener('change', () => {
                 aplicarFiltros();
@@ -124,6 +125,7 @@ function aplicarFiltros() {
         modelo: elementos.selectModelo.value,
         plazas: elementos.selectPlazas.value,
         concesionario: elementos.selectConcesionario.value,
+        ciudad: elementos.selectCiudad ? elementos.selectCiudad.value : '',
         estado: elementos.selectEstado.value,
         autonomia_min: elementos.inputAutonomia ? elementos.inputAutonomia.value : '',
         color: elementos.selectColor ? elementos.selectColor.value : ''
@@ -144,6 +146,10 @@ function aplicarFiltros() {
         }
         // Filtro por concesionario
         if (filtros.concesionario && vehiculo.nombre_concesionario !== filtros.concesionario) {
+            return false;
+        }
+        // Filtro por ciudad
+        if (filtros.ciudad && vehiculo.ciudad_concesionario !== filtros.ciudad) {
             return false;
         }
         // Filtro por estado

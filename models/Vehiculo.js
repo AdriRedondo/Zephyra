@@ -4,7 +4,7 @@ class Vehiculo {
     //Función para obtener los vehículos
     static obtenerTodos = (callback) => {
         const consulta = `
-            SELECT 
+            SELECT
                 v.id_vehiculo,
                 v.matricula,
                 v.marca,
@@ -16,9 +16,10 @@ class Vehiculo {
                 v.imagen,
                 v.estado,
                 v.id_concesionario,
-                c.nombre AS nombre_concesionario
+                c.nombre AS nombre_concesionario,
+                c.ciudad AS ciudad_concesionario
             FROM Vehiculos v
-            LEFT JOIN Concesionarios c 
+            LEFT JOIN Concesionarios c
                 ON v.id_concesionario = c.id_concesionario
             ORDER BY v.id_vehiculo ASC
         `;
@@ -31,7 +32,7 @@ class Vehiculo {
     // Obtener todos los vehículos sin la imagen (para API JSON)
     static obtenerTodosSinImagen(callback) {
         const consulta = `
-            SELECT 
+            SELECT
                 v.id_vehiculo,
                 v.matricula,
                 v.marca,
@@ -42,9 +43,10 @@ class Vehiculo {
                 v.color,
                 v.estado,
                 v.id_concesionario,
-                c.nombre AS nombre_concesionario
+                c.nombre AS nombre_concesionario,
+                c.ciudad AS ciudad_concesionario
             FROM Vehiculos v
-            LEFT JOIN Concesionarios c 
+            LEFT JOIN Concesionarios c
                 ON v.id_concesionario = c.id_concesionario
             ORDER BY v.id_vehiculo ASC
         `;

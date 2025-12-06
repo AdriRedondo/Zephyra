@@ -76,6 +76,19 @@ actual_en: 'en-vehicles' }) %>
                     <% }) %>
                 </select>
 
+                <label>City:</label>
+                <select name="ciudad" class="form-select mb-3">
+                    <option value>All</option>
+                    <% const ciudades=[...new Set(vehiculos.map(v=>
+                    v.ciudad_concesionario).filter(Boolean))].sort();
+                    ciudades.forEach(c => {
+                    %>
+                    <option value="<%= c %>">
+                        <%= c %>
+                    </option>
+                    <% }) %>
+                </select>
+
                 <label>Status:</label>
                 <select name="estado" class="form-select mb-3">
                     <option value>All</option>
