@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require('../db');
 const { requiredLoggedIn } = require('../middleware/autorizaciones');
 
-const reservas = [];   // <-- ARRAY EN MEMORIA
+const reservas = [];   //ARRAY EN MEMORIA
 
 router.get('/es-reservas', (req, res) => {
     res.render('es-reservas');
@@ -14,18 +14,25 @@ router.get('/en-bookings', (req, res) => {
 });
 
 router.post('/submit-bookings', (req, res) => {
+    // Verificar que el usuario esté loggeado
+    if (!req.session.usuario) {
+        if (req.body.idioma === 'english')
+            return res.render('en-bookings', { error: 'You must be logged in to make a reservation' });
+        else
+            return res.render('es-reservas', { error: 'Debes iniciar sesión para hacer una reserva' });
+    }
 
     const language = req.body.idioma;
     const nombre = req.body.nombre;
     const correo = req.body.correo;
-    const vehiculo = req.body.vehiculos_form;
-    const fecha = req.body.fecha;
-    const horas = req.body.horas;
+    const id_vehiculo = req.body.vehiculo;
+    const fecha = req.body.inicio;
+    const horas = parseInt(req.body.horas);
     const telefono = req.body.telefono;
-
+    const id_usuario = req.session.usuario.id_usuario;
 
     // Validar campos obligatorios
-    if (!nombre || !correo || !vehiculo || !fecha || !horas || !telefono) {
+    if (!nombre || !correo || !id_vehiculo || !fecha || !horas || !telefono) {
         if (language === 'english')
             return res.render('en-bookings', { error: 'Name, email, vehicle, date and hours are required' });
         else
@@ -34,27 +41,46 @@ router.post('/submit-bookings', (req, res) => {
 
     // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(req.body.correo.trim())) {
+    if (!emailRegex.test(correo.trim())) {
         if (language === 'english')
             return res.render('en-bookings', { error: 'Invalid email format' });
         else
             return res.render('es-reservas', { error: 'Formato de correo inválido' });
     }
-    const nuevaReserva = {
-        nombre: nombre,
-        correo: correo,
-        vehiculo: vehiculo,
-        fecha: fecha,
-        horas: horas,
-        telefono: telefono
-    };
 
-    reservas.push(nuevaReserva);
+    // Calcular fechas
+    const fecha_inicio = new Date(fecha);
+    const fecha_fin = new Date(fecha_inicio.getTime() + (horas * 60 * 60 * 1000));
 
-    if (req.body.idioma === 'english')
-        res.redirect('en-bookings');
-    else
-        res.redirect('es-reservas');
+    // Guardar en base de datos
+    const query = `
+        INSERT INTO Reservas (id_usuario, id_vehiculo, fecha_inicio, fecha_fin, estado)
+        VALUES (?, ?, ?, ?, 'activa')
+    `;
+
+    pool.query(query, [id_usuario, id_vehiculo, fecha_inicio, fecha_fin], (err, result) => {
+        if (err) {
+            console.error('Error al crear reserva:', err);
+            if (language === 'english')
+                return res.render('en-bookings', { error: 'Error creating reservation' });
+            else
+                return res.render('es-reservas', { error: 'Error al crear la reserva' });
+        }
+
+        // Actualizar estado del vehículo
+        pool.query('UPDATE Vehiculos SET estado = ? WHERE id_vehiculo = ?',
+            ['reservado', id_vehiculo], (errUpdate) => {
+                if (errUpdate) {
+                    console.error('Error al actualizar vehículo:', errUpdate);
+                }
+
+
+                if (language === 'english')
+                    res.redirect('en-bookings');
+                else
+                    res.redirect('es-reservas');
+            });
+    });
 });
 
 router.get('/listareservas', (req, res) => {
