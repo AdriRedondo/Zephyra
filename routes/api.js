@@ -3,6 +3,7 @@ const router = express.Router();
 const pool = require('../db');
 const Vehiculo = require('../models/Vehiculo');
 const Reserva = require('../models/Reserva');
+const { validateReservation } = require('../middleware/validations');
 const Concesionario = require('../models/Concesionario');
 const Usuario = require('../models/Usuario');
 
@@ -157,42 +158,20 @@ router.get('/vehiculos/:id', (req, res) => {
 
 // GET /api/reservas - Obtener todas las reservas
 router.get('/reservas', (req, res) => {
-    const consulta = `
-        SELECT 
-            r.id_reserva,
-            r.id_vehiculo,
-            r.id_usuario,
-            r.fecha_inicio,
-            r.fecha_fin,
-            r.fecha_recogida,
-            r.fecha_devolucion,
-            r.estado,
-            r.observaciones,
-            v.marca,
-            v.modelo,
-            v.matricula,
-            u.nombre AS nombre_usuario,
-            u.correo AS correo_usuario
-        FROM Reservas r
-        INNER JOIN Vehiculos v ON r.id_vehiculo = v.id_vehiculo
-        INNER JOIN Usuarios u ON r.id_usuario = u.id_usuario
-        ORDER BY r.fecha_inicio DESC
-    `;
-
-    pool.query(consulta, (err, results) => {
+    Reserva.obtenerTodas((err, reservas) => {
         if (err) {
             console.error('Error al obtener reservas:', err);
             return res.status(500).json({
                 success: false,
                 message: 'Error al obtener reservas',
-                error: err.message
+                error: process.env.NODE_ENV === 'development' ? err.message : undefined
             });
         }
 
         res.status(200).json({
             success: true,
-            data: results,
-            count: results.length
+            data: reservas,
+            count: reservas.length
         });
     });
 });
@@ -201,245 +180,161 @@ router.get('/reservas', (req, res) => {
 router.get('/reservas/:id', (req, res) => {
     const id = req.params.id;
 
-    const consulta = `
-        SELECT 
-            r.*,
-            v.marca,
-            v.modelo,
-            v.matricula,
-            u.nombre AS nombre_usuario
-        FROM Reservas r
-        INNER JOIN Vehiculos v ON r.id_vehiculo = v.id_vehiculo
-        INNER JOIN Usuarios u ON r.id_usuario = u.id_usuario
-        WHERE r.id_reserva = ?
-    `;
-
-    pool.query(consulta, [id], (err, results) => {
+    Reserva.obtenerPorId(id, (err, reserva) => {
         if (err) {
+            console.error('Error al obtener reserva:', err);
+            return res.status(500).json({
+                success: false,
+                message: 'Error al obtener reserva',
+                error: process.env.NODE_ENV === 'development' ? err.message : undefined
+            });
+        }
+
+        if (!reserva) {
+            return res.status(404).json({
+                success: false,
+                message: 'Reserva no encontrada'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: reserva
+        });
+    });
+});
+
+// POST /api/reservas - Crear nueva reserva con validaciones
+router.post('/reservas', validateReservation, (req, res) => {
+    const datosReserva = {
+        ...req.validatedData,
+        estado: 'activa'
+    };
+
+    // Verificar disponibilidad del vehículo
+    Reserva.verificarDisponibilidad(
+        datosReserva.id_vehiculo,
+        datosReserva.fecha_inicio,
+        datosReserva.fecha_fin,
+        null,
+        (err, disponible) => {
+            if (err) {
+                console.error('Error al verificar disponibilidad:', err);
+                return res.status(500).json({
+                    success: false,
+                    message: 'Error al verificar disponibilidad'
+                });
+            }
+
+            if (!disponible) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'El vehículo no está disponible en esas fechas'
+                });
+            }
+
+            // Crear reserva
+            Reserva.crear(datosReserva, (err, idReserva) => {
+                if (err) {
+                    console.error('Error al crear reserva:', err);
+                    return res.status(500).json({
+                        success: false,
+                        message: 'Error al crear reserva'
+                    });
+                }
+
+                // Actualizar estado del vehículo
+                Vehiculo.cambiarEstado(datosReserva.id_vehiculo, 'reservado', (errUpdate) => {
+                    if (errUpdate) {
+                        console.error('Error al actualizar estado del vehículo:', errUpdate);
+                    }
+
+                    res.status(201).json({
+                        success: true,
+                        message: 'Reserva creada correctamente',
+                        data: {
+                            id_reserva: idReserva,
+                            ...datosReserva,
+                            estado: 'activa'
+                        }
+                    });
+                });
+            });
+        }
+    );
+});
+
+// PUT /api/reservas/:id - Actualizar una reserva
+router.put('/reservas/:id', validateReservation, (req, res) => {
+    const id = req.params.id;
+    const datosActualizados = req.validatedData;
+
+    // Verificar que la reserva existe
+    Reserva.obtenerPorId(id, (err, reserva) => {
+        if (err) {
+            console.error('Error al obtener reserva:', err);
             return res.status(500).json({
                 success: false,
                 message: 'Error al obtener reserva'
             });
         }
 
-        if (results.length === 0) {
+        if (!reserva) {
             return res.status(404).json({
                 success: false,
                 message: 'Reserva no encontrada'
             });
         }
 
-        res.status(200).json({
-            success: true,
-            data: results[0]
-        });
-    });
-});
-
-// POST /api/reservas - Crear nueva reserva
-router.post('/reservas', (req, res) => {
-    const { id_vehiculo, id_usuario, fecha_inicio, fecha_fin, observaciones } = req.body;
-
-    // Validaciones
-    if (!id_vehiculo || !id_usuario || !fecha_inicio || !fecha_fin) {
-        return res.status(400).json({
-            success: false,
-            message: 'Faltan campos obligatorios: id_vehiculo, id_usuario, fecha_inicio, fecha_fin'
-        });
-    }
-
-    // Validar que la fecha de inicio no sea anterior a hoy
-    const fechaInicioDate = new Date(fecha_inicio);
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
-
-    if (fechaInicioDate < hoy) {
-        return res.status(400).json({
-            success: false,
-            message: 'La fecha de inicio no puede ser anterior al día actual'
-        });
-    }
-
-    // Validar que fecha_fin sea posterior a fecha_inicio
-    const fechaFinDate = new Date(fecha_fin);
-    if (fechaFinDate <= fechaInicioDate) {
-        return res.status(400).json({
-            success: false,
-            message: 'La fecha de fin debe ser posterior a la fecha de inicio'
-        });
-    }
-
-    // Verificar que el vehículo exista
-    const consultaVehiculo = 'SELECT * FROM Vehiculos WHERE id_vehiculo = ?';
-
-    pool.query(consultaVehiculo, [id_vehiculo], (err, vehiculos) => {
-        if (err) {
-            return res.status(500).json({
-                success: false,
-                message: 'Error al verificar vehículo'
-            });
-        }
-
-        if (vehiculos.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Vehículo no encontrado'
-            });
-        }
-
-        // Verificar disponibilidad del vehículo
-        const consultaDisponibilidad = `
-            SELECT * FROM Reservas 
-            WHERE id_vehiculo = ? 
-            AND estado NOT IN ('cancelada', 'completada')
-            AND (
-                (fecha_inicio BETWEEN ? AND ?) OR
-                (fecha_fin BETWEEN ? AND ?) OR
-                (? BETWEEN fecha_inicio AND fecha_fin)
-            )
-        `;
-
-        pool.query(consultaDisponibilidad,
-            [id_vehiculo, fecha_inicio, fecha_fin, fecha_inicio, fecha_fin, fecha_inicio],
-            (err, reservasConflicto) => {
+        // Verificar disponibilidad (excluyendo esta reserva)
+        Reserva.verificarDisponibilidad(
+            datosActualizados.id_vehiculo,
+            datosActualizados.fecha_inicio,
+            datosActualizados.fecha_fin,
+            id,
+            (err, disponible) => {
                 if (err) {
+                    console.error('Error al verificar disponibilidad:', err);
                     return res.status(500).json({
                         success: false,
                         message: 'Error al verificar disponibilidad'
                     });
                 }
 
-                if (reservasConflicto.length > 0) {
+                if (!disponible) {
                     return res.status(400).json({
                         success: false,
                         message: 'El vehículo no está disponible en esas fechas'
                     });
                 }
 
-                // Insertar reserva
-                const consultaInsert = `
-                    INSERT INTO Reservas (id_vehiculo, id_usuario, fecha_inicio, fecha_fin, observaciones, estado)
-                    VALUES (?, ?, ?, ?, ?, 'activa')
-                `;
-
-                pool.query(consultaInsert,
-                    [id_vehiculo, id_usuario, fecha_inicio, fecha_fin, observaciones || ''],
-                    (err, result) => {
-                        if (err) {
-                            console.error('Error al crear reserva:', err);
-                            return res.status(500).json({
-                                success: false,
-                                message: 'Error al crear reserva'
-                            });
-                        }
-
-                        // Actualizar el estado del vehículo a 'reservado'
-                        const actualizarVehiculo = 'UPDATE Vehiculos SET estado = ? WHERE id_vehiculo = ?';
-                        pool.query(actualizarVehiculo, ['reservado', id_vehiculo], (errUpdate) => {
-                            if (errUpdate) {
-                                console.error('Error al actualizar estado del vehículo:', errUpdate);
-                            }
-
-                            res.status(201).json({
-                                success: true,
-                                message: 'Reserva creada correctamente',
-                                data: {
-                                    id_reserva: result.insertId,
-                                    id_vehiculo,
-                                    id_usuario,
-                                    fecha_inicio,
-                                    fecha_fin,
-                                    estado: 'activa'
-                                }
-                            });
+                // Actualizar reserva
+                Reserva.actualizar(id, datosActualizados, (err, affectedRows) => {
+                    if (err) {
+                        console.error('Error al actualizar reserva:', err);
+                        return res.status(500).json({
+                            success: false,
+                            message: 'Error al actualizar reserva'
                         });
                     }
-                );
+
+                    // Si se finaliza o cancela, liberar el vehículo
+                    if (datosActualizados.estado === 'finalizada' ||
+                        datosActualizados.estado === 'cancelada') {
+                        Vehiculo.cambiarEstado(reserva.id_vehiculo, 'disponible', (errUpdate) => {
+                            if (errUpdate) {
+                                console.error('Error al liberar vehículo:', errUpdate);
+                            }
+                        });
+                    }
+
+                    res.status(200).json({
+                        success: true,
+                        message: 'Reserva actualizada correctamente'
+                    });
+                });
             }
         );
-    });
-});
-
-// PUT /api/reservas/:id - Actualizar una reserva
-router.put('/reservas/:id', (req, res) => {
-    const id = req.params.id;
-    const { fecha_inicio, fecha_fin, observaciones, estado, kilometros_recorridos, incidencias_reportadas } = req.body;
-
-    const campos = [];
-    const valores = [];
-
-    if (fecha_inicio) {
-        campos.push('fecha_inicio = ?');
-        valores.push(fecha_inicio);
-    }
-    if (fecha_fin) {
-        campos.push('fecha_fin = ?');
-        valores.push(fecha_fin);
-    }
-    if (observaciones !== undefined) {
-        campos.push('observaciones = ?');
-        valores.push(observaciones);
-    }
-    if (kilometros_recorridos !== undefined) {
-        campos.push('kilometros_recorridos = ?');
-        valores.push(kilometros_recorridos);
-    }
-    if (incidencias_reportadas !== undefined) {
-        campos.push('incidencias_reportadas = ?');
-        valores.push(incidencias_reportadas);
-    }
-    if (estado) {
-        campos.push('estado = ?');
-        valores.push(estado);
-    }
-
-    if (campos.length === 0) {
-        return res.status(400).json({
-            success: false,
-            message: 'No hay campos para actualizar'
-        });
-    }
-
-    valores.push(id);
-
-    const consulta = `UPDATE Reservas SET ${campos.join(', ')} WHERE id_reserva = ?`;
-
-    pool.query(consulta, valores, (err, result) => {
-        if (err) {
-            return res.status(500).json({
-                success: false,
-                message: 'Error al actualizar reserva'
-            });
-        }
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Reserva no encontrada'
-            });
-        }
-
-        // Si se finaliza o cancela la reserva, liberar el vehículo
-        if (estado === 'finalizada' || estado === 'cancelada') {
-            // Obtener el id_vehiculo de la reserva
-            pool.query('SELECT id_vehiculo FROM Reservas WHERE id_reserva = ?', [id], (errVehiculo, reserva) => {
-                if (!errVehiculo && reserva.length > 0) {
-                    const id_vehiculo = reserva[0].id_vehiculo;
-
-                    // Actualizar el estado del vehículo a 'disponible'
-                    pool.query('UPDATE Vehiculos SET estado = ? WHERE id_vehiculo = ?', ['disponible', id_vehiculo], (errUpdate) => {
-                        if (errUpdate) {
-                            console.error('Error al liberar vehículo:', errUpdate);
-                        }
-                    });
-                }
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: 'Reserva actualizada correctamente'
-        });
     });
 });
 
@@ -447,26 +342,46 @@ router.put('/reservas/:id', (req, res) => {
 router.delete('/reservas/:id', (req, res) => {
     const id = req.params.id;
 
-    const consulta = 'DELETE FROM Reservas WHERE id_reserva = ?';
-
-    pool.query(consulta, [id], (err, result) => {
+    // Obtener información de la reserva antes de eliminarla
+    Reserva.obtenerPorId(id, (err, reserva) => {
         if (err) {
+            console.error('Error al obtener reserva:', err);
             return res.status(500).json({
                 success: false,
-                message: 'Error al eliminar reserva'
+                message: 'Error al obtener reserva'
             });
         }
 
-        if (result.affectedRows === 0) {
+        if (!reserva) {
             return res.status(404).json({
                 success: false,
                 message: 'Reserva no encontrada'
             });
         }
 
-        res.status(200).json({
-            success: true,
-            message: 'Reserva eliminada correctamente'
+        // Eliminar reserva
+        Reserva.eliminar(id, (err, affectedRows) => {
+            if (err) {
+                console.error('Error al eliminar reserva:', err);
+                return res.status(500).json({
+                    success: false,
+                    message: 'Error al eliminar reserva'
+                });
+            }
+
+            // Liberar vehículo si la reserva estaba activa
+            if (reserva.estado === 'activa') {
+                Vehiculo.cambiarEstado(reserva.id_vehiculo, 'disponible', (errUpdate) => {
+                    if (errUpdate) {
+                        console.error('Error al liberar vehículo:', errUpdate);
+                    }
+                });
+            }
+
+            res.status(200).json({
+                success: true,
+                message: 'Reserva eliminada correctamente'
+            });
         });
     });
 });
