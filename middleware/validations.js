@@ -20,21 +20,24 @@ const validateUser = (req, res, next) => {
         return res.status(400).json({ error });
     }
 
-    // Validar formato de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Validar formato de email corporativo @zephyra.com
+    const emailRegex = /^[^\s@]+@zephyra\.com$/;
     if (!emailRegex.test(correo.trim())) {
         const error = language === 'english'
-            ? 'Invalid email format'
-            : 'Formato de correo inválido';
+            ? 'Email must be from corporate domain @zephyra.com'
+            : 'El correo debe ser del dominio corporativo @zephyra.com';
         return res.status(400).json({ error });
     }
 
-    // Validar longitud de contraseña (solo si se proporciona)
-    if (password && password.trim().length < 8) {
-        const error = language === 'english'
-            ? 'Password must be at least 8 characters long'
-            : 'La contraseña debe tener al menos 8 caracteres';
-        return res.status(400).json({ error });
+    // Validar contraseña segura (solo si se proporciona): mínimo 8 caracteres, 1 mayúscula, 1 número
+    if (password) {
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (!passwordRegex.test(password.trim())) {
+            const error = language === 'english'
+                ? 'Password must have at least 8 characters, 1 uppercase letter and 1 number'
+                : 'La contraseña debe tener al menos 8 caracteres, 1 mayúscula y 1 número';
+            return res.status(400).json({ error });
+        }
     }
 
     // Almacenar datos validados en req para uso posterior

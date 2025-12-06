@@ -47,8 +47,8 @@ router.post('/user-register', requiredAdminId, (req, res) => {
             });
         }
 
-        //Validamos el formato del correo electrónico
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        //Validamos el formato del correo electrónico corporativo @zephyra.com
+        const emailRegex = /^[^\s@]+@zephyra\.com$/;
         if (!emailRegex.test(email.trim())) {
 
             return Concesionario.obtenerTodos((err, concesionarios) => {
@@ -58,7 +58,7 @@ router.post('/user-register', requiredAdminId, (req, res) => {
                 }
 
                 const vista = language === 'english' ? 'en-usuario-form' : 'es-usuario-form';
-                const errorMsg = language === 'english' ? 'Invalid email format' : 'Formato del correo incorrecto';
+                const errorMsg = language === 'english' ? 'Email must be from corporate domain @zephyra.com' : 'El correo debe ser del dominio corporativo @zephyra.com';
 
                 return res.render(vista, {
                     error: errorMsg,
@@ -67,15 +67,18 @@ router.post('/user-register', requiredAdminId, (req, res) => {
             });
         }
 
-        // Validar longitud mínima de contraseña
-        if (password.trim().length < 8) {
+        // Validar contraseña segura: mínimo 8 caracteres, 1 mayúscula, 1 número
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (!passwordRegex.test(password.trim())) {
             return Concesionario.obtenerTodos((error, concesionarios) => {
                 if (error) {
                     console.error('Error al obtener los concesionarios:', err);
                     return res.status(500).send('Error al obtener los concesionarios');
                 }
                 const vista = language === 'english' ? 'en-usuario-form' : 'es-usuario-form';
-                const errorMsg = language === 'english' ? 'Password must be at least 8 characters long' : 'La contraseña debe tener al menos 8 caracteres';
+                const errorMsg = language === 'english'
+                    ? 'Password must have at least 8 characters, 1 uppercase letter and 1 number'
+                    : 'La contraseña debe tener al menos 8 caracteres, 1 mayúscula y 1 número';
 
                 return res.render(vista, {
                     error: errorMsg,
@@ -192,10 +195,10 @@ router.post('/user-edit/:id', requiredAdminId, (req, res) => {
         return res.status(400).send('El nombre y correo son obligatorios');
     }
 
-    // Validar formato de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Validar formato de email corporativo @zephyra.com
+    const emailRegex = /^[^\s@]+@zephyra\.com$/;
     if (!emailRegex.test(correo.trim())) {
-        return res.status(400).send('Formato de correo inválido');
+        return res.status(400).send('El correo debe ser del dominio corporativo @zephyra.com');
     }
 
     const telefonoValue = telefono || null;

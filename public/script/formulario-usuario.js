@@ -88,14 +88,14 @@ document.addEventListener("DOMContentLoaded", () => {
         return true;
     }
 
-    // Correo válido
+    // Correo corporativo @zephyra.com
     function validarCorreo() {
         const value = correo.value.trim();
         const error = document.getElementById("correo-error");
 
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        if (!/^[^\s@]+@zephyra\.com$/.test(value)) {
             colorearInputs(correo, false);
-            error.textContent = "Introduce un correo electrónico válido.";
+            error.textContent = "Debe ser un correo corporativo (@zephyra.com).";
             return false;
         }
         colorearInputs(correo, true);
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return true;
     }
 
-    // Password (solo si es registro o si se quiere cambiar)
+    // Password segura: mínimo 8 caracteres, 1 mayúscula, 1 número
     function validarPassword() {
         const value = password.value.trim();
         const error = document.getElementById("contraseña-error");
@@ -115,9 +115,10 @@ document.addEventListener("DOMContentLoaded", () => {
             return true;
         }
 
-        if (value.length < 6) {
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (!passwordRegex.test(value)) {
             colorearInputs(password, false);
-            error.textContent = "La contraseña debe tener al menos 6 caracteres.";
+            error.textContent = "Mínimo 8 caracteres, 1 mayúscula y 1 número.";
             return false;
         }
         colorearInputs(password, true);
