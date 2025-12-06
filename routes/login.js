@@ -50,7 +50,7 @@ router.post('/submit_login', validateLogin, (req, res) => {
         }
 
         //Verificamos la contraseña encriptada
-        bcrypt.compare(password, usuario.contraseña, (errCompare, match) => {
+        bcrypt.compare(password, user.contraseña, (errCompare, match) => {
             if (errCompare) {
                 console.error('Error al comparar contraseñas:', errCompare);
                 const vista = language === 'english' ? 'en-login' : 'es-login';
@@ -79,12 +79,12 @@ router.post('/submit_login', validateLogin, (req, res) => {
 
             //Guardamos lso datos del usuario en la sesión si todo salió bien
             req.session.usuario = {
-                id_usuario: usuario.id_usuario,
-                nombre: usuario.nombre,
-                correo: usuario.correo,
-                rol: usuario.rol,
-                telefono: usuario.telefono,
-                id_concesionario: usuario.id_concesionario
+                id_usuario: user.id_usuario,
+                nombre: user.nombre,
+                correo: user.correo,
+                rol: user.rol,
+                telefono: user.telefono,
+                id_concesionario: user.id_concesionario
             };
 
             //Redirigimos la vista según el idioma
