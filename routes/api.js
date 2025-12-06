@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const Vehiculo = require('../models/Vehiculo');
+const Reserva = require('../models/Reserva');
+const Concesionario = require('../models/Concesionario');
+const Usuario = require('../models/Usuario');
 
 /* ============================================
    ENDPOINTS DE VEHÍCULOS
@@ -8,6 +12,26 @@ const pool = require('../db');
 
 // GET /api/vehiculos - Obtener todos los vehículos con filtros
 router.get('/vehiculos', (req, res) => {
+    // Si no hay filtros, usar el modelo directamente
+    if (Object.keys(req.query).length === 0) {
+        return Vehiculo.obtenerTodosSinImagen((err, vehiculos) => {
+            if (err) {
+                console.error('Error al obtener vehículos JSON:', err);
+                return res.status(500).json({
+                    success: false,
+                    message: 'Error al obtener vehículos',
+                    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+                });
+            }
+
+            res.status(200).json({
+                success: true,
+                data: vehiculos,
+                count: vehiculos.length
+            });
+        });
+    }
+
     let consulta = `
         SELECT 
             v.id_vehiculo,

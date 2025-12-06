@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const { requiredLoggedIn } = require('../middleware/autorizaciones');
+const { validateReservation } = require('../middleware/validations');
+const Reserva = require('../models/Reserva');
+const Vehiculo = require('../models/Vehiculo');
 
 const reservas = [];   //ARRAY EN MEMORIA
 
