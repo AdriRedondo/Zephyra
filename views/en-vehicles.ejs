@@ -10,75 +10,83 @@ actual_en: 'en-vehicles' }) %>
 
             <form action="/en-vehicles" method="get">
 
+                <label>Minimum Range (km):</label>
+                <input type="number" name="autonomia_min" class="form-control mb-3" value="0" min="0">
+
+                <label>Number of Seats:</label>
+                <select name="plazas" class="form-select mb-3">
+                    <option value>All</option>
+                    <% const plazas=[...new Set(vehiculos.map(v=>
+                    v.numero_plazas))].sort((a, b) => a - b);
+                    plazas.forEach(p => {
+                    %>
+                    <option value="<%= p %>">
+                        <%= p %> seats
+                    </option>
+                    <% }) %>
+                </select>
+
+                <label>Color:</label>
+                <select name="color" class="form-select mb-3">
+                    <option value>All</option>
+                    <% const colores=[...new Set(vehiculos.map(v=>
+                    v.color).filter(Boolean))].sort();
+                    colores.forEach(c => {
+                    %>
+                    <option value="<%= c %>">
+                        <%= c %>
+                    </option>
+                    <% }) %>
+                </select>
+
                 <label>Make:</label>
-                <select name="make" class="form-select mb-3">
+                <select name="marca" class="form-select mb-3">
                     <option value>All</option>
                     <% const marcas=[...new Set(vehiculos.map(v=> v.marca))];
                     marcas.forEach(m => {
                     %>
-                    <option value="<%= m %>" <%=filtros && filtros.marca===m ?
-                        'selected' : '' %>>
+                    <option value="<%= m %>">
                         <%= m %>
                     </option>
                     <% }) %>
                 </select>
 
                 <label>Model:</label>
-                <select name="model" class="form-select mb-3">
+                <select name="modelo" class="form-select mb-3">
                     <option value>All</option>
                     <% const modelos=[...new Set(vehiculos.map(v=> v.modelo))];
                     modelos.forEach(mod => {
                     %>
-                    <option value="<%= mod %>" <%=filtros &&
-                        filtros.modelo===mod ? 'selected' : '' %>>
+                    <option value="<%= mod %>">
                         <%= mod %>
                     </option>
                     <% }) %>
                 </select>
 
-                <label>Number of Seats:</label>
-                <select name="seats" class="form-select mb-3">
-                    <option value>All</option>
-                    <% const plazas=[...new Set(vehiculos.map(v=>
-                    v.numero_plazas))].sort((a, b) => a - b);
-                    plazas.forEach(p => {
-                    %>
-                    <option value="<%= p %>" <%=filtros && filtros.plazas==p ?
-                        'selected' : '' %>>
-                        <%= p %> seats
-                    </option>
-                    <% }) %>
-                </select>
-
                 <label>Dealership:</label>
-                <select name="dealership" class="form-select mb-3">
+                <select name="concesionario" class="form-select mb-3">
                     <option value>All</option>
                     <% const concesionarios=[...new Set(vehiculos.map(v=>
                     v.nombre_concesionario).filter(Boolean))].sort();
                     concesionarios.forEach(c => {
                     %>
-                    <option value="<%= c %>" <%=filtros &&
-                        filtros.concesionario===c ? 'selected' : '' %>>
+                    <option value="<%= c %>">
                         <%= c %>
                     </option>
                     <% }) %>
                 </select>
 
                 <label>Status:</label>
-                <select name="status" class="form-select mb-3">
+                <select name="estado" class="form-select mb-3">
                     <option value>All</option>
                     <% const estados=['available', 'reserved' , 'maintenance' ];
                     estados.forEach(e=> {
                     %>
-                    <option value="<%= e %>" <%=filtros && filtros.estado===e ?
-                        'selected' : '' %>>
+                    <option value="<%= e %>">
                         <%= e %>
                     </option>
                     <% }) %>
                 </select>
-
-                <button type="submit" class="btn border-success w-100">Apply
-                    Filters</button>
 
             </form>
 
@@ -92,69 +100,9 @@ actual_en: 'en-vehicles' }) %>
     </aside>
 
     <section class="col-lg-12">
-        <% if (vehiculosFiltrados && vehiculosFiltrados.length>0) { %>
-        <div
-            class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-            <% vehiculosFiltrados.forEach(vehiculo=> { %>
-            <% if( usuario || ( !usuario && vehiculo.estado==='disponible' )) {
-            %>
-            <div class="col">
-                <div class="card h-100">
-                    <img src="/es-vehiculos/imagen/<%= vehiculo.id_vehiculo %>"
-                        class="vehiculo-img card-img-top"
-                        alt="<%= vehiculo.marca %> <%= vehiculo.modelo %>">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">
-                            <%= vehiculo.marca %>
-                            <%= vehiculo.modelo %>
-                        </h5>
-                        <p class="card-text"><strong>Status:</strong>
-                            <%= vehiculo.estado %>
-                        </p>
-
-                        <div class="d-flex gap-2 mt-3">
-                            <a type="button"
-                                href="/es-vehiculos/<%= vehiculo.id_vehiculo %>"
-                                class="btn border-success mt-auto w-100">
-                                Details
-                            </a>
-
-                            <% if(usuario && usuario.rol==='admin' ) { %>
-                            <a class="btn border-secondary mt-auto"
-                                href="/es-vehiculos/<%= vehiculo.id_vehiculo %>/editar">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-
-                            <form
-                                action="/es-vehiculos/<%= vehiculo.id_vehiculo %>/eliminar"
-                                method="post" class="flex-fill"
-                                onsubmit="return confirm('¿Estás seguro de eliminar este vehículo?');">
-                                <button class="btn border-danger" type="submit">
-                                    <i class="bi bi-trash-fill"></i>
-                                </button>
-                            </form>
-                            <% } %>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <% } %>
-
-            <% }) %>
+        <div class="contenedor-vehiculos row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+            <!-- Esto se rellena dinámicamente con el js de ajax-->
         </div>
-        <% } else { %>
-        <div class="card text-center border-0 shadow-sm p-4">
-            <div class="card-body">
-                <h5 class="card-title">No hay vehículos disponibles</h5>
-                <p class="card-text">No se encontraron vehículos que coincidan
-                    con estos filtros.
-                    <br>Intenta
-                    cambiando los criterios.
-                </p>
-            </div>
-        </div>
-        <% } %>
     </section>
 </main>
-<%- include('footer', {scripts: []}) -%>
+<%- include('footer', {scripts: ['vehiculos-ajax']}) -%>

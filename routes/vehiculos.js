@@ -284,15 +284,13 @@ router.get('/en-vehicles', (req, res) => {
     pool.query(consulta, (err, vehiculos) => {
         if (err) {
             console.error('Error al obtener los vehículos:', err);
-            return res.status(500).send('Error al obtener los vehículos');
+            return res.status(500);
         }
 
         //SI todo sale bien se muestra la vista de vehículos
         //Vista en inglés
         res.render('en-vehicles', {
-            vehiculos: vehiculos,
-            vehiculosFiltrados: vehiculos,
-            filtros: null
+            vehiculos: vehiculos
         });
     });
 });
