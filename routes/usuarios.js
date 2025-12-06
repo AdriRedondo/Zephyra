@@ -8,7 +8,7 @@ const Concesionario = require('../models/Concesionario');
 const { validateUser } = require('../middleware/validations');
 
 // GET para mostrar el formulario de registro de usuario
-router.get('/es-user/register', requiredAdminId, validateUser, (req, res) => {
+router.get('/es-user/register', requiredAdminId, (req, res) => {
     const language = req.query.idioma || 'español';
     Concesionario.obtenerTodos((err, concesionarios) => {
         if (err) concesionarios = [];
