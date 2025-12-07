@@ -2,7 +2,7 @@
     , actual_en: 'en-login' }) %>
     <main>
         <section id="Login" class="login">
-            <form id="login-form-id" class="formularios aria-label=" Formulario de login" method="post"
+            <form id="login-form-id" class="formularios" aria-label="Formulario de login" method="post"
                 action="/submit_login">
                 <div class="mb-3">
                     <fieldset class="login-fs" name="login">
@@ -39,11 +39,10 @@
                                 <span id="contraseña-error" class="error" aria-live="polite"></span>
                             </div>
                             <div class="col-12">
-                                <label>
+                                <label for="recordar" class="form-label">
                                     Recordar sesión
+                                    <input type="checkbox" id="recordar" name="recordar" class="form-check-input" value="1">
                                 </label>
-                                <input type="checkbox" name="recordar" class="form-check-input" value="1">
-
                             </div>
 
                             <% if (typeof error !=='undefined' ) { %>

@@ -10,17 +10,17 @@
                         <input type="hidden" name="idioma" value="english">
                         <legend>Sign Up Details</legend>
                         <div class="mb-3">
-                            <label for="nombre" class="form-label">Name:
+                            <label for="nombre" class="form-label">Name: <span class="text-danger">*</span>
                             </label>
                             <input type="text" id="nombre" name="nombre" class="form-control"
-                                placeholder="Ex: Eustaquio Ramirez">
+                                placeholder="Ex: Eustaquio Ramirez" required>
                             <span id="nombre-error" class="error" aria-live="polite"></span>
                         </div>
                         <div class="mb-3">
-                            <label for="contraseña" class="form-label">Password:
+                            <label for="contraseña" class="form-label">Password: <span class="text-danger">*</span>
                             </label>
-                            <input type="text" id="contraseña" name="constraseña" class="form-control"
-                                placeholder="Ex: ASDFg7&A">
+                            <input type="password" id="contraseña" name="constraseña" class="form-control"
+                                placeholder="Ex: ASDFg7&A" required>
                             <span id="contraseña-error" class="error" aria-live="polite"></span>
                         </div>
 

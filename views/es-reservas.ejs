@@ -50,11 +50,11 @@
                                         data-bs-target="#modalVehiculos" readonly required>
                                     <input type="hidden" id="vehiculo-id" name="vehiculo">
                                     <button type="button" class="btn border-secondary" data-bs-toggle="modal"
-                                        data-bs-target="#modalVehiculos">
+                                        data-bs-target="#modalVehiculos" aria-label="Buscar vehículo">
                                         <i class="bi bi-search"></i>
                                     </button>
                                 </div>
-                                <span id="vehículo-error" class="error"></span>
+                                <span id="vehículo-error" class="error" aria-live="polite"></span>
                             </div>
                             <div class="col-md-6">
                                 <label for="inicio" class="form-label">Inicio de reserva: <span
@@ -64,7 +64,7 @@
                                     <span class="input-group-text">
                                         <i class="bi bi-calendar"></i>
                                     </span>
-                                    <input type="datetime-local" id="inicio" name="inicio" class="form-control">
+                                    <input type="datetime-local" id="inicio" name="inicio" class="form-control" required>
                                 </div>
                                 <span id="inicio-error" class="error" aria-live="polite"></span>
 
@@ -77,7 +77,7 @@
                                         <i class="bi bi-clock"></i>
                                     </span>
                                     <input type="number" id="horas" name="horas" class="form-control"
-                                        placeholder="Ej: 24">
+                                        placeholder="Ej: 24" required min="1">
                                 </div>
                                 <span id="horas-error" class="error" aria-live="polite"></span>
                             </div>
@@ -89,7 +89,7 @@
                                         <i class="bi bi-telephone"></i>
                                     </span>
                                     <input type="tel" id="telefono" name="telefono" class="form-control"
-                                        placeholder="Ej: 123456789">
+                                        placeholder="Ej: 123456789" required pattern="[0-9]{9}">
                                 </div>
                                 <span id="telefono-error" class="error" aria-live="polite"></span>
                             </div>
@@ -135,26 +135,26 @@
                     <!-- Filtros en el modal -->
                     <div class="row mb-3">
                         <div class="col-md-3">
-                            <label>Marca:</label>
-                            <select id="filtro-marca" class="form-select form-select-sm">
+                            <label for="filtro-marca" class="form-label">Marca:</label>
+                            <select id="filtro-marca" class="form-select form-select-sm" aria-label="Filtrar por marca">
                                 <option value="">Todas</option>
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label>Modelo:</label>
-                            <select id="filtro-modelo" class="form-select form-select-sm">
+                            <label for="filtro-modelo" class="form-label">Modelo:</label>
+                            <select id="filtro-modelo" class="form-select form-select-sm" aria-label="Filtrar por modelo">
                                 <option value="">Todos</option>
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label>Plazas:</label>
-                            <select id="filtro-plazas" class="form-select form-select-sm">
+                            <label for="filtro-plazas" class="form-label">Plazas:</label>
+                            <select id="filtro-plazas" class="form-select form-select-sm" aria-label="Filtrar por número de plazas">
                                 <option value="">Todas</option>
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label>Concesionario:</label>
-                            <select id="filtro-concesionario" class="form-select form-select-sm">
+                            <label for="filtro-concesionario" class="form-label">Concesionario:</label>
+                            <select id="filtro-concesionario" class="form-select form-select-sm" aria-label="Filtrar por concesionario">
                                 <option value="">Todos</option>
                             </select>
                         </div>

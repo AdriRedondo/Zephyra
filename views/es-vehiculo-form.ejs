@@ -103,10 +103,10 @@
                                         <div class="input-group">
                                             <span class="input-group-text">
                                                 <i class="bi bi-battery-half"></i> </span>
-                                            <input type="text" id="autonomia_km" name="autonomia_km" required
-                                                class="form-control"
+                                            <input type="number" id="autonomia_km" name="autonomia_km" required
+                                                class="form-control" min="1"
                                                 value="<%= editar && vehiculo ? vehiculo.autonomia_km : ''  %>"
-                                                placeholder="... km">
+                                                placeholder="Ej: 500">
                                         </div>
                                         <span id="autonomia-error" class="error" aria-live="polite"></span>
                                     </div>
