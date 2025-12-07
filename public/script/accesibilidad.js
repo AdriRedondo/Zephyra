@@ -215,7 +215,7 @@ function mostrarAyudaAtajos() {
         html += `<tr><td>${labels[action] || action}</td><td><kbd>${shortcut}</kbd></td></tr>`;
     }
 
-    html += '</tbody></table><button class="btn btn-secondary" onclick="cerrarAyudaAtajos()">Cerrar</button></div>';
+    html += '</tbody></table><button class="btn border-secondary" onclick="cerrarAyudaAtajos()">Cerrar</button></div>';
 
     const overlay = document.createElement('div');
     overlay.id = 'shortcuts-overlay';
@@ -285,9 +285,9 @@ function mostrarConfiguradorAtajos() {
 
     html += '</div>';
     html += '<div class="mt-3 d-flex gap-2">';
-    html += '<button class="btn btn-success flex-fill" onclick="guardarAtajosConfig()">Guardar</button>';
-    html += '<button class="btn btn-secondary flex-fill" onclick="restaurarAtajosDefecto()">Restaurar Defaults</button>';
-    html += '<button class="btn btn-secondary" onclick="cerrarConfiguradorAtajos()">Cancelar</button>';
+    html += '<button class="btn border-secondary flex-fill" onclick="restaurarAtajosDefecto()">Restaurar atajos</button>';
+    html += '<button class="btn border-secondary" onclick="cerrarConfiguradorAtajos()">Cancelar</button>';
+    html += '<button class="btn border-success flex-fill" onclick="guardarAtajosConfig()">Guardar</button>';
     html += '</div>';
     html += '</div>';
 
