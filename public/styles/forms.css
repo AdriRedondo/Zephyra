@@ -25,7 +25,7 @@ h2 {
 .form-control:focus {
     background-color: var(--card-bg);
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(77, 155, 95, 0.25);
+    box-shadow: 0 0 0 0.2rem var(--success-bg);
     color: var(--text-color);
     outline: none;
 }
@@ -35,11 +35,62 @@ h2 {
     opacity: 0.5;
 }
 
+/* Estilos para select */
+.form-select {
+    background-color: var(--input-bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.form-select:focus {
+    background-color: var(--card-bg);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem var(--success-bg);
+    color: var(--text-color);
+    outline: none;
+}
+
+.form-select option {
+    background-color: var(--input-bg-color);
+    color: var(--text-color);
+}
+
+/* Estilos para input file */
+.form-control[type="file"] {
+    background-color: var(--input-bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.form-control[type="file"]::file-selector-button {
+    background-color: var(--input-icon-color);
+    color: var(--primary-color);
+}
+
 /* Estilos para input-group-text */
 .input-group-text {
     background-color: var(--input-icon-color);
     border: 1px solid var(--border-color);
     color: var(--primary-color);
+}
+
+/* Checkbox de términos */
+.form-check-input {
+    background-color: var(--input-bg-color);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-check-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem var(--success-bg);
+    outline: none;
 }
 
 main {
@@ -67,7 +118,6 @@ main {
     height: 1.2em;
 }
 
-/* Icono de asterisco requerido */
 .text-danger {
     color: var(--danger-color);
 }

@@ -12,24 +12,6 @@
     border-radius: 8px;
 }
 
-/* Checkbox de términos */
-.form-check-input {
-    background-color: var(--input-bg-color);
-    border: 1px solid var(--border-color);
-    cursor: pointer;
-}
-
-.form-check-input:checked {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-}
-
-.form-check-input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(77, 155, 95, 0.25);
-    outline: none;
-}
-
 /* Texto de porcentaje */
 #porcentaje-text {
     color: var(--text-color);
