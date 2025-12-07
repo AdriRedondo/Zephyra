@@ -2,41 +2,90 @@
     actual_en: 'en-profile' }) %>
 
     <main>
-        <div class=" d-flex justify-content-center align-items-center py-5">
-            <section id="profile" class="card p-4 rounded-4"">
-                <h2 class=" display-5 fw-bold mb-3">Perfil de Usuario</h2>
-                <div
-                    class="profile-circle bg-primary rounded-circle text-white d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <%= usuario.nombre.charAt(0).toUpperCase() %>
+        <!-- Título de la página -->
+        <h2 class="display-5 fw-bold text-center mb-4">Mi Perfil</h2>
 
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-8">
+                <!-- Avatar circular centrado -->
+                <div class="profile-avatar mx-auto mb-4">
+                    <%= usuario.nombre.charAt(0).toUpperCase() %>
+                        <% if(usuario.rol==='admin' ) { %>
+                            <span class="admin-badge" title="Administrador">
+                                <i class="bi bi-shield-check"></i>
+                            </span>
+                            <% } %>
                 </div>
 
-                <p class="fs-4 mb-2"><strong>Nombre:</strong>
-                    <%= usuario.nombre %>
-                </p>
-                <p class="fs-4 mb-2"><strong>Correo:</strong>
-                    <%= usuario.correo %>
-                </p>
-
-                <% if(usuario.telefono && usuario.telefono !=='' ){ %>
-                    <p class="fs-4 mb-2"><strong>Telefono:</strong>
-                        <%= usuario.telefono %>
+                <!-- Nombre y correo principales -->
+                <div class="text-center mb-4">
+                    <h3 class="h4 fw-bold mb-2">
+                        <%= usuario.nombre %>
+                    </h3>
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-envelope me-2"></i>
+                        <%= usuario.correo %>
                     </p>
-                    <% } %>
-                        <p class="fs-4 mb-2">
-                            <strong>Concesionario asignado:</strong>
-                            <%= concesionario %>
-                        </p>
-                        <p class="fs-4 mb-2">
-                            <strong>Rol de usuario:</strong>
-                            <% if(usuario.rol==='admin' ) {%>
-                                Administrador
-                                <% } else {%>
-                                    Empleado
-                                    <% } %>
-                        </p>
-            </section>
-        </div>
+                </div>
 
+                <!-- Información del usuario en cards -->
+                <div class="row g-3 mb-4">
+                    <!-- Teléfono (solo si existe) -->
+                    <% if(usuario.telefono && usuario.telefono !=='' ) { %>
+                        <div class="col-12 col-md-6">
+                            <div class="info-card rounded-3 p-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="info-icon">
+                                        <i class="bi bi-telephone"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted d-block">Teléfono</small>
+                                        <strong>
+                                            <%= usuario.telefono %>
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+
+                            <!-- Rol -->
+                            <div class="col-12 col-md-6">
+                                <div class="info-card rounded-3 p-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="info-icon">
+                                            <i
+                                                class="bi <%= usuario.rol === 'admin' ? 'bi-person-badge' : 'bi-person' %>"></i>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block">Rol</small>
+                                            <strong>
+                                                <%= usuario.rol==='admin' ? 'Administrador' : 'Empleado' %>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 d-flex justify-content-center">
+                                <div class="info-card rounded-3 p-3" style="max-width: 600px; width: 100%;">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="info-icon">
+                                            <i class="bi bi-building"></i>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block">Concesionario asignado</small>
+                                            <strong>
+                                                <%= concesionario %>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                </div>
+
+            </div>
+        </div>
     </main>
+
     <%- include('footer', {scripts: []}) -%>
