@@ -195,17 +195,18 @@ router.get('/es-vehiculos/:id/editar', requiredAdminId, (req, res) => {
 router.post('/es-vehiculos/:id/editar', requiredAdminId, validateVehicle, multerFactory.single('imagen'), (req, res) => {
     const id = req.params.id;
 
+    // Manejar errores de validación de imagen
     if (req.fileValidationError === 'FORMATO_INVALIDO_PNG' ||
         (req.file && req.file.mimetype !== 'image/png')) {
 
-        return Concesionario.obtenerTodos((errConc, concesionarios) => {
-            if (errConc) concesionarios = [];
-
-            return res.render('es-vehiculo-form', {
-                concesionarios,
-                editar: false,
-                vehiculo: null,
-                error: 'Solo se admite formato PNG'
+        return Vehiculo.obtenerPorId(id, (errVeh, vehiculo) => {
+            return Concesionario.obtenerTodos((errConc, concesionarios) => {
+                return res.render('es-vehiculo-form', {
+                    concesionarios: concesionarios || [],
+                    editar: true,
+                    vehiculo: vehiculo || null,
+                    error: 'Solo se admite formato PNG'
+                });
             });
         });
     }
@@ -233,7 +234,7 @@ router.post('/es-vehiculos/:id/editar', requiredAdminId, validateVehicle, multer
             }
 
             console.log(`Vehículo actualizado con ID: ${id}`);
-            res.redirect('/es-vehiculos');
+            res.redirect('/es-admin');
         });
     } else {
         Vehiculo.actualizar(id, {
@@ -253,7 +254,7 @@ router.post('/es-vehiculos/:id/editar', requiredAdminId, validateVehicle, multer
             }
 
             console.log(`Vehículo actualizado con ID: ${id}`);
-            res.redirect('/es-vehiculos');
+            res.redirect('/es-admin');
         });
     }
 });
@@ -337,7 +338,7 @@ router.get('/en-vehicles/new-vehicle', requiredAdminId, (req, res) => {
 });
 
 //POST para crear un nuevo vehículo como administrador
-router.post('/en-vehicles/new-vehicle', requiredAdminId, multerFactory.single('imagen'), (req, res) => {
+router.post('/en-vehicles/new-vehicle', requiredAdminId, validateVehicle, multerFactory.single('imagen'), (req, res) => {
     //Validación del formato PNG
     if (req.fileValidationError === 'FORMATO_INVALIDO_PNG' ||
         (req.file && req.file.mimetype !== 'image/png')) {

@@ -106,15 +106,25 @@ const validateDealer = (req, res, next) => {
 
 // Middleware para validar datos de vehículo
 const validateVehicle = (req, res, next) => {
-    const { matricula, marca, modelo, id_concesionario } = req.body;
+    const { matricula, marca, modelo, concesionario, anyo_matriculacion, numero_plazas, color, autonomia_km } = req.body;
+    const id_concesionario = concesionario;
     const language = req.body.idioma;
+    console.log(req.body);
+    console.log(matricula);
+    console.log(marca);
+    console.log(modelo);
+    console.log(anyo_matriculacion);
+    console.log(numero_plazas);
+    console.log(color);
+    console.log(autonomia_km);
 
     // Validar campos obligatorios
-    if (!matricula || !marca || !modelo || !id_concesionario ||
-        matricula.trim() === '' || marca.trim() === '' || modelo.trim() === '') {
+    if (!matricula || !marca || !modelo || !id_concesionario || !anyo_matriculacion ||
+        !numero_plazas || !color || !autonomia_km ||
+        matricula.trim() === '' || marca.trim() === '' || modelo.trim() === '' || color.trim() === '') {
         const error = language === 'english'
-            ? 'License plate, brand, model and dealer are required'
-            : 'La matrícula, marca, modelo y concesionario son obligatorios';
+            ? 'All fields are required'
+            : 'Todos los campos son obligatorios';
         return res.status(400).json({ error });
     }
 
@@ -128,9 +138,9 @@ const validateVehicle = (req, res, next) => {
     }
 
     // Validar año de matriculación
-    const anyo = parseInt(req.body.anyo_matriculacion);
     const currentYear = new Date().getFullYear();
-    if (anyo && (anyo < 1900 || anyo > currentYear + 1)) {
+    const anyo = parseInt(anyo_matriculacion);
+    if (!anyo || anyo < 1900 || anyo > currentYear + 1) {
         const error = language === 'english'
             ? `Year must be between 1900 and ${currentYear + 1}`
             : `El año debe estar entre 1900 y ${currentYear + 1}`;
@@ -138,8 +148,8 @@ const validateVehicle = (req, res, next) => {
     }
 
     // Validar número de plazas
-    const plazas = parseInt(req.body.numero_plazas);
-    if (plazas && (plazas < 1 || plazas > 9)) {
+    const plazas = parseInt(numero_plazas);
+    if (!plazas || plazas < 1 || plazas > 9) {
         const error = language === 'english'
             ? 'Number of seats must be between 1 and 9'
             : 'El número de plazas debe estar entre 1 y 9';
@@ -147,8 +157,8 @@ const validateVehicle = (req, res, next) => {
     }
 
     // Validar autonomía
-    const autonomia = parseFloat(req.body.autonomia_km);
-    if (autonomia && (autonomia < 0 || autonomia > 1000)) {
+    const autonomia = parseFloat(autonomia_km);
+    if (!autonomia || autonomia < 0 || autonomia > 1000) {
         const error = language === 'english'
             ? 'Autonomy must be between 0 and 1000 km'
             : 'La autonomía debe estar entre 0 y 1000 km';
@@ -160,10 +170,10 @@ const validateVehicle = (req, res, next) => {
         matricula: matricula.trim().toUpperCase(),
         marca: marca.trim(),
         modelo: modelo.trim(),
-        anyo_matriculacion: anyo || null,
-        numero_plazas: plazas || null,
-        autonomia_km: autonomia || null,
-        color: req.body.color ? req.body.color.trim() : null,
+        anyo_matriculacion: anyo,
+        numero_plazas: plazas,
+        autonomia_km: autonomia,
+        color: color.trim(),
         estado: req.body.estado || 'disponible',
         id_concesionario: parseInt(id_concesionario)
     };

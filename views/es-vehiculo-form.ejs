@@ -26,8 +26,8 @@
                                                 <i class="bi bi-car-front"></i>
                                             </span>
                                             <input type="text" id="matricula" name="matricula" class="form-control"
-                                                value="<%= editar && vehiculo ? vehiculo.matricula : ''  %>"
-                                                placeholder="ABC-1234">
+                                                required value="<%= editar && vehiculo ? vehiculo.matricula : ''  %>"
+                                                placeholder="1234ABC">
                                         </div>
                                         <span id="matricula-error" class="error" aria-live="polite"></span>
                                     </div>
@@ -38,7 +38,7 @@
                                             <span class="input-group-text">
                                                 <i class="bi bi-tag"></i>
                                             </span>
-                                            <input type="text" id="marca" name="marca" class="form-control"
+                                            <input type="text" id="marca" name="marca" class="form-control" required
                                                 value="<%=editar && vehiculo ? vehiculo.marca : ''  %>"
                                                 placeholder="Toyota">
                                         </div>
@@ -52,32 +52,33 @@
                                             <span class="input-group-text">
                                                 <i class="bi bi-gear"></i> </span>
                                             <input type="text" id="modelo" name="modelo"
-                                                value="<%= editar && vehiculo ? vehiculo.modelo : ''  %>"
+                                                value="<%= editar && vehiculo ? vehiculo.modelo : ''  %>" required
                                                 class="form-control" placeholder="XRVZ-33">
                                         </div>
                                         <span id="modelo-error" class="error" aria-live="polite"></span>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="anyoMatri" class="form-label">Año de matriculación: <span
+                                        <label for="anyo_matriculacion" class="form-label">Año de matriculación: <span
                                                 class="text-danger">*</span>
                                         </label>
                                         <div class="input-group">
                                             <span class="input-group-text">
                                                 <i class="bi bi-calendar"></i> </span>
-                                            <input type="text" id="anyo_matri" name="anyoMatri"
+                                            <input type="number" id="anyo_matriculacion" name="anyo_matriculacion"
+                                                required
                                                 value="<%= editar && vehiculo ? vehiculo.anyo_matriculacion : ''  %>"
                                                 class="form-control" placeholder="1999">
                                         </div>
                                         <span id="anyoMatri-error" class="error" aria-live="polite"></span>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="numPlazas" class="form-label">Número de plazas: <span
+                                        <label for="numero_plazas" class="form-label">Número de plazas: <span
                                                 class="text-danger">*</span>
                                         </label>
                                         <div class="input-group">
                                             <span class="input-group-text">
                                                 <i class="bi bi-people"></i> </span>
-                                            <input type="text" id="numPlazas" name="numPlazas"
+                                            <input type="number" id="numero_plazas" name="numero_plazas" required
                                                 value="<%= editar && vehiculo ? vehiculo.numero_plazas : ''  %>"
                                                 class="form-control" placeholder="5">
                                         </div>
@@ -90,19 +91,20 @@
                                             <span class="input-group-text">
                                                 <i class="bi bi-palette"></i> </span>
                                             <input type="text" id="color" name="color"
-                                                value="<%= editar && vehiculo ? vehiculo.color : ''  %>"
+                                                value="<%= editar && vehiculo ? vehiculo.color : ''  %>" required
                                                 class="form-control" placeholder="Rojo">
                                         </div>
                                         <span id="color-error" class="error" aria-live="polite"></span>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="autonomia" class="form-label">Autonomía (km): <span
+                                        <label for="autonomia_km" class="form-label">Autonomía (km): <span
                                                 class="text-danger">*</span>
                                         </label>
                                         <div class="input-group">
                                             <span class="input-group-text">
                                                 <i class="bi bi-battery-half"></i> </span>
-                                            <input type="text" id="autonomia" name="autonomia" class="form-control"
+                                            <input type="text" id="autonomia_km" name="autonomia_km" required
+                                                class="form-control"
                                                 value="<%= editar && vehiculo ? vehiculo.autonomia_km : ''  %>"
                                                 placeholder="... km">
                                         </div>

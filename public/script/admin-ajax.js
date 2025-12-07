@@ -92,6 +92,15 @@ function eliminarEntidadAjax(tipo, id, form) {
             // Eliminación exitosa
             console.log(`${tipo} eliminado correctamente:`, data);
 
+            // Mostrar modal de éxito
+            const mensajes = {
+                vehiculo: 'Vehículo eliminado correctamente',
+                usuario: 'Usuario eliminado correctamente',
+                concesionario: 'Concesionario eliminado correctamente'
+            };
+
+            mostrarModalExito(mensajes[tipo]);
+
             // Eliminar fila de la tabla con animación
             const fila = btnEliminar.closest('tr');
             if (fila) {
@@ -112,17 +121,66 @@ function eliminarEntidadAjax(tipo, id, form) {
         });
 }
 
+function mostrarModalExito(mensaje) {
+    const modalHTML = `
+        <div class="modal fade" id="exitoModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="bi bi-check-circle-fill me-2"></i>Éxito
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="alert alert-success m-0">
+                            <i class="bi bi-check-lg me-2"></i>
+                            ${mensaje}
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn border-success" data-bs-dismiss="modal">
+                            Aceptar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Si ya existe un modal previo, eliminarlo
+    const oldModal = document.getElementById('exitoModal');
+    if (oldModal) {
+        const bs = bootstrap.Modal.getInstance(oldModal);
+        if (bs) bs.dispose();
+        oldModal.remove();
+    }
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    const modal = new bootstrap.Modal(document.getElementById('exitoModal'));
+    modal.show();
+
+    // Auto cerrar después de 2 segundos
+    setTimeout(() => {
+        modal.hide();
+    }, 2000);
+}
+
 function mostrarModalError(mensaje) {
     const modalHTML = `
         <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     
-                    <div class="modal-header text-white">
+                    <div class="modal-header">
                         <h5 class="modal-title">
                             <i class="bi bi-x-circle-fill me-2"></i>Error
                         </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
                     <div class="modal-body">

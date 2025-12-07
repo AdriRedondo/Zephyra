@@ -8,16 +8,44 @@
 }
 
 .filtros {
-    background: #fff;
+    background: var(--card-bg);
     padding: 1.5rem;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     height: fit-content;
 }
 
+.filtros h3 {
+    color: var(--text-color);
+}
+
+.filtros label {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.filtros .form-control,
+.filtros .form-select {
+    background-color: var(--input-bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.filtros .form-control:focus,
+.filtros .form-select:focus {
+    background-color: var(--card-bg);
+    border-color: var(--primary-color);
+    color: var(--text-color);
+}
+
+.filtros .form-select option {
+    background-color: var(--input-bg-color);
+    color: var(--text-color);
+}
+
 
 .card:hover {
-    outline: 1px #47865a54 solid;
+    outline: 1px solid var(--primary-color);
 }
 
 .vehiculo-img {
