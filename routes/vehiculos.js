@@ -25,15 +25,26 @@ const multerFactory = multer({
 
 //GET de la página de vehículos con filtros en español
 router.get('/es-vehiculos', (req, res) => {
+    // Si es admin, mostrar todos los vehículos; si no, solo disponibles
+    const esAdmin = req.session.usuario && req.session.usuario.rol === 'admin';
 
-    Vehiculo.obtenerTodos((err, vehiculos) => {
-        if (err) {
-            console.error('Error al obtener los vehículos:', err);
-            return res.status(500).send('Error al cargar vehículos');
-        }
-
-        res.render('es-vehiculos', { vehiculos });
-    });
+    if (esAdmin) {
+        Vehiculo.obtenerTodos((err, vehiculos) => {
+            if (err) {
+                console.error('Error al obtener los vehículos:', err);
+                return res.status(500).send('Error al cargar vehículos');
+            }
+            res.render('es-vehiculos', { vehiculos });
+        });
+    } else {
+        Vehiculo.obtenerDisponibles((err, vehiculos) => {
+            if (err) {
+                console.error('Error al obtener los vehículos:', err);
+                return res.status(500).send('Error al cargar vehículos');
+            }
+            res.render('es-vehiculos', { vehiculos });
+        });
+    }
 });
 
 //GET para obtener la imágen PNG desde la BD según el ID del vehículo
@@ -275,26 +286,26 @@ router.post('/es-vehiculos/:id/eliminar', requiredAdminId, (req, res) => {
 
 //GET de la página de vehículos con filtros en inglés
 router.get('/en-vehicles', (req, res) => {
+    // Si es admin, mostrar todos los vehículos; si no, solo disponibles
+    const esAdmin = req.session.usuario && req.session.usuario.rol === 'admin';
 
-    //Consulta que une vehículos con concesionarios para obtener el nombre
-    //JOIN con la tabla Concesionarios para obtener el nombre
-    const consulta = `
-        SELECT v.*, c.nombre AS nombre_concesionario
-        FROM Vehiculos v
-        LEFT JOIN Concesionarios c ON v.id_concesionario = c.id_concesionario
-    `;
-    pool.query(consulta, (err, vehiculos) => {
-        if (err) {
-            console.error('Error al obtener los vehículos:', err);
-            return res.status(500);
-        }
-
-        //SI todo sale bien se muestra la vista de vehículos
-        //Vista en inglés
-        res.render('en-vehicles', {
-            vehiculos: vehiculos
+    if (esAdmin) {
+        Vehiculo.obtenerTodos((err, vehiculos) => {
+            if (err) {
+                console.error('Error al obtener los vehículos:', err);
+                return res.status(500).send('Error loading vehicles');
+            }
+            res.render('en-vehicles', { vehiculos });
         });
-    });
+    } else {
+        Vehiculo.obtenerDisponibles((err, vehiculos) => {
+            if (err) {
+                console.error('Error al obtener los vehículos:', err);
+                return res.status(500).send('Error loading vehicles');
+            }
+            res.render('en-vehicles', { vehiculos });
+        });
+    }
 });
 
 //GET para obtener la imágen PNG desde la BD según el ID del vehículo
@@ -562,16 +573,5 @@ router.post('/en-vehicles/:id/delete', requiredAdminId, (req, res) => {
     });
 });
 */
-
-router.get('/api/vehiculos', (req, res) => {
-
-    Vehiculo.obtenerTodosSinImagen((err, vehiculos) => {
-        if (err) {
-            console.error('Error al obtener vehículos JSON:', err);
-            return res.status(500).json({ error: 'Error interno del servidor' });
-        }
-        res.json(vehiculos);
-    });
-});
 
 module.exports = router;

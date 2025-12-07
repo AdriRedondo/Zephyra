@@ -82,6 +82,9 @@ router.delete('/concesionarios/:id', requiredAdminId, checkDealerDependencies, (
 
 // GET /api/vehiculos - Obtener todos los vehículos con filtros
 router.get('/vehiculos', (req, res) => {
+    // Verificar si el usuario es admin
+    const esAdmin = req.session && req.session.usuario && req.session.usuario.rol === 'admin';
+
     // Si no hay filtros, usar el modelo directamente
     if (Object.keys(req.query).length === 0) {
         return Vehiculo.obtenerTodosSinImagen((err, vehiculos) => {
@@ -94,6 +97,11 @@ router.get('/vehiculos', (req, res) => {
                 });
             }
 
+            // Si no es admin, filtrar solo disponibles
+            if (!esAdmin) {
+                vehiculos = vehiculos.filter(v => v.estado === 'disponible');
+            }
+
             res.status(200).json({
                 success: true,
                 data: vehiculos,
@@ -103,7 +111,7 @@ router.get('/vehiculos', (req, res) => {
     }
 
     let consulta = `
-        SELECT 
+        SELECT
             v.id_vehiculo,
             v.matricula,
             v.marca,
@@ -114,13 +122,20 @@ router.get('/vehiculos', (req, res) => {
             v.color,
             v.estado,
             v.id_concesionario,
-            c.nombre AS nombre_concesionario
+            c.nombre AS nombre_concesionario,
+            c.ciudad AS ciudad_concesionario
         FROM Vehiculos v
         LEFT JOIN Concesionarios c ON v.id_concesionario = c.id_concesionario
         WHERE 1=1
     `;
 
     const params = [];
+
+    // Si no es admin, agregar filtro de solo disponibles
+    if (!esAdmin) {
+        consulta += ' AND v.estado = ?';
+        params.push('disponible');
+    }
 
     // Filtro por marca
     if (req.query.marca) {
@@ -134,8 +149,8 @@ router.get('/vehiculos', (req, res) => {
         params.push(req.query.modelo);
     }
 
-    // Filtro por estado
-    if (req.query.estado) {
+    // Filtro por estado (solo si es admin)
+    if (req.query.estado && esAdmin) {
         consulta += ' AND v.estado = ?';
         params.push(req.query.estado);
     }
