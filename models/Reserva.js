@@ -329,7 +329,6 @@ class Reserva {
                 return callback(err, null);
             }
 
-            console.log(`Reservas finalizadas automáticamente: ${resultFinalizar.affectedRows}`);
 
             // Obtener vehículos de reservas finalizadas o canceladas para ponerlos disponibles
             const consultaVehiculosLiberar = `
