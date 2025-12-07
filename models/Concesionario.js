@@ -28,11 +28,9 @@ class Concesionario {
         //Datos del usuario a insertar 
         const parametros = [
             datos.nombre,
-            datos.correo,
-            datos.contrasenya,
-            datos.rol,
-            datos.telefono,
-            datos.id_concesionario
+            datos.ciudad,
+            datos.direccion,
+            datos.telefono_contacto
         ];
         pool.query(consulta, parametros, (err, result) => {
             if (err) return callback(err, null);

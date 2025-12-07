@@ -35,7 +35,7 @@ router.post('/dealer-register', requiredAdminId, validateDealer, (req, res) => {
 
         // Registro exitoso
         const vista = language === 'english' ? 'en-admin' : 'es-admin';
-        console.log(`Concesionario creado con ID: ${result.insertId}`);
+        console.log(`Concesionario creado con ID: ${nuevoId}`);
 
         res.redirect(vista);
     });
