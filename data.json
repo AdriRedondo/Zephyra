@@ -1,22 +1,76 @@
 {
     "concesionarios": [
         {
-            "nombre": "Zephyra Madrid Centro",
-            "ciudad": "Madrid",
-            "direccion": "Calle Gran Vía, 28",
-            "telefono_contacto": "912345678"
+            "nombre": "Zephyra Prime Motors",
+            "ciudad": "Sevilla",
+            "direccion": "Avenida de la Constitución, 14",
+            "telefono_contacto": "954123456"
         },
         {
-            "nombre": "Zephyra Barcelona Norte",
-            "ciudad": "Barcelona",
-            "direccion": "Passeig de Gràcia, 92",
-            "telefono_contacto": "934567890"
+            "nombre": "Zephyra AutoElite",
+            "ciudad": "Bilbao",
+            "direccion": "Gran Vía Don Diego López de Haro, 50",
+            "telefono_contacto": "944567890"
         },
         {
-            "nombre": "Zephyra Valencia Sur",
-            "ciudad": "Valencia",
-            "direccion": "Avenida del Puerto, 456",
-            "telefono_contacto": "963456789"
+            "nombre": "Zephyra Drive Center",
+            "ciudad": "Zaragoza",
+            "direccion": "Paseo de la Independencia, 22",
+            "telefono_contacto": "976223344"
+        },
+        {
+            "nombre": "Zephyra Mobility Hub",
+            "ciudad": "Málaga",
+            "direccion": "Calle Larios, 9",
+            "telefono_contacto": "952112233"
+        },
+        {
+            "nombre": "Zephyra AutoPoint",
+            "ciudad": "Alicante",
+            "direccion": "Avenida Maisonnave, 17",
+            "telefono_contacto": "965889900"
+        },
+        {
+            "nombre": "Zephyra EV Center",
+            "ciudad": "Murcia",
+            "direccion": "Gran Vía Alfonso X, 44",
+            "telefono_contacto": "968445566"
+        },
+        {
+            "nombre": "Zephyra MotorLine",
+            "ciudad": "Valladolid",
+            "direccion": "Calle Santiago, 28",
+            "telefono_contacto": "983667788"
+        },
+        {
+            "nombre": "Zephyra AutoStudio",
+            "ciudad": "Gijón",
+            "direccion": "Calle Corrida, 35",
+            "telefono_contacto": "984557799"
+        },
+        {
+            "nombre": "Zephyra Signature Cars",
+            "ciudad": "Santander",
+            "direccion": "Paseo de Pereda, 13",
+            "telefono_contacto": "942778899"
+        },
+        {
+            "nombre": "Zephyra AutoSpace",
+            "ciudad": "Pamplona",
+            "direccion": "Avenida Carlos III, 21",
+            "telefono_contacto": "948112233"
+        },
+        {
+            "nombre": "Zephyra Excellence Motors",
+            "ciudad": "Castellón",
+            "direccion": "Calle Colón, 18",
+            "telefono_contacto": "964334455"
+        },
+        {
+            "nombre": "Zephyra AutoHub",
+            "ciudad": "Logroño",
+            "direccion": "Gran Vía Juan Carlos I, 62",
+            "telefono_contacto": "941556677"
         }
     ],
     "vehiculos": [
@@ -190,6 +244,201 @@
             "id_concesionario": 1
         },
         {
+            "matricula": "1004BYD",
+            "marca": "BYD",
+            "modelo": "Seal",
+            "anyo_matriculacion": 2024,
+            "numero_plazas": 5,
+            "autonomia_km": 570,
+            "color": "Gris oscuro",
+            "imagen": "byd_seal1.png",
+            "estado": "disponible",
+            "tipo": "coche",
+            "id_concesionario": 4
+        },
+        {
+            "matricula": "1005BYD",
+            "marca": "BYD",
+            "modelo": "Seal",
+            "anyo_matriculacion": 2024,
+            "numero_plazas": 5,
+            "autonomia_km": 540,
+            "color": "Azul",
+            "imagen": "byd_seal2.png",
+            "estado": "reservado",
+            "tipo": "coche",
+            "id_concesionario": 5
+        },
+        {
+            "matricula": "1006BYD",
+            "marca": "BYD",
+            "modelo": "Seal",
+            "anyo_matriculacion": 2023,
+            "numero_plazas": 5,
+            "autonomia_km": 560,
+            "color": "Blanco perla",
+            "imagen": "byd_seal3.png",
+            "estado": "disponible",
+            "tipo": "coche",
+            "id_concesionario": 6
+        },
+        {
+            "matricula": "2007TSL",
+            "marca": "Tesla",
+            "modelo": "Model 3",
+            "anyo_matriculacion": 2024,
+            "numero_plazas": 5,
+            "autonomia_km": 520,
+            "color": "Gris",
+            "imagen": "tesla1.png",
+            "estado": "disponible",
+            "tipo": "coche",
+            "id_concesionario": 4
+        },
+        {
+            "matricula": "2008TSL",
+            "marca": "Tesla",
+            "modelo": "Model Y",
+            "anyo_matriculacion": 2024,
+            "numero_plazas": 5,
+            "autonomia_km": 533,
+            "color": "Blanco",
+            "imagen": "tesla2.png",
+            "estado": "reservado",
+            "tipo": "coche",
+            "id_concesionario": 5
+        },
+        {
+            "matricula": "2009TSL",
+            "marca": "Tesla",
+            "modelo": "Model Y",
+            "anyo_matriculacion": 2023,
+            "numero_plazas": 5,
+            "autonomia_km": 533,
+            "color": "Negro",
+            "imagen": "tesla3.png",
+            "estado": "disponible",
+            "tipo": "coche",
+            "id_concesionario": 6
+        },
+        {
+            "matricula": "2010TSL",
+            "marca": "Tesla",
+            "modelo": "Model S",
+            "anyo_matriculacion": 2022,
+            "numero_plazas": 5,
+            "autonomia_km": 640,
+            "color": "Blanco",
+            "imagen": "tesla4.png",
+            "estado": "mantenimiento",
+            "tipo": "coche",
+            "id_concesionario": 7
+        },
+        {
+            "matricula": "2011TSL",
+            "marca": "Tesla",
+            "modelo": "Model X",
+            "anyo_matriculacion": 2022,
+            "numero_plazas": 7,
+            "autonomia_km": 560,
+            "color": "Negro",
+            "imagen": "tesla5.png",
+            "estado": "disponible",
+            "tipo": "coche",
+            "id_concesionario": 8
+        },
+        {
+            "matricula": "2012TSL",
+            "marca": "Tesla",
+            "modelo": "Model 3",
+            "anyo_matriculacion": 2023,
+            "numero_plazas": 5,
+            "autonomia_km": 510,
+            "color": "Azul",
+            "imagen": "tesla6.png",
+            "estado": "reservado",
+            "tipo": "coche",
+            "id_concesionario": 9
+        },
+        {
+            "matricula": "3004VLV",
+            "marca": "Volvo",
+            "modelo": "EX30",
+            "anyo_matriculacion": 2024,
+            "numero_plazas": 5,
+            "autonomia_km": 445,
+            "color": "Azul claro",
+            "imagen": "volvo1.png",
+            "estado": "disponible",
+            "tipo": "coche",
+            "id_concesionario": 4
+        },
+        {
+            "matricula": "3005VLV",
+            "marca": "Volvo",
+            "modelo": "XC40 Recharge",
+            "anyo_matriculacion": 2023,
+            "numero_plazas": 5,
+            "autonomia_km": 420,
+            "color": "Rojo",
+            "imagen": "volvo2.png",
+            "estado": "mantenimiento",
+            "tipo": "coche",
+            "id_concesionario": 5
+        },
+        {
+            "matricula": "3006VLV",
+            "marca": "Volvo",
+            "modelo": "C40 Recharge",
+            "anyo_matriculacion": 2023,
+            "numero_plazas": 5,
+            "autonomia_km": 435,
+            "color": "Negro",
+            "imagen": "volvo3.png",
+            "estado": "disponible",
+            "tipo": "coche",
+            "id_concesionario": 6
+        },
+        {
+            "matricula": "4006VLW",
+            "marca": "Volkswagen",
+            "modelo": "ID.3",
+            "anyo_matriculacion": 2023,
+            "numero_plazas": 5,
+            "autonomia_km": 430,
+            "color": "Gris",
+            "imagen": "VW1.png",
+            "estado": "disponible",
+            "tipo": "coche",
+            "id_concesionario": 4
+        },
+        {
+            "matricula": "4007VLW",
+            "marca": "Volkswagen",
+            "modelo": "ID.4",
+            "anyo_matriculacion": 2024,
+            "numero_plazas": 5,
+            "autonomia_km": 480,
+            "color": "Negro",
+            "imagen": "VW2.png",
+            "estado": "disponible",
+            "tipo": "coche",
+            "id_concesionario": 5
+        },
+        {
+            "matricula": "4008VLW",
+            "marca": "Volkswagen",
+            "modelo": "ID.7",
+            "anyo_matriculacion": 2024,
+            "numero_plazas": 5,
+            "autonomia_km": 610,
+            "color": "Blanco",
+            "imagen": "VW3.png",
+            "estado": "reservado",
+            "tipo": "coche",
+            "id_concesionario": 6
+        },
+        {
             "matricula": "4002VLW",
             "marca": "Volkswagen",
             "modelo": "ID.4",
@@ -240,19 +489,6 @@
             "estado": "mantenimiento",
             "tipo": "coche",
             "id_concesionario": 2
-        },
-        {
-            "matricula": "1111AAA",
-            "marca": "Citröen",
-            "modelo": "Picasso C4",
-            "anyo_matriculacion": 2002,
-            "numero_plazas": 5,
-            "autonomia_km": 7000,
-            "color": "Amarillo",
-            "imagen": "PNG-de-coches.png",
-            "estado": "disponible",
-            "tipo": "coche",
-            "id_concesionario": 1
         }
     ],
     "usuarios": [
