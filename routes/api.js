@@ -3,13 +3,82 @@ const router = express.Router();
 const pool = require('../db');
 const Vehiculo = require('../models/Vehiculo');
 const Reserva = require('../models/Reserva');
-const { validateReservation } = require('../middleware/validations');
+const { validateReservation, checkDealerDependencies } = require('../middleware/validations');
+const requiredAdminId = require('../middleware/autorizaciones').requiredAdminId;
 const Concesionario = require('../models/Concesionario');
 const Usuario = require('../models/Usuario');
 
-/* ============================================
-   ENDPOINTS DE VEHÍCULOS
-   ============================================ */
+//-----------------------------------------------------------
+// USUARIOS
+
+// DELETE /api/usuarios/:id - Eliminar usuario (RESTful)
+router.delete('/usuarios/:id', requiredAdminId, (req, res) => {
+    const id = req.params.id;
+    console.log('Se inicia la eliminación del usuario con ID: ' + id);
+
+    Usuario.eliminar(id, (err, filasAfectadas) => {
+        if (err) {
+            console.error(`Error al eliminar el usuario con ID ${id}:`, err);
+            return res.status(500).json({
+                success: false,
+                message: 'Error al eliminar el usuario',
+                error: process.env.NODE_ENV === 'development' ? err.message : undefined
+            });
+        }
+
+        if (filasAfectadas === 0) {
+            return res.status(404).json({
+                success: false,
+                message: `Usuario con ID ${id} no encontrado`
+            });
+        }
+
+        console.log(`Usuario eliminado con ID: ${id}`);
+
+        res.status(200).json({
+            success: true,
+            message: 'Usuario eliminado correctamente',
+            id: parseInt(id)
+        });
+    });
+});
+
+//-----------------------------------------------------------
+// CONCESIONARIOS
+
+// DELETE /api/concesionarios/:id - Eliminar concesionario (RESTful)
+router.delete('/concesionarios/:id', requiredAdminId, checkDealerDependencies, (req, res) => {
+    const id = req.params.id;
+
+    Concesionario.eliminar(id, (err, filasAfectadas) => {
+        if (err) {
+            console.error(`Error al eliminar el concesionario con ID ${id}:`, err);
+            return res.status(500).json({
+                success: false,
+                message: 'Error al eliminar el concesionario',
+                error: process.env.NODE_ENV === 'development' ? err.message : undefined
+            });
+        }
+
+        if (filasAfectadas === 0) {
+            return res.status(404).json({
+                success: false,
+                message: `Concesionario con ID ${id} no encontrado`
+            });
+        }
+
+        console.log(`Concesionario eliminado con ID: ${id}`);
+
+        res.status(200).json({
+            success: true,
+            message: 'Concesionario eliminado correctamente',
+            id: parseInt(id)
+        });
+    });
+});
+
+//-----------------------------------------------------------
+// ENDPOINTS DE VEHÍCULOS
 
 // GET /api/vehiculos - Obtener todos los vehículos con filtros
 router.get('/vehiculos', (req, res) => {
@@ -152,9 +221,38 @@ router.get('/vehiculos/:id', (req, res) => {
     });
 });
 
-/* ============================================
-   ENDPOINTS DE RESERVAS
-   ============================================ */
+// DELETE /api/vehiculos/:id - Eliminar vehículo 
+router.delete('/vehiculos/:id', requiredAdminId, (req, res) => {
+    const id = req.params.id;
+
+    Vehiculo.eliminar(id, (err, filasAfectadas) => {
+        if (err) {
+            console.error(`Error al eliminar el vehículo con ID ${id}:`, err);
+            return res.status(500).json({
+                success: false,
+                message: 'Error al eliminar el vehículo',
+                error: process.env.NODE_ENV === 'development' ? err.message : undefined
+            });
+        }
+
+        if (filasAfectadas === 0) {
+            return res.status(404).json({
+                success: false,
+                message: `Vehículo con ID ${id} no encontrado`
+            });
+        }
+
+        console.log(`Vehículo eliminado con ID: ${id}`);
+
+        res.status(200).json({
+            success: true,
+            message: 'Vehículo eliminado correctamente',
+            id: parseInt(id)
+        });
+    });
+});
+//-----------------------------------------------------------
+// ENDPOINTS DE RESERVAS
 
 // GET /api/reservas - Obtener todas las reservas
 router.get('/reservas', (req, res) => {
@@ -386,9 +484,8 @@ router.delete('/reservas/:id', (req, res) => {
     });
 });
 
-/* ============================================
-   ENDPOINTS DE ACCESIBILIDAD
-   ============================================ */
+//-----------------------------------------------------------
+// ENDPOINTS DE ACCESIBILIDAD
 
 // POST /api/accesibilidad/preferencias - Guardar preferencias de accesibilidad en sesión
 router.post('/accesibilidad/preferencias', (req, res) => {
@@ -451,9 +548,8 @@ router.get('/accesibilidad/preferencias', (req, res) => {
     }
 });
 
-/* ============================================
-   ENDPOINTS DE ESTADÍSTICAS
-   ============================================ */
+//-----------------------------------------------------------
+// ENDPOINTS DE ESTADÍSTICAS
 
 // GET /api/estadisticas/vehiculos
 router.get('/estadisticas/vehiculos', (req, res) => {

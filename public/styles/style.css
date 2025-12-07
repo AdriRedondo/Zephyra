@@ -11,6 +11,12 @@
     --secondary-color: #4D9B5F;
     --list-bg: #eaf1f7;
     --dl-bg: #FAFAFA;
+    --success-color: #198754;
+    --danger-color: #dc3545;
+    --success-bg: #d1e7dd;
+    --danger-bg: #f8d7da;
+    --input-bg-color: #fff;
+    --input-icon-color: #E9ECEF;
 }
 
 /* Variables CSS para tema oscuro */
@@ -23,6 +29,12 @@
     --secondary-color: #023A26;
     --list-bg: #2d3d2d;
     --dl-bg: #252525;
+    --success-color: #4D9B5F;
+    --danger-color: #ff6b6b;
+    --success-bg: #1e3a2a;
+    --danger-bg: #3a1e1e;
+    --input-bg-color: #1a1a1a;
+    --input-icon-color: #1a1a1a;
 }
 
 @font-face {
@@ -201,6 +213,13 @@ select {
 .nav-link:hover {
     color: #fff !important;
 
+}
+
+.nav-link:focus,
+.nav-item:focus,
+a:focus {
+    outline: none;
+    box-shadow: none;
 }
 
 .dropdown-menu {

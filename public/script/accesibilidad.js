@@ -99,6 +99,7 @@ const lightBtn = document.getElementById("light-btn");
 const darkBtn = document.getElementById("dark-btn");
 
 // Cargar preferencia guardada al inicio
+
 cargarPreferencias();
 
 // Activar modo claro

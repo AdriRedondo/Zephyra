@@ -196,10 +196,10 @@ const checkDealerDependencies = (req, res, next) => {
         const usuarios = results[0].usuarios;
 
         if (vehiculos > 0 || usuarios > 0) {
-            const error = language === 'english'
+            const mensaje = language === 'english'
                 ? `Cannot delete dealer: ${vehiculos} vehicles and ${usuarios} users associated`
                 : `No se puede eliminar: hay ${vehiculos} vehículos y ${usuarios} usuarios asociados`;
-            return res.status(400).json({ error });
+            return res.status(400).json({ message: mensaje });
         }
 
         next();

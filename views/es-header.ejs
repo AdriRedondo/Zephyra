@@ -12,7 +12,13 @@
     <% estilos.forEach(estilo=> { %>
         <link rel="stylesheet" href="/styles/<%= estilo %>.css">
         <% }) %>
-
+            <script>
+                // Aplicar tema lo antes posible, antes de que cargue el CSS
+                const theme = localStorage.getItem('theme');
+                if (theme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                };
+            </script>
 </head>
 
 <body>

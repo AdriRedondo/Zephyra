@@ -41,10 +41,9 @@ router.post('/dealer-register', requiredAdminId, validateDealer, (req, res) => {
     });
 });
 
-router.get('/es-dealer/edit/:id', requiredAdminId, validateDealer, (req, res) => {
+router.get('/es-dealer/edit/:id', requiredAdminId, (req, res) => {
     const language = req.body.idioma;
     const id = req.params.id;
-
     Concesionario.obtenerPorId(id, (err, concesionario) => {
         if (err) {
             console.error(`Error al obtener concesionario con id ${id}: `, err);
@@ -63,7 +62,7 @@ router.get('/es-dealer/edit/:id', requiredAdminId, validateDealer, (req, res) =>
 });
 
 // POST para editar un concesionario existente
-router.post('/dealer-edit/:id', requiredAdminId, (req, res) => {
+router.post('/dealer-edit/:id', requiredAdminId, validateDealer, (req, res) => {
     const id = req.params.id;
     const language = req.body.idioma;
 
@@ -91,7 +90,7 @@ router.post('/dealer-edit/:id', requiredAdminId, (req, res) => {
             res.redirect('/es-admin');
     });
 });
-
+/*
 // POST para eliminar un concesionario
 router.post('/dealer-delete/:id', requiredAdminId, checkDealerDependencies, (req, res) => {
     const id = req.params.id;
@@ -112,5 +111,5 @@ router.post('/dealer-delete/:id', requiredAdminId, checkDealerDependencies, (req
         res.redirect('/es-admin');
     });
 });
-
+*/
 module.exports = router;

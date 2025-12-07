@@ -164,7 +164,7 @@
                                                             href="/es-dealer/edit/<%= c.id_concesionario %>">
                                                             <i class="bi bi-pencil"></i>
                                                         </a>
-                                                        <form action="/dealer-delete/<%= c.id_concesionario %>"
+                                                        <form action="/es-dealer/<%= c.id_concesionario %>/eliminar"
                                                             method="post"
                                                             onsubmit="return confirm('¿Estás seguro de eliminar este concesionario?');">
                                                             <input type="hidden" name="idioma" value="español">
@@ -255,7 +255,8 @@
                                                             href="/es-user/edit/<%= u.id_usuario %>">
                                                             <i class="bi bi-pencil"></i>
                                                         </a>
-                                                        <form action="/user-delete/<%= u.id_usuario %>" method="post"
+                                                        <form action="/es-users/<%= u.id_usuario %>/eliminar"
+                                                            method="post"
                                                             onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
                                                             <input type="hidden" name="idioma" value="español">
                                                             <button type="submit" class="btn btn-sm border-danger">
@@ -305,4 +306,4 @@
         </section>
     </main>
 
-    <%- include('footer', {scripts: ['estadisticas-admin']}) -%>
+    <%- include('footer', {scripts: ['estadisticas-admin', 'admin-ajax' ]}) -%>

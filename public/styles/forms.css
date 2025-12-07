@@ -1,10 +1,45 @@
 h2 {
     text-align: start;
+    color: var(--text-color);
 }
 
 .formularios {
     padding: 0 20px 20px 20px;
     max-width: 1300px;
+}
+
+/* Estilos para labels */
+.form-label {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+/* Estilos para inputs y textarea */
+.form-control {
+    background-color: var(--input-bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background-color: var(--card-bg);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(77, 155, 95, 0.25);
+    color: var(--text-color);
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: var(--text-color);
+    opacity: 0.5;
+}
+
+/* Estilos para input-group-text */
+.input-group-text {
+    background-color: var(--input-icon-color);
+    border: 1px solid var(--border-color);
+    color: var(--primary-color);
 }
 
 main {
@@ -13,21 +48,26 @@ main {
 }
 
 .wrong-input {
-    border-color: #dc3545 !important;
-    background-color: #f8d7da !important;
+    border-color: var(--danger-color) !important;
+    background-color: var(--danger-bg) !important;
     border-width: 2px !important;
 }
 
 .right-input {
-    border-color: #198754 !important;
-    background-color: #d1e7dd !important;
+    border-color: var(--success-color) !important;
+    background-color: var(--success-bg) !important;
     border-width: 2px !important;
 }
 
 .error-message {
-    color: #dc3545;
+    color: var(--danger-color);
     font-size: 0.875em;
     margin-top: 0.25rem;
     display: block;
     height: 1.2em;
+}
+
+/* Icono de asterisco requerido */
+.text-danger {
+    color: var(--danger-color);
 }

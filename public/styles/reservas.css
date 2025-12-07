@@ -1,8 +1,99 @@
+/* Barra de progreso */
+.progress {
+    background-color: var(--input-bg-color);
+    border: 1px solid var(--border-color);
+    height: 25px;
+    border-radius: 8px;
+}
+
+.progress-bar {
+    background-color: var(--primary-color);
+    transition: width 0.3s ease;
+    border-radius: 8px;
+}
+
+/* Checkbox de términos */
+.form-check-input {
+    background-color: var(--input-bg-color);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-check-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(77, 155, 95, 0.25);
+    outline: none;
+}
+
+/* Texto de porcentaje */
+#porcentaje-text {
+    color: var(--text-color);
+    font-weight: 600;
+    margin: 10px 0;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+.modal-header {
+    background-color: var(--input-bg-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-title {
+    color: #fff;
+}
+
+
+.modal-body {
+    background-color: var(--card-bg);
+}
+
+.modal-footer {
+    background-color: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+}
+
+.modal-body .form-select {
+    background-color: var(--input-bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+
+/* Tarjetas de vehículos en el modal */
+.vehiculo-card {
+    background-color: var(--card-color);
+    border: 2px solid var(--border-color);
+}
+
+
+.vehiculo-card .card-title {
+    color: var(--primary-color);
+}
+
+.vehiculo-card .card-text {
+    color: var(--text-color);
+}
+
 .vehiculo-card:hover {
-    outline: 1px #47865a54 solid;
+    outline: 1px #ffffff54 solid;
+    border-color: var(--border-color) !important;
+
 }
 
 #vehiculo-seleccionado {
     cursor: pointer;
-    background: #fff;
+    background-color: var(--input-bg-color);
+
 }

@@ -157,7 +157,7 @@ router.post('/user-edit/:id', requiredAdminId, validateUser, (req, res) => {
         });
     }
 });
-
+/*
 router.post('/user-delete/:id', requiredAdminId, (req, res) => {
     const id = req.params.id;
 
@@ -177,5 +177,5 @@ router.post('/user-delete/:id', requiredAdminId, (req, res) => {
         res.redirect('/es-admin');
     });
 });
-
+*/
 module.exports = router;

@@ -247,6 +247,7 @@ router.post('/es-vehiculos/:id/editar', requiredAdminId, validateVehicle, multer
     }
 });
 
+/*
 router.post('/es-vehiculos/:id/eliminar', requiredAdminId, (req, res) => {
     const id = req.params.id;
 
@@ -266,6 +267,7 @@ router.post('/es-vehiculos/:id/eliminar', requiredAdminId, (req, res) => {
         res.redirect('/es-admin');
     });
 });
+*/
 
 // ============================================
 // VERSIÓN EN INGLÉS
@@ -536,7 +538,7 @@ router.post('/en-vehicles/:id/edit', requiredAdminId, multerFactory.single('imag
         res.redirect('/en-vehicles');
     });
 });
-
+/*
 router.post('/en-vehicles/:id/delete', requiredAdminId, (req, res) => {
     const id = req.params.id;
 
@@ -559,7 +561,7 @@ router.post('/en-vehicles/:id/delete', requiredAdminId, (req, res) => {
 
     });
 });
-
+*/
 
 router.get('/api/vehiculos', (req, res) => {
 
