@@ -218,15 +218,51 @@ const checkDealerDependencies = (req, res, next) => {
 
 // Middleware para validar datos de reserva
 const validateReservation = (req, res, next) => {
-    const { id_vehiculo, fecha_inicio, fecha_fin } = req.body;
+    const { id_vehiculo, fecha_inicio, fecha_fin, nombre_cliente, correo_cliente, telefono_cliente } = req.body;
     const language = req.body.idioma;
 
-    // Validar campos obligatorios
+    // Verificar que hay un usuario logueado (solo empleados pueden crear reservas)
+    if (!req.session || !req.session.usuario) {
+        const error = language === 'english'
+            ? 'You must be logged in to create a reservation'
+            : 'Debes estar logueado para crear una reserva';
+        return res.status(401).json({ error });
+    }
+
+    // Validar campos obligatorios de reserva
     if (!id_vehiculo || !fecha_inicio || !fecha_fin) {
         const error = language === 'english'
             ? 'Vehicle, start date and end date are required'
             : 'El vehículo, fecha de inicio y fecha de fin son obligatorios';
         return res.status(400).json({ error });
+    }
+
+    // SIEMPRE validar datos del cliente (son obligatorios)
+    if (!nombre_cliente || !correo_cliente) {
+        const error = language === 'english'
+            ? 'Client name and email are required'
+            : 'El nombre y correo del cliente son obligatorios';
+        return res.status(400).json({ error });
+    }
+
+    // Validar formato de correo del cliente
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(correo_cliente.trim())) {
+        const error = language === 'english'
+            ? 'Invalid email format'
+            : 'Formato de correo inválido';
+        return res.status(400).json({ error });
+    }
+
+    // Validar formato de teléfono si se proporciona
+    if (telefono_cliente) {
+        const telefonoRegex = /^[0-9]{9}$/;
+        if (!telefonoRegex.test(telefono_cliente.trim())) {
+            const error = language === 'english'
+                ? 'Invalid phone format (use 9 digits)'
+                : 'Formato de teléfono inválido (usa 9 dígitos)';
+            return res.status(400).json({ error });
+        }
     }
 
     // Validar fechas
@@ -269,7 +305,16 @@ const validateReservation = (req, res, next) => {
         fecha_inicio: inicio,
         fecha_fin: fin,
         kilometros_recorridos: req.body.kilometros_recorridos || null,
-        incidencias_reportadas: req.body.incidencias_reportadas || null
+        incidencias_reportadas: req.body.incidencias_reportadas || null,
+        estado: req.body.estado || 'activa',
+        // SIEMPRE incluir datos del cliente
+        datosCliente: {
+            nombre: nombre_cliente.trim(),
+            correo: correo_cliente.trim(),
+            telefono: telefono_cliente ? telefono_cliente.trim() : null,
+            direccion: req.body.direccion_cliente ? req.body.direccion_cliente.trim() : null,
+            codigo_postal: req.body.codigo_postal ? req.body.codigo_postal.trim() : null
+        }
     };
 
     next();

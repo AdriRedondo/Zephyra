@@ -1,121 +1,134 @@
-<%- include('es-header', { title: 'Administración' , estilos: ['style', 'admin-sections' , 'forms' ],
-    actual_es: 'es-admin' , actual_en: 'en-admin' }) %>
-    <main>
-        <section id="gestor-vehiculos" class="admin-section">
-            <div class="container-fluid">
-                <div class="row">
-                    <h2>Gestión de vehículos</h2>
-                </div>
-                <div class="row">
-                    <div class="col-12">
+<%- include('es-header', { title: 'Administración' , estilos: ['style',
+'admin-sections' , 'forms' ],
+actual_es: 'es-admin' , actual_en: 'en-admin' }) %>
+<main>
+    <section id="gestor-vehiculos" class="admin-section">
+        <div class="container-fluid">
+            <div class="row">
+                <h2>Gestión de vehículos</h2>
+            </div>
+            <div class="row">
+                <div class="col-12">
 
-                        <% if (typeof vehiculos !=='undefined' && vehiculos.length> 0) { %>
+                    <% if (typeof vehiculos !=='undefined' && vehiculos.length>
+                    0) { %>
 
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Matrícula</th>
-                                            <th>Marca</th>
-                                            <th>Modelo</th>
-                                            <th>Año Matriculación</th>
-                                            <th>Plazas</th>
-                                            <th>Autonomía (km)</th>
-                                            <th>Color</th>
-                                            <th>Estado</th>
-                                            <th>Concesionario</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% vehiculos.forEach(v=> { %>
-                                            <tr>
-                                                <td>
-                                                    <%= v.id_vehiculo %>
-                                                </td>
-                                                <td>
-                                                    <%= v.matricula %>
-                                                </td>
-                                                <td>
-                                                    <%= v.marca %>
-                                                </td>
-                                                <td>
-                                                    <%= v.modelo %>
-                                                </td>
-                                                <td>
-                                                    <%= v.anyo_matriculacion %>
-                                                </td>
-                                                <td>
-                                                    <%= v.numero_plazas %>
-                                                </td>
-                                                <td>
-                                                    <%= v.autonomia_km %>
-                                                </td>
-                                                <td>
-                                                    <%= v.color %>
-                                                </td>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Matrícula</th>
+                                    <th>Marca</th>
+                                    <th>Modelo</th>
+                                    <th>Año Matriculación</th>
+                                    <th>Plazas</th>
+                                    <th>Autonomía (km)</th>
+                                    <th>Color</th>
+                                    <th>Estado</th>
+                                    <th>Concesionario</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% vehiculos.forEach(v=> { %>
+                                <tr>
+                                    <td>
+                                        <%= v.id_vehiculo %>
+                                    </td>
+                                    <td>
+                                        <%= v.matricula %>
+                                    </td>
+                                    <td>
+                                        <%= v.marca %>
+                                    </td>
+                                    <td>
+                                        <%= v.modelo %>
+                                    </td>
+                                    <td>
+                                        <%= v.anyo_matriculacion %>
+                                    </td>
+                                    <td>
+                                        <%= v.numero_plazas %>
+                                    </td>
+                                    <td>
+                                        <%= v.autonomia_km %>
+                                    </td>
+                                    <td>
+                                        <%= v.color %>
+                                    </td>
 
-                                                <td>
-                                                    <%= v.estado %>
-                                                </td>
+                                    <td>
+                                        <%= v.estado %>
+                                    </td>
 
-                                                <td>
-                                                    <%= v.nombre_concesionario || 'Sin asignar' %>
-                                                </td>
+                                    <td>
+                                        <%= v.nombre_concesionario ||
+                                        'Sin asignar' %>
+                                    </td>
 
-                                                <td>
-                                                    <div class="d-flex">
-                                                        <a class="btn border-success btn-sm me-2"
-                                                            href="/es-vehiculos/<%= v.id_vehiculo %>">
-                                                            <i class="bi bi-search"></i>
-                                                        </a>
+                                    <td>
+                                        <div class="d-flex">
+                                            <a
+                                                class="btn border-success btn-sm me-2"
+                                                href="/es-vehiculos/<%= v.id_vehiculo %>">
+                                                <i class="bi bi-search"></i>
+                                            </a>
 
-                                                        <a class="btn btn-sm border-secondary me-2"
-                                                            href="/es-vehiculos/<%= v.id_vehiculo %>/editar">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </a>
+                                            <a
+                                                class="btn btn-sm border-secondary me-2"
+                                                href="/es-vehiculos/<%= v.id_vehiculo %>/editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
 
-                                                        <form action="/es-vehiculos/<%= v.id_vehiculo %>/eliminar"
-                                                            method="post"
-                                                            onsubmit="return confirm('¿Estás seguro de eliminar este vehículo?');">
-                                                            <input type="hidden" name="idioma" value="español">
-                                                            <button type="submit" class="btn btn-sm border-danger">
-                                                                <i class="bi bi-trash-fill"></i>
-                                                            </button>
-                                                        </form>
+                                            <form
+                                                action="/es-vehiculos/<%= v.id_vehiculo %>/eliminar"
+                                                method="post"
+                                                onsubmit="return confirm('¿Estás seguro de eliminar este vehículo?');">
+                                                <input type="hidden"
+                                                    name="idioma"
+                                                    value="español">
+                                                <button type="submit"
+                                                    class="btn btn-sm border-danger">
+                                                    <i
+                                                        class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </form>
 
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <% }) %>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <% } else { %>
-                                <div class="alert alert-info">
-                                    No hay vehículos registrados
-                                </div>
-                                <% } %>
-                                    <% if (typeof success_lista_vehiculos !=='undefined' && success_lista_vehiculos) {
-                                        %>
-                                        <div class="alert alert-success" role="alert">
-                                            <%= success_lista_vehiculos %>
                                         </div>
-                                        <% } %>
-                                            <% if (typeof error_lista_vehiculos !=='undefined' && error_lista_vehiculos)
-                                                { %>
-                                                <div class="alert alert-danger" role="alert">
-                                                    <%= error_lista_vehiculos %>
-                                                </div>
-                                                <% } %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="col-auto">
-                        <a href="/es-vehiculos/nuevo-vehiculo" class="btn border-success">
-                            <i class="bi bi-plus-lg"></i> Añadir vehículo
-                        </a>
+                    <% } else { %>
+                    <div class="alert alert-info">
+                        No hay vehículos registrados
                     </div>
+                    <% } %>
+                    <% if (typeof success_lista_vehiculos !=='undefined' &&
+                    success_lista_vehiculos) {
+                    %>
+                    <div class="alert alert-success" role="alert">
+                        <%= success_lista_vehiculos %>
+                    </div>
+                    <% } %>
+                    <% if (typeof error_lista_vehiculos !=='undefined' &&
+                    error_lista_vehiculos)
+                    { %>
+                    <div class="alert alert-danger" role="alert">
+                        <%= error_lista_vehiculos %>
+                    </div>
+                    <% } %>
                 </div>
+                <div class="col-auto">
+                    <a href="/es-vehiculos/nuevo-vehiculo"
+                        class="btn border-success">
+                        <i class="bi bi-plus-lg"></i> Añadir vehículo
+                    </a>
+                </div>
+            </div>
         </section>
         <section id="gestor-concesionarios-id" class="admin-section">
             <div class="container-fluid">
@@ -126,92 +139,103 @@
                 <div class="row">
                     <div class="col-12">
 
-                        <% if (typeof concesionarios !=='undefined' && concesionarios.length> 0) { %>
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Nombre</th>
-                                            <th>Ciudad</th>
-                                            <th>Dirección</th>
-                                            <th>Teléfono</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% concesionarios.forEach(c=> { %>
-                                            <tr>
-                                                <td>
-                                                    <%= c.id_concesionario %>
-                                                </td>
-                                                <td>
-                                                    <%= c.nombre %>
-                                                </td>
-                                                <td>
-                                                    <%= c.ciudad %>
-                                                </td>
-                                                <td>
-                                                    <%= c.direccion %>
-                                                </td>
-                                                <td>
-                                                    <%= c.telefono_contacto %>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex">
+                        <% if (typeof concesionarios !=='undefined' &&
+                        concesionarios.length> 0) { %>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Ciudad</th>
+                                        <th>Dirección</th>
+                                        <th>Teléfono</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% concesionarios.forEach(c=> { %>
+                                    <tr>
+                                        <td>
+                                            <%= c.id_concesionario %>
+                                        </td>
+                                        <td>
+                                            <%= c.nombre %>
+                                        </td>
+                                        <td>
+                                            <%= c.ciudad %>
+                                        </td>
+                                        <td>
+                                            <%= c.direccion %>
+                                        </td>
+                                        <td>
+                                            <%= c.telefono_contacto %>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex">
 
-                                                        <a class="btn btn-sm border-secondary me-2"
-                                                            href="/es-dealer/edit/<%= c.id_concesionario %>">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </a>
-                                                        <form action="/es-dealer/<%= c.id_concesionario %>/eliminar"
-                                                            method="post"
-                                                            onsubmit="return confirm('¿Estás seguro de eliminar este concesionario?');">
-                                                            <input type="hidden" name="idioma" value="español">
-                                                            <button type="submit" class="btn btn-sm border-danger">
-                                                                <i class="bi bi-trash-fill"></i>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <% }) %>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <% } else { %>
-                                <div class="alert alert-info">
-                                    No hay concesionarios registrados
-                                </div>
-                                <% } %>
-                                    <% if (typeof success_lista !=='undefined' && success_lista) { %>
-                                        <div class="alert alert-success" role="alert">
-                                            <%= success_lista %>
-                                        </div>
-                                        <% } %>
-                                            <% if (typeof error_lista !=='undefined' && error_lista) { %>
-                                                <div class="alert alert-danger" role="alert">
-                                                    <%= error_lista %>
-                                                </div>
-                                                <% } %>
+                                                <a
+                                                    class="btn btn-sm border-secondary me-2"
+                                                    href="/es-dealer/edit/<%= c.id_concesionario %>">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <form
+                                                    action="/es-dealer/<%= c.id_concesionario %>/eliminar"
+                                                    method="post"
+                                                    onsubmit="return confirm('¿Estás seguro de eliminar este concesionario?');">
+                                                    <input type="hidden"
+                                                        name="idioma"
+                                                        value="español">
+                                                    <button type="submit"
+                                                        class="btn btn-sm border-danger">
+                                                        <i
+                                                            class="bi bi-trash-fill"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% } else { %>
+                        <div class="alert alert-info">
+                            No hay concesionarios registrados
+                        </div>
+                        <% } %>
+                        <% if (typeof success_lista !=='undefined' &&
+                        success_lista) { %>
+                        <div class="alert alert-success" role="alert">
+                            <%= success_lista %>
+                        </div>
+                        <% } %>
+                        <% if (typeof error_lista !=='undefined' && error_lista)
+                        { %>
+                        <div class="alert alert-danger" role="alert">
+                            <%= error_lista %>
+                        </div>
+                        <% } %>
                     </div>
                     <div class="col-auto">
-                        <a href="/es-dealer/register" class="btn border-success">
+                        <a href="/es-dealer/register"
+                            class="btn border-success">
                             <i class="bi bi-plus-lg"></i> Añadir concesionario
                         </a>
                     </div>
                 </div>
-        </section>
-        <section id="gestor-usuarios-id" class="admin-section">
-            <div class="container-fluid">
-                <div class="row">
-                    <h2>Gestión de usuarios</h2>
-                </div>
-                <!-- Lista de usuarios existentes -->
-                <div class="row">
-                    <div class="col-12">
+            </section>
+            <section id="gestor-usuarios-id" class="admin-section">
+                <div class="container-fluid">
+                    <div class="row">
+                        <h2>Gestión de usuarios</h2>
+                    </div>
+                    <!-- Lista de usuarios existentes -->
+                    <div class="row">
+                        <div class="col-12">
 
-                        <% if (typeof usuarios !=='undefined' && usuarios.length> 0) { %>
+                            <% if (typeof usuarios !=='undefined' &&
+                            usuarios.length> 0) { %>
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
@@ -227,83 +251,172 @@
                                     </thead>
                                     <tbody>
                                         <% usuarios.forEach(u=> { %>
-                                            <tr>
-                                                <td>
-                                                    <%= u.id_usuario %>
-                                                </td>
-                                                <td>
-                                                    <%= u.nombre %>
-                                                </td>
-                                                <td>
-                                                    <%= u.correo %>
-                                                </td>
-                                                <td>
-                                                    <span
-                                                        class="badge bg-<%= u.rol === 'admin' ? 'danger' : 'primary' %>">
-                                                        <%= u.rol %>
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <%= u.telefono || '-' %>
-                                                </td>
-                                                <td>
-                                                    <%= u.nombre_concesionario || 'Sin asignar' %>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex">
-                                                        <a class="btn btn-sm border-secondary me-2"
-                                                            href="/es-user/edit/<%= u.id_usuario %>">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </a>
-                                                        <form action="/es-users/<%= u.id_usuario %>/eliminar"
-                                                            method="post"
-                                                            onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
-                                                            <input type="hidden" name="idioma" value="español">
-                                                            <button type="submit" class="btn btn-sm border-danger">
-                                                                <i class="bi bi-trash-fill"></i>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <% }) %>
+                                        <tr>
+                                            <td>
+                                                <%= u.id_usuario %>
+                                            </td>
+                                            <td>
+                                                <%= u.nombre %>
+                                            </td>
+                                            <td>
+                                                <%= u.correo %>
+                                            </td>
+                                            <td>
+                                                <span
+                                                    class="badge bg-<%= u.rol === 'admin' ? 'danger' : 'primary' %>">
+                                                    <%= u.rol %>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <%= u.telefono || '-' %>
+                                            </td>
+                                            <td>
+                                                <%= u.nombre_concesionario ||
+                                                'Sin asignar' %>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex">
+                                                    <a
+                                                        class="btn btn-sm border-secondary me-2"
+                                                        href="/es-user/edit/<%= u.id_usuario %>">
+                                                        <i
+                                                            class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <form
+                                                        action="/es-users/<%= u.id_usuario %>/eliminar"
+                                                        method="post"
+                                                        onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
+                                                        <input type="hidden"
+                                                            name="idioma"
+                                                            value="español">
+                                                        <button type="submit"
+                                                            class="btn btn-sm border-danger">
+                                                            <i
+                                                                class="bi bi-trash-fill"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
                                     </tbody>
                                 </table>
                             </div>
                             <% } else { %>
+                            <div class="alert alert-info">
+                                No hay usuarios registrados
+                            </div>
+                            <% } %>
+                            <% if (typeof success_lista_usuarios !=='undefined'
+                            && success_lista_usuarios) { %>
+                            <div class="alert alert-success" role="alert">
+                                <%= success_lista_usuarios %>
+                            </div>
+                            <% } %>
+                            <% if (typeof error_lista_usuarios !=='undefined' &&
+                            error_lista_usuarios) {
+                            %>
+                            <div class="alert alert-danger" role="alert">
+                                <%= error_lista_usuarios %>
+                            </div>
+                            <% } %>
+                        </div>
+                        <div class="col-auto">
+                            <a href="/es-user/register"
+                                class="btn border-success">
+                                <i class="bi bi-plus-lg"></i> Añadir usuario
+                            </a>
+                        </div>
+                    </div>
+                </section>
+                <section id="gestor-reservas" class="admin-section">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <h2>Gestión de reservas</h2>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <% if (typeof reservas !== 'undefined' &&
+                                reservas.length > 0) { %>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Vehículo</th>
+                                                <th>Matrícula</th>
+                                                <th>Cliente</th>
+                                                <th>Correo Cliente</th>
+                                                <th>Empleado</th>
+                                                <th>Fecha Inicio</th>
+                                                <th>Fecha Fin</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% reservas.forEach(r => { %>
+                                            <tr>
+                                                <td><%= r.id_reserva %></td>
+                                                <td><%= r.marca %> <%= r.modelo
+                                                    %></td>
+                                                <td><%= r.matricula %></td>
+                                                <td><%= r.nombre_cliente ||
+                                                    'N/A' %></td>
+                                                <td><%= r.correo_cliente ||
+                                                    'N/A' %></td>
+                                                <td><%= r.nombre_usuario ||
+                                                    'Sin asignar' %></td>
+                                                <td><%= new
+                                                    Date(r.fecha_inicio).toLocaleDateString('es-ES')
+                                                    %></td>
+                                                <td><%= new
+                                                    Date(r.fecha_fin).toLocaleDateString('es-ES')
+                                                    %></td>
+                                                <td>
+                                                    <span
+                                                        class="badge bg-<%= r.estado === 'activa' ? 'success' : r.estado === 'finalizada' ? 'secondary' : 'danger' %>">
+                                                        <%= r.estado %>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <% if (r.estado &&
+                                                    r.estado.toLowerCase().trim()
+                                                    === 'activa') { %>
+                                                    <button
+                                                        class="btn btn-sm btn-danger cancelar-reserva"
+                                                        data-id="<%= r.id_reserva %>">
+                                                        <i
+                                                            class="bi bi-x-circle"></i>
+                                                        Cancelar
+                                                    </button>
+                                                    <% } %>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <% } else { %>
                                 <div class="alert alert-info">
-                                    No hay usuarios registrados
+                                    No hay reservas registradas
                                 </div>
                                 <% } %>
-                                    <% if (typeof success_lista_usuarios !=='undefined' && success_lista_usuarios) { %>
-                                        <div class="alert alert-success" role="alert">
-                                            <%= success_lista_usuarios %>
-                                        </div>
-                                        <% } %>
-                                            <% if (typeof error_lista_usuarios !=='undefined' && error_lista_usuarios) {
-                                                %>
-                                                <div class="alert alert-danger" role="alert">
-                                                    <%= error_lista_usuarios %>
-                                                </div>
-                                                <% } %>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-auto">
-                        <a href="/es-user/register" class="btn border-success">
-                            <i class="bi bi-plus-lg"></i> Añadir usuario
-                        </a>
+                </section>
+                <section id="estadisticas" class="admin-section">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <h2>Estadísticas</h2>
+                        </div>
+                        <div class="row">
+                            <%- include('es-estadisticas') -%>
+                        </div>
                     </div>
-                </div>
-        </section>
-        <section id="estadisticas" class="admin-section">
-            <div class="container-fluid">
-                <div class="row">
-                    <h2>Estadísticas</h2>
-                </div>
-                <div class="row">
-                    <%- include('es-estadisticas') -%>
-                </div>
-            </div>
-        </section>
-    </main>
+                </section>
+            </main>
 
-    <%- include('footer', {scripts: ['estadisticas-admin', 'admin-ajax' ]}) -%>
+            <%- include('footer', {scripts: ['estadisticas-admin', 'admin-ajax'
+            ]}) -%>

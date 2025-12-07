@@ -71,10 +71,23 @@ const crearTablas = () => {
             )`
         },
         {
+            nombre: 'Cliente',
+            consulta: `CREATE TABLE IF NOT EXISTS Cliente (
+                id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+                nombre VARCHAR(100) NOT NULL,
+                correo VARCHAR(150) NOT NULL UNIQUE,
+                telefono VARCHAR(20),
+                preferencias_accesibilidad JSON,
+                direccion VARCHAR(200),
+                codigo_postal VARCHAR(5)
+            )`
+        },
+        {
             nombre: 'Reservas',
             consulta: ` CREATE TABLE IF NOT EXISTS Reservas (
                 id_reserva INT AUTO_INCREMENT PRIMARY KEY,
-                id_usuario INT NOT NULL,
+                id_usuario INT,
+                id_cliente INT NOT NULL,
                 id_vehiculo INT NOT NULL,
                 fecha_inicio DATETIME NOT NULL,
                 fecha_fin DATETIME NOT NULL,
@@ -84,6 +97,11 @@ const crearTablas = () => {
                 CONSTRAINT fk_reserva_usuario
                     FOREIGN KEY (id_usuario)
                     REFERENCES Usuarios(id_usuario)
+                    ON DELETE SET NULL
+                    ON UPDATE CASCADE,
+                CONSTRAINT fk_reserva_cliente
+                    FOREIGN KEY (id_cliente)
+                    REFERENCES Cliente(id_cliente)
                     ON DELETE CASCADE
                     ON UPDATE CASCADE,
                 CONSTRAINT fk_reserva_vehiculo
@@ -93,20 +111,6 @@ const crearTablas = () => {
                     ON UPDATE CASCADE
             )`
         },
-        {
-            nombre: 'Cliente',
-            consulta: `CREATE TABLE IF NOT EXISTS Cliente (
-
-                id_cliente INT AUTO_INCREMENT PRIMARY KEY,
-                nombre VARCHAR(100) NOT NULL,
-                correo VARCHAR(150) NOT NULL UNIQUE, 
-                telefono VARCHAR(20),
-                preferencias_accesibilidad JSON,
-                direccion VARCHAR(200),
-                codigo_postal varchar(5)
-                
-            )`
-        }
 
     ];
 

@@ -5,6 +5,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     inicializarEliminacionAjax();
+    inicializarCancelacionReservas();
 });
 
 function inicializarEliminacionAjax() {
@@ -244,4 +245,76 @@ function verificarTablaVacia(tipo) {
             `;
         }
     }
+}
+
+// ============================================
+// SISTEMA DE CANCELACIÓN DE RESERVAS
+// ============================================
+
+function inicializarCancelacionReservas() {
+    const botonesCancelar = document.querySelectorAll('.cancelar-reserva');
+
+    console.log('Botones de cancelar encontrados:', botonesCancelar.length);
+
+    botonesCancelar.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const idReserva = btn.getAttribute('data-id');
+
+            // Confirmar cancelación
+            if (confirm('¿Estás seguro de que deseas cancelar esta reserva?')) {
+                cancelarReserva(idReserva, btn);
+            }
+        });
+    });
+}
+
+function cancelarReserva(idReserva, btn) {
+    const url = `/api/reservas/${idReserva}/cancelar`;
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.message || `Error ${response.status}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Reserva cancelada correctamente:', data);
+        mostrarModalExito('Reserva cancelada correctamente');
+
+        // Actualizar el estado en la tabla
+        const fila = btn.closest('tr');
+        if (fila) {
+            // Cambiar el badge de estado
+            const estadoBadge = fila.querySelector('.badge');
+            if (estadoBadge) {
+                estadoBadge.className = 'badge bg-danger';
+                estadoBadge.textContent = 'cancelada';
+            }
+
+            // Eliminar el botón de cancelar
+            btn.remove();
+
+            // Animar la fila
+            fila.style.transition = 'all 0.3s ease';
+            fila.style.backgroundColor = '#f8d7da';
+            setTimeout(() => {
+                fila.style.backgroundColor = '';
+            }, 1000);
+        }
+    })
+    .catch(error => {
+        console.error('Error al cancelar reserva:', error);
+        mostrarModalError(error.message || 'No se pudo cancelar la reserva');
+    });
 }

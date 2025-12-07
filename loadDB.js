@@ -73,9 +73,27 @@ function cargarDatosIniciales() {
             if (res[0].hayDatos === 0) {
                 cargarClientes(data.clientes, () => {
                     console.log('Clientes cargados');
+                    cargarReservasSiNecesario();
                 });
             } else {
                 console.log('La tabla Cliente ya tiene datos, no se cargan más');
+                cargarReservasSiNecesario();
+            }
+        });
+    }
+
+    // Carga de reservas si está vacía su tabla
+    function cargarReservasSiNecesario() {
+        const consulta = 'SELECT COUNT(*) AS hayDatos FROM Reservas';
+        pool.query(consulta, (err, res) => {
+            if (err) return console.error('Error al verificar Reservas:', err);
+
+            if (res[0].hayDatos === 0) {
+                cargarReservas(data.reservas, () => {
+                    console.log('Reservas cargadas');
+                });
+            } else {
+                console.log('La tabla Reservas ya tiene datos, no se cargan más');
             }
         });
     }
@@ -219,6 +237,49 @@ function cargarClientes(clientes, callback) {
                     console.error(`Error al insertar cliente ${c.nombre}:`, err.message);
                 } else {
                     console.log(`Cliente ${c.nombre} insertado`);
+                }
+
+                completed++;
+                if (completed === total) callback();
+            }
+        );
+    });
+}
+
+// Carga de reservas
+function cargarReservas(reservas, callback) {
+    if (!reservas || reservas.length === 0) {
+        console.log('No hay reservas que cargar');
+        return callback();
+    }
+
+    let completed = 0;
+    const total = reservas.length;
+
+    reservas.forEach(r => {
+
+        const consulta = `
+            INSERT INTO Reservas (id_vehiculo, id_usuario, id_cliente, fecha_inicio, fecha_fin, estado, kilometros_recorridos, incidencias_reportadas)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        pool.query(
+            consulta,
+            [
+                r.id_vehiculo,
+                r.id_usuario || null,
+                r.id_cliente,
+                r.fecha_inicio,
+                r.fecha_fin,
+                r.estado || 'activa',
+                r.kilometros_recorridos || null,
+                r.incidencias_reportadas || null
+            ],
+            err => {
+                if (err) {
+                    console.error(`Error al insertar reserva (Vehículo ${r.id_vehiculo}):`, err.message);
+                } else {
+                    console.log(`Reserva insertada para vehículo ${r.id_vehiculo}`);
                 }
 
                 completed++;

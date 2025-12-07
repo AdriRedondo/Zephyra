@@ -1,29 +1,31 @@
 const pool = require('../db');
 
 class Reserva {
-    // Obtener todas las reservas con información de vehículo y usuario
+    // Obtener todas las reservas con información de vehículo, usuario y cliente
     static obtenerTodas = (callback) => {
         const consulta = `
-            SELECT 
+            SELECT
                 r.id_reserva,
                 r.id_vehiculo,
                 r.id_usuario,
+                r.id_cliente,
                 r.fecha_inicio,
                 r.fecha_fin,
-                r.fecha_recogida,
-                r.fecha_devolucion,
                 r.estado,
-                r.observaciones,
                 r.kilometros_recorridos,
                 r.incidencias_reportadas,
                 v.marca,
                 v.modelo,
                 v.matricula,
                 u.nombre AS nombre_usuario,
-                u.correo AS correo_usuario
+                u.correo AS correo_usuario,
+                c.nombre AS nombre_cliente,
+                c.correo AS correo_cliente,
+                c.telefono AS telefono_cliente
             FROM Reservas r
             INNER JOIN Vehiculos v ON r.id_vehiculo = v.id_vehiculo
-            INNER JOIN Usuarios u ON r.id_usuario = u.id_usuario
+            LEFT JOIN Usuarios u ON r.id_usuario = u.id_usuario
+            LEFT JOIN Cliente c ON r.id_cliente = c.id_cliente
             ORDER BY r.fecha_inicio DESC
         `;
 
@@ -36,7 +38,7 @@ class Reserva {
     // Obtener una reserva por ID con información completa
     static obtenerPorId = (id, callback) => {
         const consulta = `
-            SELECT 
+            SELECT
                 r.*,
                 v.marca,
                 v.modelo,
@@ -45,10 +47,16 @@ class Reserva {
                 v.numero_plazas,
                 u.nombre AS nombre_usuario,
                 u.correo AS correo_usuario,
-                u.telefono AS telefono_usuario
+                u.telefono AS telefono_usuario,
+                c.nombre AS nombre_cliente,
+                c.correo AS correo_cliente,
+                c.telefono AS telefono_cliente,
+                c.direccion AS direccion_cliente,
+                c.codigo_postal AS codigo_postal_cliente
             FROM Reservas r
             INNER JOIN Vehiculos v ON r.id_vehiculo = v.id_vehiculo
-            INNER JOIN Usuarios u ON r.id_usuario = u.id_usuario
+            LEFT JOIN Usuarios u ON r.id_usuario = u.id_usuario
+            LEFT JOIN Cliente c ON r.id_cliente = c.id_cliente
             WHERE r.id_reserva = ?
         `;
 
@@ -130,17 +138,20 @@ class Reserva {
     // Crear una nueva reserva
     static crear = (datos, callback) => {
         const consulta = `
-            INSERT INTO Reservas 
-            (id_vehiculo, id_usuario, fecha_inicio, fecha_fin, observaciones, estado)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO Reservas
+            (id_vehiculo, id_usuario, id_cliente, fecha_inicio, fecha_fin,
+             kilometros_recorridos, incidencias_reportadas, estado)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
         const parametros = [
             datos.id_vehiculo,
-            datos.id_usuario,
+            datos.id_usuario || null,
+            datos.id_cliente || null,
             datos.fecha_inicio,
             datos.fecha_fin,
-            datos.observaciones || '',
+            datos.kilometros_recorridos || null,
+            datos.incidencias_reportadas || null,
             datos.estado || 'activa'
         ];
 
@@ -162,18 +173,6 @@ class Reserva {
         if (datos.fecha_fin) {
             campos.push('fecha_fin = ?');
             valores.push(datos.fecha_fin);
-        }
-        if (datos.fecha_recogida !== undefined) {
-            campos.push('fecha_recogida = ?');
-            valores.push(datos.fecha_recogida);
-        }
-        if (datos.fecha_devolucion !== undefined) {
-            campos.push('fecha_devolucion = ?');
-            valores.push(datos.fecha_devolucion);
-        }
-        if (datos.observaciones !== undefined) {
-            campos.push('observaciones = ?');
-            valores.push(datos.observaciones);
         }
         if (datos.kilometros_recorridos !== undefined) {
             campos.push('kilometros_recorridos = ?');
@@ -308,6 +307,122 @@ class Reserva {
             if (err) return callback(err, null);
             if (results.length === 0) return callback(null, null);
             callback(null, results[0].id_vehiculo);
+        });
+    };
+
+    // Actualizar automáticamente estados de reservas según fechas
+    static actualizarEstadosAutomaticamente = (callback) => {
+        const Vehiculo = require('./Vehiculo');
+        const ahora = new Date();
+
+        // Finalizar reservas que ya pasaron su fecha de fin
+        const consultaFinalizar = `
+            UPDATE Reservas
+            SET estado = 'finalizada'
+            WHERE estado = 'activa'
+            AND fecha_fin < ?
+        `;
+
+        pool.query(consultaFinalizar, [ahora], (err, resultFinalizar) => {
+            if (err) {
+                console.error('Error al finalizar reservas automáticamente:', err);
+                return callback(err, null);
+            }
+
+            console.log(`Reservas finalizadas automáticamente: ${resultFinalizar.affectedRows}`);
+
+            // Obtener vehículos de reservas finalizadas o canceladas para ponerlos disponibles
+            const consultaVehiculosLiberar = `
+                SELECT DISTINCT id_vehiculo
+                FROM Reservas
+                WHERE estado IN ('finalizada', 'cancelada')
+                AND id_vehiculo IN (
+                    SELECT id_vehiculo
+                    FROM Vehiculos
+                    WHERE estado = 'reservado'
+                )
+            `;
+
+            pool.query(consultaVehiculosLiberar, (errVeh, vehiculos) => {
+                if (errVeh) {
+                    console.error('Error al obtener vehículos a liberar:', errVeh);
+                    return callback(errVeh, null);
+                }
+
+                // Poner disponibles los vehículos que no tienen reservas activas
+                let liberados = 0;
+                let procesados = 0;
+
+                if (vehiculos.length === 0) {
+                    return callback(null, { finalizadas: resultFinalizar.affectedRows, liberados: 0 });
+                }
+
+                vehiculos.forEach(v => {
+                    // Verificar si el vehículo tiene alguna reserva activa
+                    const consultaReservasActivas = `
+                        SELECT COUNT(*) as activas
+                        FROM Reservas
+                        WHERE id_vehiculo = ?
+                        AND estado = 'activa'
+                        AND fecha_inicio <= ?
+                        AND fecha_fin >= ?
+                    `;
+
+                    pool.query(consultaReservasActivas, [v.id_vehiculo, ahora, ahora], (errActivas, resultActivas) => {
+                        procesados++;
+
+                        if (!errActivas && resultActivas[0].activas === 0) {
+                            // No tiene reservas activas, liberar vehículo
+                            Vehiculo.cambiarEstado(v.id_vehiculo, 'disponible', (errCambio) => {
+                                if (!errCambio) {
+                                    liberados++;
+                                    console.log(`Vehículo ${v.id_vehiculo} liberado automáticamente`);
+                                }
+
+                                if (procesados === vehiculos.length) {
+                                    callback(null, { finalizadas: resultFinalizar.affectedRows, liberados });
+                                }
+                            });
+                        } else {
+                            if (procesados === vehiculos.length) {
+                                callback(null, { finalizadas: resultFinalizar.affectedRows, liberados });
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    };
+
+    // Cancelar una reserva
+    static cancelar = (idReserva, motivoCancelacion, callback) => {
+        const Vehiculo = require('./Vehiculo');
+
+        // Primero obtener el id del vehículo
+        Reserva.obtenerVehiculoDeReserva(idReserva, (err, idVehiculo) => {
+            if (err) return callback(err, null);
+            if (!idVehiculo) return callback(new Error('Reserva no encontrada'), null);
+
+            // Actualizar estado de la reserva a cancelada
+            const consulta = `
+                UPDATE Reservas
+                SET estado = 'cancelada',
+                    incidencias_reportadas = ?
+                WHERE id_reserva = ?
+            `;
+
+            pool.query(consulta, [motivoCancelacion || 'Reserva cancelada', idReserva], (errUpdate, result) => {
+                if (errUpdate) return callback(errUpdate, null);
+
+                // Liberar el vehículo
+                Vehiculo.cambiarEstado(idVehiculo, 'disponible', (errVehiculo) => {
+                    if (errVehiculo) {
+                        console.error('Error al liberar vehículo:', errVehiculo);
+                    }
+
+                    callback(null, result.affectedRows);
+                });
+            });
         });
     };
 }

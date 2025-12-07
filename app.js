@@ -106,6 +106,22 @@ app.use((req, res, next) => {
     next();
 });
 
+// Middleware para actualizar automáticamente los estados de las reservas
+app.use((req, res, next) => {
+    const Reserva = require('./models/Reserva');
+
+    // Actualizar estados de reservas automáticamente
+    Reserva.actualizarEstadosAutomaticamente((err, resultado) => {
+        if (err) {
+            console.error('Error al actualizar estados de reservas:', err);
+        } else if (resultado && (resultado.finalizadas > 0 || resultado.liberados > 0)) {
+            console.log(`Actualización automática: ${resultado.finalizadas} reservas finalizadas, ${resultado.liberados} vehículos liberados`);
+        }
+        // Continuar con la petición independientemente del resultado
+        next();
+    });
+});
+
 //Rutas principales de la app
 app.use('/api', apiRouter);
 

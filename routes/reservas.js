@@ -5,6 +5,7 @@ const { requiredLoggedIn } = require('../middleware/autorizaciones');
 const { validateReservation } = require('../middleware/validations');
 const Reserva = require('../models/Reserva');
 const Vehiculo = require('../models/Vehiculo');
+const Cliente = require('../models/Cliente');
 
 const reservas = [];   //ARRAY EN MEMORIA
 
@@ -55,34 +56,56 @@ router.post('/submit-bookings', (req, res) => {
     const fecha_inicio = new Date(fecha);
     const fecha_fin = new Date(fecha_inicio.getTime() + (horas * 60 * 60 * 1000));
 
-    // Guardar en base de datos
-    const query = `
-        INSERT INTO Reservas (id_usuario, id_vehiculo, fecha_inicio, fecha_fin, estado)
-        VALUES (?, ?, ?, ?, 'activa')
-    `;
+    // Preparar datos del cliente
+    const datosCliente = {
+        nombre: nombre.trim(),
+        correo: correo.trim(),
+        telefono: telefono.trim()
+    };
 
-    pool.query(query, [id_usuario, id_vehiculo, fecha_inicio, fecha_fin], (err, result) => {
-        if (err) {
-            console.error('Error al crear reserva:', err);
+    // Buscar o crear el cliente
+    Cliente.buscarOCrear(datosCliente, (errCliente, idCliente, esNuevo) => {
+        if (errCliente) {
+            console.error('Error al buscar/crear cliente:', errCliente);
             if (language === 'english')
-                return res.render('en-bookings', { error: 'Error creating reservation' });
+                return res.render('en-bookings', { error: 'Error processing client data' });
             else
-                return res.render('es-reservas', { error: 'Error al crear la reserva' });
+                return res.render('es-reservas', { error: 'Error al procesar datos del cliente' });
         }
 
-        // Actualizar estado del vehículo
-        pool.query('UPDATE Vehiculos SET estado = ? WHERE id_vehiculo = ?',
-            ['reservado', id_vehiculo], (errUpdate) => {
+        console.log(`Cliente ${esNuevo ? 'creado' : 'encontrado'} con ID: ${idCliente}`);
+
+        // Crear la reserva con el id_cliente
+        const datosReserva = {
+            id_usuario: id_usuario,
+            id_vehiculo: id_vehiculo,
+            id_cliente: idCliente,
+            fecha_inicio: fecha_inicio,
+            fecha_fin: fecha_fin,
+            estado: 'activa'
+        };
+
+        Reserva.crear(datosReserva, (err, idReserva) => {
+            if (err) {
+                console.error('Error al crear reserva:', err);
+                if (language === 'english')
+                    return res.render('en-bookings', { error: 'Error creating reservation' });
+                else
+                    return res.render('es-reservas', { error: 'Error al crear la reserva' });
+            }
+
+            // Actualizar estado del vehículo
+            Vehiculo.cambiarEstado(id_vehiculo, 'reservado', (errUpdate) => {
                 if (errUpdate) {
                     console.error('Error al actualizar vehículo:', errUpdate);
                 }
-
 
                 if (language === 'english')
                     res.redirect('en-bookings');
                 else
                     res.redirect('es-reservas');
             });
+        });
     });
 });
 

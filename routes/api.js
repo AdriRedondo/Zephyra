@@ -3,6 +3,7 @@ const router = express.Router();
 const pool = require('../db');
 const Vehiculo = require('../models/Vehiculo');
 const Reserva = require('../models/Reserva');
+const Cliente = require('../models/Cliente');
 const { validateReservation, checkDealerDependencies } = require('../middleware/validations');
 const requiredAdminId = require('../middleware/autorizaciones').requiredAdminId;
 const Concesionario = require('../models/Concesionario');
@@ -320,8 +321,12 @@ router.get('/reservas/:id', (req, res) => {
 // POST /api/reservas - Crear nueva reserva con validaciones
 router.post('/reservas', validateReservation, (req, res) => {
     const datosReserva = {
-        ...req.validatedData,
-        estado: 'activa'
+        id_vehiculo: req.validatedData.id_vehiculo,
+        fecha_inicio: req.validatedData.fecha_inicio,
+        fecha_fin: req.validatedData.fecha_fin,
+        kilometros_recorridos: req.validatedData.kilometros_recorridos,
+        incidencias_reportadas: req.validatedData.incidencias_reportadas,
+        estado: req.validatedData.estado
     };
 
     // Verificar disponibilidad del vehículo
@@ -346,30 +351,46 @@ router.post('/reservas', validateReservation, (req, res) => {
                 });
             }
 
-            // Crear reserva
-            Reserva.crear(datosReserva, (err, idReserva) => {
-                if (err) {
-                    console.error('Error al crear reserva:', err);
+            // SIEMPRE buscar o crear el cliente
+            Cliente.buscarOCrear(req.validatedData.datosCliente, (errCliente, idCliente, esNuevo) => {
+                if (errCliente) {
+                    console.error('Error al buscar/crear cliente:', errCliente);
                     return res.status(500).json({
                         success: false,
-                        message: 'Error al crear reserva'
+                        message: 'Error al procesar datos del cliente'
                     });
                 }
 
-                // Actualizar estado del vehículo
-                Vehiculo.cambiarEstado(datosReserva.id_vehiculo, 'reservado', (errUpdate) => {
-                    if (errUpdate) {
-                        console.error('Error al actualizar estado del vehículo:', errUpdate);
+                console.log(`Cliente ${esNuevo ? 'creado' : 'encontrado'} con ID: ${idCliente}`);
+
+                // Asignar IDs a la reserva
+                datosReserva.id_cliente = idCliente; // Siempre obligatorio
+                datosReserva.id_usuario = (req.session && req.session.usuario) ? req.session.usuario.id_usuario : null; // Empleado que crea la reserva (opcional)
+
+                // Crear la reserva
+                Reserva.crear(datosReserva, (err, idReserva) => {
+                    if (err) {
+                        console.error('Error al crear reserva:', err);
+                        return res.status(500).json({
+                            success: false,
+                            message: 'Error al crear reserva'
+                        });
                     }
 
-                    res.status(201).json({
-                        success: true,
-                        message: 'Reserva creada correctamente',
-                        data: {
-                            id_reserva: idReserva,
-                            ...datosReserva,
-                            estado: 'activa'
+                    // Actualizar estado del vehículo
+                    Vehiculo.cambiarEstado(datosReserva.id_vehiculo, 'reservado', (errUpdate) => {
+                        if (errUpdate) {
+                            console.error('Error al actualizar estado del vehículo:', errUpdate);
                         }
+
+                        res.status(201).json({
+                            success: true,
+                            message: 'Reserva creada correctamente',
+                            data: {
+                                id_reserva: idReserva,
+                                ...datosReserva
+                            }
+                        });
                     });
                 });
             });
@@ -448,6 +469,33 @@ router.put('/reservas/:id', validateReservation, (req, res) => {
                 });
             }
         );
+    });
+});
+
+// POST /api/reservas/:id/cancelar - Cancelar una reserva
+router.post('/reservas/:id/cancelar', (req, res) => {
+    const id = req.params.id;
+
+    Reserva.cancelar(id, 'Cancelada por el administrador', (err, affectedRows) => {
+        if (err) {
+            console.error('Error al cancelar reserva:', err);
+            return res.status(500).json({
+                success: false,
+                message: 'Error al cancelar reserva'
+            });
+        }
+
+        if (affectedRows === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Reserva no encontrada'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Reserva cancelada correctamente'
+        });
     });
 });
 
