@@ -6,11 +6,12 @@ const Reserva = require('../models/Reserva');
 const Cliente = require('../models/Cliente');
 const { validateReservation, checkDealerDependencies } = require('../middleware/validations');
 const requiredAdminId = require('../middleware/autorizaciones').requiredAdminId;
+const requiredLoggedIn = require('../middleware/autorizaciones').requiredLoggedIn;
 const Concesionario = require('../models/Concesionario');
 const Usuario = require('../models/Usuario');
 
-//-----------------------------------------------------------
 // USUARIOS
+// -----------------------------------------
 
 // DELETE /api/usuarios/:id - Eliminar usuario (RESTful)
 router.delete('/usuarios/:id', requiredAdminId, (req, res) => {
@@ -44,8 +45,8 @@ router.delete('/usuarios/:id', requiredAdminId, (req, res) => {
     });
 });
 
-//-----------------------------------------------------------
 // CONCESIONARIOS
+// -----------------------------------------
 
 // DELETE /api/concesionarios/:id - Eliminar concesionario (RESTful)
 router.delete('/concesionarios/:id', requiredAdminId, checkDealerDependencies, (req, res) => {
@@ -81,7 +82,7 @@ router.delete('/concesionarios/:id', requiredAdminId, checkDealerDependencies, (
 //-----------------------------------------------------------
 // ENDPOINTS DE VEHÍCULOS
 
-// GET /api/vehiculos - Obtener todos los vehículos con filtros
+// GET /api/vehiculos - Obtener todos los vehículos con filtrosfetc
 router.get('/vehiculos', (req, res) => {
     // Verificar si el usuario es admin
     const esAdmin = req.session && req.session.usuario && req.session.usuario.rol === 'admin';
@@ -185,6 +186,74 @@ router.get('/vehiculos', (req, res) => {
             data: vehiculos,
             count: vehiculos.length
         });
+    });
+});
+
+// GET /api/vehiculos/disponibles - Obtener vehículos disponibles en un rango de fechas
+router.get('/vehiculos/disponibles', (req, res) => {
+    const { inicio, fin } = req.query;
+
+    if (!inicio || !fin) {
+        return res.status(400).json({
+            success: false,
+            message: 'Se requieren las fechas de inicio y fin'
+        });
+    }
+
+    const fechaInicio = new Date(inicio);
+    const fechaFin = new Date(fin);
+
+    // Validar que las fechas sean válidas
+    if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
+        return res.status(400).json({
+            success: false,
+            message: 'Formato de fechas inválido'
+        });
+    }
+
+    if (fechaFin <= fechaInicio) {
+        return res.status(400).json({
+            success: false,
+            message: 'La fecha de fin debe ser posterior a la de inicio'
+        });
+    }
+
+    // Consulta para obtener vehículos NO reservados en ese rango
+    const query = `
+        SELECT 
+            v.*,
+            c.nombre as concesionario_nombre,
+            c.ciudad as concesionario_ciudad
+        FROM Vehiculos v
+        LEFT JOIN Concesionarios c ON v.id_concesionario = c.id_concesionario
+        WHERE v.estado != 'mantenimiento'
+        AND v.id_vehiculo NOT IN (
+            SELECT r.id_vehiculo
+            FROM Reservas r
+            WHERE r.estado = 'activa'
+            AND (
+                -- El rango solicitado se superpone con la reserva existente
+                (? < r.fecha_fin AND ? > r.fecha_inicio)
+            )
+        )
+    `;
+
+    pool.query(query, [fechaInicio, fechaFin], (err, vehiculos) => {
+        if (err) {
+            console.error('Error al obtener vehículos disponibles:', err);
+            return res.status(500).json({
+                success: false,
+                message: 'Error al obtener vehículos disponibles'
+            });
+        }
+
+        // Convertir imágenes a base64
+        const vehiculosConImagenes = vehiculos.map(v => ({
+            ...v,
+            imagen: v.imagen ? v.imagen.toString('base64') : null
+        }));
+
+        res.status(200).json(vehiculosConImagenes);
     });
 });
 
@@ -547,75 +616,197 @@ router.delete('/reservas/:id', (req, res) => {
     });
 });
 
-//-----------------------------------------------------------
-// ENDPOINTS DE ACCESIBILIDAD
+// GET - Obtener preferencias del usuario
+router.get('/accesibilidad/preferencias', requiredLoggedIn, (req, res) => {
+    const idUsuario = req.session.usuario.id_usuario;
 
-// POST /api/accesibilidad/preferencias - Guardar preferencias de accesibilidad en sesión
-router.post('/accesibilidad/preferencias', (req, res) => {
-    const { fontSize, theme, colorblind } = req.body;
+    const consulta = 'SELECT preferencias_accesibilidad FROM Usuarios WHERE id_usuario = ?';
 
-    // Guardar en sesión
-    if (!req.session.preferencias) {
-        req.session.preferencias = {};
-    }
+    pool.query(consulta, [idUsuario], (err, resultados) => {
+        if (err) {
+            console.error('Error al obtener preferencias:', err);
+            return res.status(500).json({
+                success: false,
+                message: 'Error al obtener preferencias'
+            });
+        }
 
-    if (fontSize) req.session.preferencias.fontSize = fontSize;
-    if (theme) req.session.preferencias.theme = theme;
-    if (colorblind !== undefined) req.session.preferencias.colorblind = colorblind;
+        if (resultados.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado'
+            });
+        }
 
-    // Si el usuario está loggeado, también guardar en la BD
-    if (req.session.usuario && req.session.usuario.id_usuario) {
-        const prefsJSON = JSON.stringify(req.session.preferencias);
-        const consulta = 'UPDATE Usuarios SET preferencias_accesibilidad = ? WHERE id_usuario = ?';
+        const preferencias = resultados[0].preferencias_accesibilidad;
 
-        pool.query(consulta, [prefsJSON, req.session.usuario.id_usuario], (err) => {
-            if (err) {
-                console.error('Error al guardar preferencias en BD:', err);
+        // Si hay preferencias, parsearlas (MySQL las devuelve como string)
+        let preferenciasParsed = null;
+        if (preferencias) {
+            try {
+                preferenciasParsed = typeof preferencias === 'string'
+                    ? JSON.parse(preferencias)
+                    : preferencias;
+            } catch (error) {
+                console.error('⚠️  Error al parsear preferencias:', error);
             }
-        });
-    }
+        }
 
-    res.json({
-        success: true,
-        message: 'Preferencias guardadas correctamente',
-        data: req.session.preferencias
+        res.json({
+            success: true,
+            data: preferenciasParsed
+        });
     });
 });
 
-// GET /api/accesibilidad/preferencias - Obtener preferencias de accesibilidad
-router.get('/accesibilidad/preferencias', (req, res) => {
-    if (req.session.usuario && req.session.usuario.id_usuario) {
-        const consulta = 'SELECT preferencias_accesibilidad FROM Usuarios WHERE id_usuario = ?';
+// POST - Guardar/actualizar preferencias del usuario
+router.post('/accesibilidad/preferencias', requiredLoggedIn, (req, res) => {
+    const idUsuario = req.session.usuario.id_usuario;
+    const { fontSize, theme, atajos } = req.body;
 
-        pool.query(consulta, [req.session.usuario.id_usuario], (err, results) => {
-            if (err || results.length === 0) {
-                return res.json({
-                    success: true,
-                    data: req.session.preferencias || {}
-                });
-            }
-
-            const prefs = results[0].preferencias_accesibilidad;
-            const preferencias = prefs ? JSON.parse(prefs) : (req.session.preferencias || {});
-
-            res.json({
-                success: true,
-                data: preferencias
-            });
-        });
-    } else {
-        res.json({
-            success: true,
-            data: req.session.preferencias || {}
+    // Validar datos
+    if (!fontSize || !theme) {
+        return res.status(400).json({
+            success: false,
+            message: 'Datos incompletos. Se requiere fontSize y theme'
         });
     }
+
+    // Validar valores permitidos
+    const fontSizesPermitidos = ['80', '100', '120'];
+    const temasPermitidos = ['light', 'dark'];
+
+    if (!fontSizesPermitidos.includes(fontSize)) {
+        return res.status(400).json({
+            success: false,
+            message: 'Tamaño de fuente no válido. Debe ser: 80, 100 o 120'
+        });
+    }
+
+    if (!temasPermitidos.includes(theme)) {
+        return res.status(400).json({
+            success: false,
+            message: 'Tema no válido. Debe ser: light o dark'
+        });
+    }
+
+    // Crear objeto de preferencias
+    const preferencias = {
+        fontSize: fontSize,
+        theme: theme,
+        atajos: atajos || null,
+        fecha_actualizacion: new Date().toISOString()
+    };
+
+    const consulta = 'UPDATE Usuarios SET preferencias_accesibilidad = ? WHERE id_usuario = ?';
+
+    pool.query(consulta, [JSON.stringify(preferencias), idUsuario], (err, resultado) => {
+        if (err) {
+            console.error('Error al guardar preferencias:', err);
+            return res.status(500).json({
+                success: false,
+                message: 'Error al guardar preferencias en la base de datos'
+            });
+        }
+
+        if (resultado.affectedRows === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado'
+            });
+        }
+
+        // Actualizar también la sesión para que esté disponible sin recargar
+        if (req.session.usuario) {
+            req.session.usuario.preferencias_accesibilidad = preferencias;
+        }
+
+        console.log(`Preferencias guardadas para usuario ${idUsuario}:`, preferencias);
+
+        res.json({
+            success: true,
+            message: 'Preferencias guardadas correctamente',
+            data: preferencias
+        });
+    });
 });
 
-//-----------------------------------------------------------
+// DELETE - Restaurar preferencias por defecto
+router.delete('/accesibilidad/preferencias', requiredLoggedIn, (req, res) => {
+    const idUsuario = req.session.usuario.id_usuario;
+
+    const consulta = 'UPDATE Usuarios SET preferencias_accesibilidad = NULL WHERE id_usuario = ?';
+
+    pool.query(consulta, [idUsuario], (err, resultado) => {
+        if (err) {
+            console.error('Error al eliminar preferencias:', err);
+            return res.status(500).json({
+                success: false,
+                message: 'Error al eliminar preferencias'
+            });
+        }
+
+        if (resultado.affectedRows === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado'
+            });
+        }
+
+        // Actualizar la sesión
+        if (req.session.usuario) {
+            req.session.usuario.preferencias_accesibilidad = null;
+        }
+
+        console.log(`Preferencias eliminadas para usuario ${idUsuario}`);
+
+        res.json({
+            success: true,
+            message: 'Preferencias restauradas a valores por defecto'
+        });
+    });
+});
+
+// GET - Obtener estadísticas de uso de accesibilidad (solo admin)
+router.get('/estadisticas', requiredAdminId, (req, res) => {
+    // Verificar que el usuario sea admin
+    if (req.session.usuario.rol !== 'admin') {
+        return res.status(403).json({
+            success: false,
+            message: 'Acceso denegado. Solo administradores'
+        });
+    }
+
+    const consulta = `
+        SELECT 
+            COUNT(*) as total_usuarios,
+            SUM(CASE WHEN preferencias_accesibilidad IS NOT NULL THEN 1 ELSE 0 END) as usuarios_con_preferencias,
+            SUM(CASE WHEN JSON_EXTRACT(preferencias_accesibilidad, '$.theme') = 'dark' THEN 1 ELSE 0 END) as usuarios_tema_oscuro,
+            SUM(CASE WHEN JSON_EXTRACT(preferencias_accesibilidad, '$.fontSize') = '120' THEN 1 ELSE 0 END) as usuarios_fuente_grande,
+            SUM(CASE WHEN JSON_EXTRACT(preferencias_accesibilidad, '$.fontSize') = '80' THEN 1 ELSE 0 END) as usuarios_fuente_pequena
+        FROM Usuarios
+    `;
+
+    pool.query(consulta, (err, resultados) => {
+        if (err) {
+            console.error('Error al obtener estadísticas:', err);
+            return res.status(500).json({
+                success: false,
+                message: 'Error al obtener estadísticas'
+            });
+        }
+
+        res.json({
+            success: true,
+            data: resultados[0]
+        });
+    });
+});
 // ENDPOINTS DE ESTADÍSTICAS
+// -----------------------------------------
 
 // GET /api/estadisticas/vehiculos
-router.get('/estadisticas/vehiculos', (req, res) => {
+router.get('/estadisticas/vehiculos', requiredAdminId, (req, res) => {
     const consulta = `
         SELECT 
             COUNT(*) as total,
@@ -641,7 +832,7 @@ router.get('/estadisticas/vehiculos', (req, res) => {
 });
 
 // GET /api/estadisticas/reservas
-router.get('/estadisticas/reservas', (req, res) => {
+router.get('/estadisticas/reservas', requiredAdminId, (req, res) => {
     const consulta = `
         SELECT
             COUNT(*) as total,
@@ -667,7 +858,7 @@ router.get('/estadisticas/reservas', (req, res) => {
 });
 
 // GET /api/estadisticas/reservas-por-concesionario
-router.get('/estadisticas/reservas-por-concesionario', (req, res) => {
+router.get('/estadisticas/reservas-por-concesionario', requiredAdminId, (req, res) => {
     const consulta = `
         SELECT
             c.nombre as concesionario,
@@ -696,7 +887,7 @@ router.get('/estadisticas/reservas-por-concesionario', (req, res) => {
 });
 
 // GET /api/estadisticas/vehiculo-mas-usado
-router.get('/estadisticas/vehiculo-mas-usado', (req, res) => {
+router.get('/estadisticas/vehiculo-mas-usado', requiredAdminId, (req, res) => {
     const consulta = `
         SELECT
             v.id_vehiculo,
@@ -726,7 +917,7 @@ router.get('/estadisticas/vehiculo-mas-usado', (req, res) => {
 });
 
 // GET /api/estadisticas/resumen-general
-router.get('/estadisticas/resumen-general', (req, res) => {
+router.get('/estadisticas/resumen-general', requiredAdminId, (req, res) => {
     const consultas = [
         // Total de reservas
         'SELECT COUNT(*) as total_reservas FROM Reservas',

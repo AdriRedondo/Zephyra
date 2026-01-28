@@ -1,433 +1,481 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("reservas-form-id");
-    const nombre = document.getElementById("nombre");
-    const correo = document.getElementById("correo");
-    const vehiculo = document.getElementById("vehiculo-seleccionado");
-    const inicio = document.getElementById("inicio");
-    //const fin = document.getElementById("fin");
-    const telefono = document.getElementById("telefono");
-    const progressBar = document.querySelector(".progress-bar");
-    console.log("Formulario cargado correctamente");
-    checkProgressBar();
+// formulario-reservas.js
 
-    nombre.addEventListener("input", validarNombre);
-    correo.addEventListener("input", validarCorreo);
-    vehiculo.addEventListener("input", validarVehiculo);
-    inicio.addEventListener("input", validarInicio);
-    horas.addEventListener("input", validarHoras);
-    //fin.addEventListener("input", validarFin);
-    telefono.addEventListener("input", validarTelefono);
+let vehiculosDisponibles = [];
+let todosLosVehiculos = [];
+let concesionarios = [];
 
-    form.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const esValidoNombre = validarNombre();
-        const esValidoCorreo = validarCorreo();
-        const esValidoVehiculo = validarVehiculo();
-        const esValidoInicio = validarInicio();
-        const esValidoHoras = validarHoras();
-        //const esValidoFin = validarFin();
-        const esValidoTelefono = validarTelefono();
+// Configurar fecha mínima (hoy)
+document.addEventListener('DOMContentLoaded', () => {
+    const ahora = new Date();
+    const fechaMinima = ahora.toISOString().slice(0, 16);
 
-        console.log("Nombre: ", nombre.value);
-        console.log("Correo: ", correo.value);
-        console.log("Vehículo: ", vehiculo.value);
-        console.log("Inicio: ", inicio.value);
-        //console.log("Fin: ", fin.value);
-        console.log("Teléfono: ", telefono.value);
+    document.getElementById('inicio').min = fechaMinima;
+    document.getElementById('fin').min = fechaMinima;
 
-        if (esValidoNombre && esValidoCorreo && esValidoInicio && esValidoHoras &&
-            esValidoVehiculo && esValidoTelefono) {
-            form.submit();
+    // Eventos para validar fechas
+    const inputInicio = document.getElementById('inicio');
+    const inputFin = document.getElementById('fin');
+    const inputNombre = document.getElementById('nombre');
+    const inputCorreo = document.getElementById('correo');
+    const inputTelefono = document.getElementById('telefono');
 
-        } else {
-            alert("Por favor, corrige los campos erróneos antes de enviar el formulario.");
-        }
+    inputInicio.addEventListener('change', validarYHabilitarBusqueda);
+    inputFin.addEventListener('change', validarYHabilitarBusqueda);
+
+    // Validación en tiempo real de datos del cliente
+    if (inputNombre) inputNombre.addEventListener('input', validarNombreCliente);
+    if (inputCorreo) inputCorreo.addEventListener('input', validarCorreoCliente);
+    if (inputTelefono) inputTelefono.addEventListener('input', validarTelefonoCliente);
+
+    // Cargar todos los vehículos y concesionarios
+    cargarDatosIniciales();
+
+    // Configurar modal para cargar vehículos disponibles
+    const modal = document.getElementById('modalVehiculos');
+    modal.addEventListener('show.bs.modal', cargarVehiculosDisponibles);
+
+    // Configurar filtros
+    document.getElementById('filtro-marca').addEventListener('change', aplicarFiltros);
+    document.getElementById('filtro-modelo').addEventListener('change', aplicarFiltros);
+    document.getElementById('filtro-plazas').addEventListener('change', aplicarFiltros);
+    document.getElementById('filtro-concesionario').addEventListener('change', aplicarFiltros);
+
+    // Reset form
+    document.querySelector('button[type="reset"]').addEventListener('click', () => {
+        document.getElementById('vehiculo-seleccionado').value = '';
+        document.getElementById('vehiculo-id').value = '';
+        deshabilitarBusquedaVehiculo();
     });
-
-    form.addEventListener("reset", (event) => {
-        resetColors(nombre);
-        resetColors(correo);
-        resetColors(vehiculo);
-        resetColors(inicio);
-        resetColors(horas);
-        resetColors(telefono);
-        checkProgressBar();
-
-    });
-
-    // Colorear los inputs según estén mal o bien
-    function colorearInputs(input, esCorrecto) {
-        if (esCorrecto) {
-            input.classList.add("right-input");
-            input.classList.remove("wrong-input");
-        }
-        else {
-            input.classList.add("wrong-input");
-            input.classList.remove("right-input");
-        }
-        checkProgressBar();
-    }
-
-    // Validación nombre y apellidos
-    function validarNombre() {
-        const nombreValue = nombre.value.trim();
-        const errorElement = document.getElementById("nombre-error");
-
-        if (nombreValue == "" || !/^[a-zA-Z\s]{3,}$/.test(nombreValue)) {
-            colorearInputs(nombre, false);
-            errorElement.textContent = "El nombre debe tener al menos 3 caracteres y contener solo letras y espacios";
-            return false;
-        }
-        else {
-            colorearInputs(nombre, true);
-            errorElement.textContent = "";
-            return true;
-
-        }
-    }
-
-    // Validación correo
-    function validarCorreo() {
-
-        const correoValue = correo.value.trim();
-        const errorElement = document.getElementById("correo-error");
-
-        if (correoValue == "" || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(correoValue)) {
-            colorearInputs(correo, false);
-            errorElement.textContent = "Introduce un correo electrónico válido";
-            return false;
-
-        }
-        else {
-            colorearInputs(correo, true);
-            errorElement.textContent = "";
-            return true;
-        }
-    }
-
-    // Validación correo
-    function validarVehiculo() {
-
-        const vehiculoValue = vehiculo.value.trim();
-        const vehiculoId = document.getElementById("vehiculo-id").value; // ⬅️ NUEVO
-        const errorElement = document.getElementById("vehículo-error");
-        console.log(vehiculoValue);
-
-        if (vehiculoValue == "" || vehiculoId === "") {
-            colorearInputs(vehiculo, false);
-            errorElement.textContent = "Seleccione uno de los vehículos disponibles";
-            return false;
-        }
-        else {
-            colorearInputs(vehiculo, true);
-            errorElement.textContent = "";
-            return true;
-        }
-    }
-
-    // Validación fecha ini
-    function validarInicio() {
-        const inicioValue = inicio.value;
-        const errorElement = document.getElementById("inicio-error");
-        const hoy = new Date();
-        const fechaInicio = new Date(inicioValue);
-
-        if (inicioValue === "" || fechaInicio < hoy) {
-            colorearInputs(inicio, false);
-            errorElement.textContent = "La fecha de inicio debe ser posterior a la fecha actual";
-            return false;
-        } else {
-            colorearInputs(inicio, true);
-            errorElement.textContent = "";
-            return true;
-        }
-    }
-
-    // Validación fecha ini
-    function validarHoras() {
-        const horasValue = horas.value;
-        const errorElement = document.getElementById("horas-error");
-
-        if (horasValue <= 0 && !Number.isInteger(horasValue)) {
-            colorearInputs(horas, false);
-            errorElement.textContent = "El numero de horas debe ser un nmero entero positivo";
-            return false;
-        } else {
-            colorearInputs(horas, true);
-            errorElement.textContent = "";
-            return true;
-        }
-    }
-
-
-    // Validación fecha fin
-    /*function validarFin() {
-        const finValue = fin.value;
-        const inicioValue = inicio.value;
-        const errorElement = document.getElementById("fin-error");
-        const hoy = new Date();
-        const fechaFin = new Date(finValue);
-        const fechaInicio = new Date(inicioValue);
-
-        if (finValue === "" || fechaFin < hoy || fechaInicio >= fechaFin) {
-            colorearInputs(fin, false);
-            errorElement.textContent = "La fecha de fin debe ser posterior a la fecha de inicio y a la fecha actual";
-            return false;
-        } else {
-            colorearInputs(fin, true);
-            errorElement.textContent = "";
-            return true;
-        }
-    }
-        */
-
-    // Validación del teléfono
-    function validarTelefono() {
-        const telefonoValue = telefono.value.trim();
-        const errorElement = document.getElementById("telefono-error");
-
-        if (telefonoValue === "" || !/^[0-9]{9}$/.test(telefonoValue)) {
-            colorearInputs(telefono, false);
-            errorElement.textContent = "El teléfono debe tener exactamente 9 dígitos";
-            return false;
-        } else {
-            colorearInputs(telefono, true);
-            errorElement.textContent = "";
-            return true;
-        }
-    }
-
-    function validInput(input) {
-        return input.classList.contains("right-input");
-    }
-
-    function checkProgressBar() {
-        let correctInputs = 0;
-        correctInputs += validInput(nombre);
-        correctInputs += validInput(correo);
-        correctInputs += validInput(vehiculo);
-        correctInputs += validInput(inicio);
-        correctInputs += validInput(horas);
-        correctInputs += validInput(telefono);
-        const porcentaje_text = document.getElementById('porcentaje-text');
-        switch (correctInputs) {
-            case 0:
-                progressBar.style.width = "0%"
-                porcentaje_text.textContent = '0.0%';
-                break;
-            case 1:
-                progressBar.style.width = "16.7%";
-                porcentaje_text.textContent = '16.7%';
-                break;
-            case 2:
-                progressBar.style.width = "33.3%";
-                porcentaje_text.textContent = '33.3%';
-                break;
-            case 3:
-                progressBar.style.width = "50%";
-                porcentaje_text.textContent = '50%';
-                break;
-            case 4:
-                progressBar.style.width = "66.7%";
-                porcentaje_text.textContent = '66.7%';
-                break;
-            case 5:
-                progressBar.style.width = "83.3%";
-                porcentaje_text.textContent = '83.3%';
-                break;
-            case 6:
-                progressBar.style.width = "100%";
-                porcentaje_text.textContent = '100%';
-                break;
-        }
-    }
-
-    function resetColors(input) {
-        input.classList.remove("right-input");
-        input.classList.remove("wrong-input");
-    }
 });
 
-//Gestión del modal de selección de vehículo
+// Validar fechas y habilitar búsqueda de vehículo
+function validarYHabilitarBusqueda() {
+    const inicio = document.getElementById('inicio').value;
+    const fin = document.getElementById('fin').value;
+    const inputVehiculo = document.getElementById('vehiculo-seleccionado');
+    const btnBuscar = document.getElementById('btn-buscar-vehiculo');
+    const avisoFechas = document.getElementById('aviso-fechas');
+    const errorInicio = document.getElementById('inicio-error');
+    const errorFin = document.getElementById('fin-error');
 
-let vehiculosData = [];
-let vehiculosFiltrados = [];
+    // Limpiar errores
+    errorInicio.textContent = '';
+    errorFin.textContent = '';
 
-// Verificar que el modal existe antes de agregar el evento
-const modalVehiculos = document.getElementById('modalVehiculos');
-if (modalVehiculos) {
-    modalVehiculos.addEventListener('show.bs.modal', function () {
-        console.log('Modal abierto. Vehículos en cache:', vehiculosData.length);
+    if (!inicio || !fin) {
+        deshabilitarBusquedaVehiculo();
+        return;
+    }
 
-        if (vehiculosData.length === 0) {
-            // Mostrar mensaje de carga
-            const listaVehiculos = document.getElementById('lista-vehiculos');
-            if (listaVehiculos) {
-                listaVehiculos.innerHTML = '<div class="col-12"><p class="text-center">Cargando vehículos...</p></div>';
-            }
+    const fechaInicio = new Date(inicio);
+    const fechaFin = new Date(fin);
+    const ahora = new Date();
 
-            cargarVehiculos(function (error, data) {
-                if (error) {
-                    console.error('Error al cargar vehículos:', error);
-                    const listaVehiculos = document.getElementById('lista-vehiculos');
-                    if (listaVehiculos) {
-                        listaVehiculos.innerHTML =
-                            '<div class="col-12"><p class="text-danger text-center">Error al cargar los vehículos. Por favor, intenta de nuevo.</p></div>';
-                    }
-                } else {
-                    console.log('Vehículos cargados exitosamente:', data.length);
-                }
-            });
-        } else {
-            // Ya hay vehículos cargados, solo mostrarlos
-            mostrarVehiculos();
-        }
-    });
-} else {
-    console.error('No se encontró el modal con id "modalVehiculos"');
+    // Validar que inicio no sea en el pasado
+    if (fechaInicio < ahora) {
+        errorInicio.textContent = 'La fecha de inicio no puede ser en el pasado';
+        deshabilitarBusquedaVehiculo();
+        return;
+    }
+
+    // Validar que fin sea después de inicio
+    if (fechaFin <= fechaInicio) {
+        errorFin.textContent = 'La fecha de fin debe ser posterior a la de inicio';
+        deshabilitarBusquedaVehiculo();
+        return;
+    }
+
+    // Validar duración mínima (1 hora)
+    const diferenciaHoras = (fechaFin - fechaInicio) / (1000 * 60 * 60);
+    if (diferenciaHoras < 1) {
+        errorFin.textContent = 'La reserva debe ser de al menos 1 hora';
+        deshabilitarBusquedaVehiculo();
+        return;
+    }
+
+    // Todo válido: habilitar búsqueda
+    inputVehiculo.disabled = false;
+    inputVehiculo.placeholder = 'Haz clic para seleccionar un vehículo';
+    btnBuscar.disabled = false;
+    avisoFechas.style.display = 'none';
+
+    // Limpiar selección previa si cambió las fechas
+    if (document.getElementById('vehiculo-id').value) {
+        document.getElementById('vehiculo-seleccionado').value = '';
+        document.getElementById('vehiculo-id').value = '';
+    }
 }
 
-// Función para cargar vehículos desde la API
-function cargarVehiculos(callback) {
+function deshabilitarBusquedaVehiculo() {
+    const inputVehiculo = document.getElementById('vehiculo-seleccionado');
+    const btnBuscar = document.getElementById('btn-buscar-vehiculo');
+    const avisoFechas = document.getElementById('aviso-fechas');
+
+    inputVehiculo.disabled = true;
+    inputVehiculo.placeholder = 'Primero selecciona las fechas';
+    btnBuscar.disabled = true;
+    avisoFechas.style.display = 'block';
+}
+
+// Cargar datos iniciales (todos los vehículos y concesionarios)
+function cargarDatosIniciales() {
+    let vehiculosCargados = false;
+    let concesionariosCargados = false;
+    let errorVehiculos = null;
+    let errorConcesionarios = null;
+
+    // Cargar vehículos
     fetch('/api/vehiculos')
-        .then((response) => {
+        .then(response => response.json())
+        .then(data => {
+            todosLosVehiculos = data;
+            vehiculosCargados = true;
+            verificarCargaCompleta();
+        })
+        .catch(error => {
+            errorVehiculos = error;
+            vehiculosCargados = true;
+            verificarCargaCompleta();
+        });
+
+    // Cargar concesionarios
+    fetch('/api/concesionarios')
+        .then(response => response.json())
+        .then(data => {
+            concesionarios = data;
+            concesionariosCargados = true;
+            verificarCargaCompleta();
+        })
+        .catch(error => {
+            errorConcesionarios = error;
+            concesionariosCargados = true;
+            verificarCargaCompleta();
+        });
+
+    function verificarCargaCompleta() {
+        if (vehiculosCargados && concesionariosCargados) {
+            if (errorVehiculos || errorConcesionarios) {
+                console.error('Error al cargar datos iniciales:', errorVehiculos || errorConcesionarios);
+            }
+        }
+    }
+}
+
+// Cargar vehículos disponibles según las fechas
+function cargarVehiculosDisponibles() {
+    const inicio = document.getElementById('inicio').value;
+    const fin = document.getElementById('fin').value;
+
+    if (!inicio || !fin) {
+        return;
+    }
+
+    // Mostrar loading
+    document.getElementById('loading-vehiculos').style.display = 'block';
+    document.getElementById('lista-vehiculos').innerHTML = '';
+    document.getElementById('sin-vehiculos').style.display = 'none';
+
+    // Actualizar texto de fechas en el modal
+    actualizarTextoFechasModal(inicio, fin);
+
+    // Llamar al endpoint que verifica disponibilidad
+    const url = `/api/vehiculos/disponibles?inicio=${encodeURIComponent(inicio)}&fin=${encodeURIComponent(fin)}`;
+    console.log('Llamando a URL:', url);
+
+    fetch(url)
+        .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+
             if (!response.ok) {
-                throw new Error('Error HTTP ' + response.status);
+                return response.text().then(text => {
+                    console.error('Error response body:', text);
+                    throw new Error(`Error ${response.status}: ${text}`);
+                });
             }
             return response.json();
         })
-        .then(function (json) {
-            console.log('Datos JSON recibidos:', json);
+        .then(data => {
+            console.log('Vehículos recibidos:', data);
+            vehiculosDisponibles = data;
 
-            // El API devuelve {success: true, data: [...], count: N}
-            // Extraer el array de vehículos
-            let vehiculos = [];
-            if (json.success && json.data) {
-                vehiculos = json.data;
-            } else if (Array.isArray(json)) {
-                vehiculos = json;
-            } else {
-                throw new Error('Formato de respuesta inválido');
+            // Ocultar loading
+            document.getElementById('loading-vehiculos').style.display = 'none';
+
+            if (vehiculosDisponibles.length === 0) {
+                document.getElementById('sin-vehiculos').style.display = 'block';
+                return;
             }
 
-            // Filtrar solo vehículos disponibles
-            vehiculosData = vehiculos.filter(function (v) {
-                return v.estado === 'disponible';
-            });
+            // Poblar filtros
+            poblarFiltros(vehiculosDisponibles);
 
-            vehiculosFiltrados = vehiculosData.slice(); // Copia del array
-
-            inicializarFiltros();
-            mostrarVehiculos();
-
-            callback(null, vehiculosData);
+            // Mostrar vehículos
+            mostrarVehiculos(vehiculosDisponibles);
         })
-        .catch(function (error) {
-            console.error('Error al cargar vehículos:', error);
-            callback(error);
+        .catch(error => {
+            console.error('Error completo:', error);
+            console.error('Error message:', error.message);
+            console.error('Error stack:', error.stack);
+
+            document.getElementById('loading-vehiculos').style.display = 'none';
+            document.getElementById('sin-vehiculos').style.display = 'block';
+            document.getElementById('sin-vehiculos').innerHTML = `
+                <i class="bi bi-exclamation-triangle" style="font-size: 3rem; color: #dc3545;"></i>
+                <p class="text-danger mt-3">Error al cargar vehículos: ${error.message}</p>
+                <p class="text-muted small">Revisa la consola para más detalles</p>
+            `;
         });
 }
 
-// Inicializar opciones de filtros
-function inicializarFiltros() {
-    const marcas = [...new Set(vehiculosData.map(v => v.marca))];
-    const modelos = [...new Set(vehiculosData.map(v => v.modelo))];
-    const plazas = [...new Set(vehiculosData.map(v => v.numero_plazas))].sort((a, b) => a - b);
-    const concesionarios = [...new Set(vehiculosData.map(v => v.nombre_concesionario).filter(Boolean))].sort();
+function actualizarTextoFechasModal(inicio, fin) {
+    const fechaInicio = new Date(inicio);
+    const fechaFin = new Date(fin);
 
-    llenarSelect('filtro-marca', marcas);
-    llenarSelect('filtro-modelo', modelos);
-    llenarSelect('filtro-plazas', plazas, ' plazas');
-    llenarSelect('filtro-concesionario', concesionarios);
+    const opciones = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    };
 
-    // Event listeners para filtros
-    ['filtro-marca', 'filtro-modelo', 'filtro-plazas', 'filtro-concesionario'].forEach(id => {
-        document.getElementById(id).addEventListener('change', aplicarFiltros);
+    const textoInicio = fechaInicio.toLocaleDateString('es-ES', opciones);
+    const textoFin = fechaFin.toLocaleDateString('es-ES', opciones);
+
+    const duracion = calcularDuracion(fechaInicio, fechaFin);
+
+    document.getElementById('rango-fechas-texto').innerHTML = `
+        <strong>Desde:</strong> ${textoInicio}<br>
+        <strong>Hasta:</strong> ${textoFin}<br>
+        <strong>Duración:</strong> ${duracion}
+    `;
+}
+
+function calcularDuracion(inicio, fin) {
+    const diff = fin - inicio;
+    const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+    if (dias > 0) {
+        return `${dias} día${dias > 1 ? 's' : ''} y ${horas} hora${horas !== 1 ? 's' : ''}`;
+    } else {
+        return `${horas} hora${horas !== 1 ? 's' : ''}`;
+    }
+}
+
+function poblarFiltros(vehiculos) {
+    const marcas = new Set();
+    const modelos = new Set();
+    const plazas = new Set();
+    const concesionariosMap = new Map();
+
+    vehiculos.forEach(v => {
+        marcas.add(v.marca);
+        modelos.add(v.modelo);
+        plazas.add(v.numero_plazas);
+
+        // Usar los datos del concesionario que vienen del backend
+        if (v.id_concesionario && v.concesionario_nombre) {
+            const clave = `${v.concesionario_nombre} - ${v.concesionario_ciudad || ''}`;
+            concesionariosMap.set(v.id_concesionario, clave);
+        }
+    });
+
+    // Poblar marca
+    const selectMarca = document.getElementById('filtro-marca');
+    selectMarca.innerHTML = '<option value="">Todas</option>';
+    [...marcas].sort().forEach(marca => {
+        selectMarca.innerHTML += `<option value="${marca}">${marca}</option>`;
+    });
+
+    // Poblar modelo
+    const selectModelo = document.getElementById('filtro-modelo');
+    selectModelo.innerHTML = '<option value="">Todos</option>';
+    [...modelos].sort().forEach(modelo => {
+        selectModelo.innerHTML += `<option value="${modelo}">${modelo}</option>`;
+    });
+
+    // Poblar plazas
+    const selectPlazas = document.getElementById('filtro-plazas');
+    selectPlazas.innerHTML = '<option value="">Todas</option>';
+    [...plazas].sort((a, b) => a - b).forEach(plaza => {
+        selectPlazas.innerHTML += `<option value="${plaza}">${plaza} plazas</option>`;
+    });
+
+    // Poblar concesionarios usando los datos que vienen del backend
+    const selectConcesionario = document.getElementById('filtro-concesionario');
+    selectConcesionario.innerHTML = '<option value="">Todos</option>';
+
+    // Ordenar por nombre de concesionario
+    const concesionariosArray = Array.from(concesionariosMap.entries())
+        .sort((a, b) => a[1].localeCompare(b[1]));
+
+    concesionariosArray.forEach(([id, nombre]) => {
+        selectConcesionario.innerHTML += `<option value="${id}">${nombre}</option>`;
     });
 }
 
-// Llenar un select con opciones
-function llenarSelect(id, opciones, sufijo = '') {
-    const select = document.getElementById(id);
-    const valorActual = select.value;
-
-    select.innerHTML = '<option value="">Todos</option>';
-    opciones.forEach(opcion => {
-        const option = document.createElement('option');
-        option.value = opcion;
-        option.textContent = opcion + sufijo;
-        select.appendChild(option);
-    });
-
-    select.value = valorActual;
-}
-
-// Aplicar filtros
 function aplicarFiltros() {
-    const marca = document.getElementById('filtro-marca').value.toLowerCase();
-    const modelo = document.getElementById('filtro-modelo').value.toLowerCase();
+    const marca = document.getElementById('filtro-marca').value;
+    const modelo = document.getElementById('filtro-modelo').value;
     const plazas = document.getElementById('filtro-plazas').value;
-    const concesionario = document.getElementById('filtro-concesionario').value.toLowerCase();
+    const concesionario = document.getElementById('filtro-concesionario').value;
 
-    vehiculosFiltrados = vehiculosData.filter(v => {
-        return (!marca || v.marca.toLowerCase() === marca) &&
-            (!modelo || v.modelo.toLowerCase() === modelo) &&
-            (!plazas || v.numero_plazas === parseInt(plazas)) &&
-            (!concesionario || v.nombre_concesionario?.toLowerCase() === concesionario);
+    const vehiculosFiltrados = vehiculosDisponibles.filter(v => {
+        return (!marca || v.marca === marca) &&
+            (!modelo || v.modelo === modelo) &&
+            (!plazas || v.numero_plazas == plazas) &&
+            (!concesionario || v.id_concesionario == concesionario);
     });
 
-    mostrarVehiculos();
+    mostrarVehiculos(vehiculosFiltrados);
 }
 
-// Mostrar vehículos en el modal
-function mostrarVehiculos() {
-    const listaVehiculos = document.getElementById('lista-vehiculos');
+function mostrarVehiculos(vehiculos) {
+    const contenedor = document.getElementById('lista-vehiculos');
     const sinVehiculos = document.getElementById('sin-vehiculos');
 
-    if (vehiculosFiltrados.length === 0) {
-        listaVehiculos.style.display = 'none';
+    if (vehiculos.length === 0) {
+        contenedor.innerHTML = '';
         sinVehiculos.style.display = 'block';
         return;
     }
 
-    listaVehiculos.style.display = 'flex';
     sinVehiculos.style.display = 'none';
+    contenedor.innerHTML = vehiculos.map(v => {
+        const concesionario = concesionarios.find(c => c.id_concesionario === v.id_concesionario);
+        const nombreConcesionario = concesionario ? concesionario.nombre : 'No disponible';
 
-    listaVehiculos.innerHTML = vehiculosFiltrados.map(v => `
-        <div class="col">
-            <div class="card h-100 vehiculo-card" style="cursor: pointer;" 
-                 onclick="seleccionarVehiculo(${v.id_vehiculo}, '${v.marca}', '${v.modelo}')">
-                <img src="/es-vehiculos/imagen/${v.id_vehiculo}" 
-                     class="card-img-top" 
-                     alt="${v.marca} ${v.modelo}"
-                     style="height: 200px; object-fit: cover;">
-                <div class="card-body">
-                    <h6 class="card-title">${v.marca} ${v.modelo}</h6>
-                    <p class="card-text small mb-1">
-                        <i class="bi bi-people-fill"></i> ${v.numero_plazas} plazas
-                    </p>
-                    <p class="card-text small mb-1">
-                        <i class="bi bi-building"></i> ${v.nombre_concesionario}
-                    </p>
-                    <p class="card-text small">
-                    <i class="bi bi-palette"></i> ${v.color}</p>
+        // Si el vehículo ya trae el nombre del concesionario del backend, usarlo
+        const nombreFinal = v.concesionario_nombre || nombreConcesionario;
+
+        const imagenSrc = v.imagen
+            ? `data:image/jpeg;base64,${v.imagen}`
+            : '/images/default-car.jpg';
+
+        return `
+            <div class="col">
+                <div class="card h-100 vehiculo-card" onclick="seleccionarVehiculo(${v.id_vehiculo}, '${v.marca}', '${v.modelo}', '${v.matricula}')">
+                    <img src="${imagenSrc}" class="card-img-top" alt="${v.marca} ${v.modelo}">
+                    <div class="card-body">
+                        <h5 class="card-title">${v.marca} ${v.modelo}</h5>
+                        <p class="card-text">
+                            <strong>Matrícula:</strong> ${v.matricula}<br>
+                            <strong>Año:</strong> ${v.anyo_matriculacion}<br>
+                            <strong>Plazas:</strong> ${v.numero_plazas}<br>
+                            <strong>Autonomía:</strong> ${v.autonomia_km} km<br>
+                            <strong>Color:</strong> ${v.color}<br>
+                            <strong>Concesionario:</strong> ${nombreFinal}
+                        </p>
+                        <span class="badge bg-success">Disponible</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
-// Seleccionar vehículo
-function seleccionarVehiculo(id, marca, modelo) {
-    const vehiculoSeleccionado = document.getElementById('vehiculo-seleccionado');
-    const vehiculoId = document.getElementById('vehiculo-id');
+function seleccionarVehiculo(id, marca, modelo, matricula) {
+    document.getElementById('vehiculo-id').value = id;
+    document.getElementById('vehiculo-seleccionado').value = `${marca} ${modelo} (${matricula})`;
 
-    vehiculoId.value = id;
-    vehiculoSeleccionado.value = `${marca} ${modelo}`;
-
-    vehiculoSeleccionado.dispatchEvent(new Event('input'));
-
+    // Cerrar modal
     const modal = bootstrap.Modal.getInstance(document.getElementById('modalVehiculos'));
     modal.hide();
 }
 
+// VALIDACIONES EN TIEMPO REAL PARA DATOS DEL CLIENTE
+// -----------------------------------------------------
+
+function colorearInputs(input, esCorrecto) {
+    if (esCorrecto) {
+        input.classList.add("right-input");
+        input.classList.remove("wrong-input");
+    } else {
+        input.classList.add("wrong-input");
+        input.classList.remove("right-input");
+    }
+}
+
+function resetColors(input) {
+    const errorElementId = `${input.id}-error`;
+    const errorElement = document.getElementById(errorElementId);
+
+    input.classList.remove("right-input");
+    input.classList.remove("wrong-input");
+
+    if (errorElement) {
+        errorElement.textContent = "";
+    }
+}
+
+// Validación nombre del cliente
+function validarNombreCliente() {
+    const nombre = document.getElementById('nombre');
+    if (!nombre) return true;
+
+    const nombreValue = nombre.value.trim();
+    const errorElement = document.getElementById('nombre-error');
+
+    if (nombreValue === "" || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,}$/.test(nombreValue)) {
+        colorearInputs(nombre, false);
+        if (errorElement) {
+            errorElement.textContent = "El nombre debe tener al menos 3 caracteres y contener solo letras";
+        }
+        return false;
+    } else {
+        colorearInputs(nombre, true);
+        if (errorElement) {
+            errorElement.textContent = "";
+        }
+        return true;
+    }
+}
+
+// Validación correo del cliente
+function validarCorreoCliente() {
+    const correo = document.getElementById('correo');
+    if (!correo) return true;
+
+    const correoValue = correo.value.trim();
+    const errorElement = document.getElementById('correo-error');
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (correoValue === "" || !emailRegex.test(correoValue)) {
+        colorearInputs(correo, false);
+        if (errorElement) {
+            errorElement.textContent = "Debes introducir un correo electrónico válido";
+        }
+        return false;
+    } else {
+        colorearInputs(correo, true);
+        if (errorElement) {
+            errorElement.textContent = "";
+        }
+        return true;
+    }
+}
+
+// Validación teléfono del cliente
+function validarTelefonoCliente() {
+    const telefono = document.getElementById('telefono');
+    if (!telefono) return true;
+
+    const telefonoValue = telefono.value.trim();
+    const errorElement = document.getElementById('telefono-error');
+
+    if (telefonoValue === "" || !/^[0-9]{9}$/.test(telefonoValue)) {
+        colorearInputs(telefono, false);
+        if (errorElement) {
+            errorElement.textContent = "El teléfono debe contener exactamente 9 dígitos";
+        }
+        return false;
+    } else {
+        colorearInputs(telefono, true);
+        if (errorElement) {
+            errorElement.textContent = "";
+        }
+        return true;
+    }
+}

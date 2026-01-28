@@ -72,7 +72,7 @@ router.post('/user-register', requiredAdminId, validateUser, (req, res) => {
 
                     // Registro exitoso
                     const vista = language === 'english' ? 'en-admin' : 'es-admin';
-                    console.log(`Usuario creado con ID: ${result.insertId}`);
+                    console.log(`Usuario creado con ID: ${nuevoId}`);
 
                     res.redirect(vista);
                 })

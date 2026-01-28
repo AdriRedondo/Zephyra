@@ -384,22 +384,24 @@ input {
     color: var(--text-color)
 }
 
-#custom-navbar .navbar-collapse {
-    display: none !important;
-}
-
-#custom-navbar .navbar-toggler {
-    display: block !important;
-}
-
-/* Expandido a partir de 1300px */
-@media (min-width: 1299px) {
+/*
+/* Expandido a partir de 1300px 
+@media (min-width: 1300px) {
     #custom-navbar .navbar-collapse {
         display: flex !important;
     }
 
     #custom-navbar .navbar-toggler {
         display: none !important;
+    }
+}
+
+/* Colapsado en pantallas menores a 1300px 
+
+@media (max-width: 1299px) {
+    #custom-navbar .navbar-collapse {
+        flex-basis: 100%;
+        flex-grow: 1;
     }
 }
 
@@ -410,5 +412,28 @@ input {
         text-align: center;
         display: flex;
         justify-content: center;
+    }
+}
+
+*/
+/* Logo centrado en modo colapsado */
+@media (max-width: 1199px) {
+    .logo-container {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .navbar-toggler {
+        order: -1;
+        /* Mueve el botón hamburguesa a la izquierda */
+    }
+}
+
+/* Logo normal en modo expandido */
+@media (min-width: 1200px) {
+    .logo-container {
+        margin-left: 0;
+        margin-right: auto;
     }
 }

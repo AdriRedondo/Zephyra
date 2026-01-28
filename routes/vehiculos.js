@@ -80,7 +80,7 @@ router.get('/es-vehiculos/nuevo-vehiculo', requiredAdminId, (req, res) => {
 });
 
 //POST para crear un nuevo vehículo como administrador
-router.post('/es-vehiculos/nuevo-vehiculo', requiredAdminId, validateVehicle, multerFactory.single('imagen'), (req, res) => {
+router.post('/es-vehiculos/nuevo-vehiculo', requiredAdminId, multerFactory.single('imagen'), validateVehicle, (req, res) => {
     //Validación del formato PNG
     if (req.fileValidationError === 'FORMATO_INVALIDO_PNG' ||
         (req.file && req.file.mimetype !== 'image/png')) {
@@ -192,7 +192,7 @@ router.get('/es-vehiculos/:id/editar', requiredAdminId, (req, res) => {
 
 });
 
-router.post('/es-vehiculos/:id/editar', requiredAdminId, validateVehicle, multerFactory.single('imagen'), (req, res) => {
+router.post('/es-vehiculos/:id/editar', requiredAdminId, multerFactory.single('imagen'), validateVehicle, (req, res) => {
     const id = req.params.id;
 
     // Manejar errores de validación de imagen

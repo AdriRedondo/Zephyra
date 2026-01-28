@@ -1,6 +1,5 @@
-
-// SISTEMA DE ATAJOS DE TECLADO CONFIGURABLES
-
+// SISTEMA DE ATAJOS DE TECLADO Y ACCESIBILIDAD
+// Versión mejorada que guarda en la base de datos del usuario
 
 // Atajos por defecto
 const DEFAULT_SHORTCUTS = {
@@ -13,127 +12,322 @@ const DEFAULT_SHORTCUTS = {
     'admin': 'Alt+M',
     'logout': 'Alt+G',
     'accesibilidad': 'Alt+A',
-    'buscar': 'Ctrl+K',
     'ayuda': 'F1'
 };
 
-// Cargar atajos personalizados o usar defaults
-function cargarAtajos() {
-    const saved = localStorage.getItem('keyboardShortcuts');
-    return saved ? JSON.parse(saved) : { ...DEFAULT_SHORTCUTS };
+// Variable para preferencias actuales (se sincroniza con BD)
+let preferenciasActuales = {
+    fontSize: '100',
+    theme: 'light',
+    atajos: null
+};
+
+// Bandera para saber si el usuario está autenticado
+let usuarioAutenticado = false;
+
+// GESTIÓN DE PREFERENCIAS DE ACCESIBILIDAD
+// ---------------------------------------------------
+
+// Función para cargar preferencias desde la BD al iniciar
+function cargarPreferenciasBD() {
+    fetch('/api/accesibilidad/preferencias')
+        .then(response => response.json())
+        .then(result => {
+            if (result.success && result.data) {
+                usuarioAutenticado = true;
+                const prefs = result.data;
+                console.log('Preferencias cargadas desde BD:', prefs);
+
+                // Guardar preferencias actuales
+                preferenciasActuales = {
+                    fontSize: prefs.fontSize || '100',
+                    theme: prefs.theme || 'light',
+                    atajos: prefs.atajos || null
+                };
+
+                // Aplicar las preferencias
+                aplicarPreferencias(preferenciasActuales);
+            } else if (result.success && !result.data) {
+                // Usuario autenticado pero sin preferencias guardadas
+                usuarioAutenticado = true;
+                aplicarPreferenciasDefault();
+            } else {
+                // Usuario no autenticado
+                usuarioAutenticado = false;
+            }
+        })
+        .catch(err => {
+            console.log('ℹNo hay sesión activa');
+            usuarioAutenticado = false;
+        });
+}
+// Aplicar preferencias
+function aplicarPreferencias(prefs) {
+    // Aplicar tamaño de fuente
+    if (prefs.fontSize) {
+        document.documentElement.style.fontSize = prefs.fontSize + "%";
+        actualizarUIFontSize(prefs.fontSize);
+    }
+
+    // Aplicar tema
+    if (prefs.theme) {
+        if (prefs.theme === "dark") {
+            document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+            document.documentElement.removeAttribute("data-theme");
+        }
+        actualizarUITheme(prefs.theme);
+    }
+
+    // Cargar atajos personalizados si existen
+    if (prefs.atajos) {
+        guardarAtajosEnMemoria(prefs.atajos);
+    }
 }
 
-// Guardar atajos personalizados
-function guardarAtajos(shortcuts) {
-    localStorage.setItem('keyboardShortcuts', JSON.stringify(shortcuts));
-    console.log('Atajos guardados:', shortcuts);
+// Aplicar preferencias por defecto
+function aplicarPreferenciasDefault() {
+    preferenciasActuales = {
+        fontSize: '100',
+        theme: 'light',
+        atajos: null
+    };
+    document.documentElement.style.fontSize = "100%";
+    document.documentElement.removeAttribute("data-theme");
+    actualizarUIFontSize('100');
+    actualizarUITheme('light');
 }
 
-// Función para guardar preferencias en sesión
-function guardarPreferencias(tipo, valor) {
+// Actualizar UI de tamaño de fuente
+function actualizarUIFontSize(fontSize) {
+    const fontSmBtn = document.getElementById('font-sm-btn');
+    const fontNmBtn = document.getElementById('font-nm-btn');
+    const fontLgBtn = document.getElementById('font-lg-btn');
+
+    // Quitar disabled de todos
+    if (fontSmBtn) fontSmBtn.disabled = false;
+    if (fontNmBtn) fontNmBtn.disabled = false;
+    if (fontLgBtn) fontLgBtn.disabled = false;
+
+    // Quitar clase active de todos
+    if (fontSmBtn) fontSmBtn.classList.remove('active');
+    if (fontNmBtn) fontNmBtn.classList.remove('active');
+    if (fontLgBtn) fontLgBtn.classList.remove('active');
+
+    // Agregar disabled y active al botón seleccionado
+    if (fontSize === '80') {
+        if (fontSmBtn) {
+            fontSmBtn.classList.add('active');
+            fontSmBtn.disabled = true;
+        }
+    } else if (fontSize === '100') {
+        if (fontNmBtn) {
+            fontNmBtn.classList.add('active');
+            fontNmBtn.disabled = true;
+        }
+    } else if (fontSize === '120') {
+        if (fontLgBtn) {
+            fontLgBtn.classList.add('active');
+            fontLgBtn.disabled = true;
+        }
+    }
+}
+
+// Actualizar UI de tema
+function actualizarUITheme(theme) {
+    const lightBtn = document.getElementById("light-btn");
+    const darkBtn = document.getElementById("dark-btn");
+
+    if (lightBtn && darkBtn) {
+        if (theme === 'dark') {
+            darkBtn.disabled = true;
+            lightBtn.disabled = false;
+        } else {
+            lightBtn.disabled = true;
+            darkBtn.disabled = false;
+        }
+    }
+}
+
+
+
+// Cambiar tamaño de fuente
+function cambiarFontSize(size) {
+    document.documentElement.style.fontSize = size + "%";
+    preferenciasActuales.fontSize = size;
+    actualizarUIFontSize(size);
+}
+
+// Cambiar tema
+function cambiarTema(theme) {
+    if (theme === 'dark') {
+        document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+        document.documentElement.removeAttribute("data-theme");
+    }
+    preferenciasActuales.theme = theme;
+    actualizarUITheme(theme);
+}
+
+// Guardar preferencias en la BD (solo para usuarios autenticados)
+function guardarPreferenciasPermanentes() {
+    if (!usuarioAutenticado) {
+        mostrarMensajeError('Debes iniciar sesión para guardar tus preferencias permanentemente');
+        return;
+    }
+
+    // Obtener atajos actuales
+    const atajosActuales = cargarAtajos();
+
     fetch('/api/accesibilidad/preferencias', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ [tipo]: valor })
+        body: JSON.stringify({
+            fontSize: preferenciasActuales.fontSize,
+            theme: preferenciasActuales.theme,
+            atajos: atajosActuales
+        })
     })
         .then(response => response.json())
         .then(data => {
-            console.log('Preferencias guardadas:', data);
-            localStorage.setItem(tipo, valor);
-        })
-        .catch(err => {
-            console.error('Error al guardar preferencias:', err);
-            localStorage.setItem(tipo, valor);
-        });
-}
-
-// Función para cargar preferencias al iniciar
-function cargarPreferencias() {
-    fetch('/api/accesibilidad/preferencias')
-        .then(response => response.json())
-        .then(result => {
-            if (result.success && result.data) {
-                const prefs = result.data;
-
-                // Aplicar fontSize
-                if (prefs.fontSize) {
-                    document.documentElement.style.fontSize = prefs.fontSize + "%";
-                    localStorage.setItem("fontSize", prefs.fontSize);
-                }
-
-                // Aplicar theme
-                if (prefs.theme) {
-                    if (prefs.theme === "dark") {
-                        document.documentElement.setAttribute("data-theme", "dark");
-                        if (darkBtn) darkBtn.disabled = true;
-                        if (lightBtn) lightBtn.disabled = false;
-                    }
-                    localStorage.setItem("theme", prefs.theme);
-                }
+            if (data.success) {
+                console.log('Preferencias guardadas en BD:', data);
+                mostrarMensajeExito('Preferencias guardadas correctamente');
+                preferenciasActuales.atajos = atajosActuales;
+            } else {
+                console.error('Error al guardar:', data);
+                mostrarMensajeError(data.message || 'Error al guardar las preferencias');
             }
         })
         .catch(err => {
-            console.error('Error al cargar preferencias:', err);
+            console.error('Error en petición:', err);
+            mostrarMensajeError('Error de conexión al guardar');
         });
 }
 
-document.getElementById("font-sm-btn").addEventListener("click", () => {
-    document.documentElement.style.fontSize = "80%";
-    guardarPreferencias("fontSize", "80");
+// Restaurar preferencias por defecto
+function restaurarPreferenciasDefault() {
+    if (!confirm('¿Restaurar todas las preferencias a valores por defecto?')) {
+        return;
+    }
+
+    if (usuarioAutenticado) {
+        // Eliminar de BD
+        fetch('/api/accesibilidad/preferencias', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Preferencias eliminadas de BD');
+                aplicarPreferenciasDefault();
+                // Restaurar atajos también
+                guardarAtajos(DEFAULT_SHORTCUTS);
+                mostrarMensajeExito('Preferencias restauradas a valores por defecto');
+            })
+            .catch(err => {
+                console.error('Error al eliminar preferencias:', err);
+                aplicarPreferenciasDefault();
+                mostrarMensajeError('Error al restaurar preferencias');
+            });
+    } else {
+        // Usuario no autenticado, limpiar localStorage
+        localStorage.removeItem('fontSize');
+        localStorage.removeItem('theme');
+        aplicarPreferenciasDefault();
+        guardarAtajos(DEFAULT_SHORTCUTS);
+        mostrarMensajeExito('Preferencias restauradas localmente');
+    }
+}
+
+// Mensajes de éxito y error
+function mostrarMensajeExito(texto) {
+    const msg = document.createElement('div');
+    msg.className = 'alert alert-success alert-dismissible fade show';
+    msg.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:10000;min-width:300px;box-shadow:0 4px 12px rgba(0,0,0,0.15);';
+    msg.innerHTML = `
+        <i class="bi bi-check-circle-fill me-2"></i>${texto}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(msg);
+    setTimeout(() => msg.remove(), 4000);
+}
+
+function mostrarMensajeError(texto) {
+    const msg = document.createElement('div');
+    msg.className = 'alert alert-danger alert-dismissible fade show';
+    msg.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:10000;min-width:300px;box-shadow:0 4px 12px rgba(0,0,0,0.15);';
+    msg.innerHTML = `
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>${texto}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(msg);
+    setTimeout(() => msg.remove(), 4000);
+}
+
+// GESTIÓN DE ATAJOS DE TECLADO
+//------------------------------------------
+
+// Cargar atajos personalizados o usar defaults
+function cargarAtajos() {
+    // Si hay atajos en las preferencias actuales, usarlos
+    if (preferenciasActuales.atajos) {
+        return preferenciasActuales.atajos;
+    }
+
+    // Si no, buscar en localStorage
+    const saved = localStorage.getItem('keyboardShortcuts');
+    return saved ? JSON.parse(saved) : { ...DEFAULT_SHORTCUTS };
+}
+
+// Guardar atajos en localStorage (temporal)
+function guardarAtajos(shortcuts) {
+    //localStorage.setItem('keyboardShortcuts', JSON.stringify(shortcuts));
+    console.log('Atajos guardados en localStorage:', shortcuts);
+}
+
+// Guardar atajos en memoria
+function guardarAtajosEnMemoria(shortcuts) {
+    preferenciasActuales.atajos = shortcuts;
+    //localStorage.setItem('keyboardShortcuts', JSON.stringify(shortcuts));
+}
+
+// EVENT LISTENERS
+// -------------------------------------------------
+document.getElementById("font-sm-btn")?.addEventListener("click", () => {
+    cambiarFontSize("80");
 });
 
-document.getElementById("font-nm-btn").addEventListener("click", () => {
-    document.documentElement.style.fontSize = "100%";
-    guardarPreferencias("fontSize", "100");
+document.getElementById("font-nm-btn")?.addEventListener("click", () => {
+    cambiarFontSize("100");
 });
 
-document.getElementById("font-lg-btn").addEventListener("click", () => {
-    document.documentElement.style.fontSize = "120%";
-    guardarPreferencias("fontSize", "120");
+document.getElementById("font-lg-btn")?.addEventListener("click", () => {
+    cambiarFontSize("120");
 });
 
-const html = document.documentElement;
-const lightBtn = document.getElementById("light-btn");
-const darkBtn = document.getElementById("dark-btn");
-
-// Cargar preferencia guardada al inicio
-
-cargarPreferencias();
-
-// Activar modo claro
-lightBtn.addEventListener("click", () => {
-    html.removeAttribute("data-theme");
-    guardarPreferencias("theme", "light");
-    lightBtn.disabled = true;
-    darkBtn.disabled = false;
+document.getElementById("light-btn")?.addEventListener("click", () => {
+    cambiarTema("light");
 });
 
-// Activar modo oscuro
-darkBtn.addEventListener("click", () => {
-    html.setAttribute("data-theme", "dark");
-    guardarPreferencias("theme", "dark");
-    darkBtn.disabled = true;
-    lightBtn.disabled = false;
+document.getElementById("dark-btn")?.addEventListener("click", () => {
+    cambiarTema("dark");
 });
-
 
 // MANEJADOR DE ATAJOS DE TECLADO
-
-
-// Normalizar combinación de teclas
+// ------------------------------------------
 function normalizarCombinacion(event) {
     const keys = [];
     if (event.ctrlKey) keys.push('Ctrl');
     if (event.altKey) keys.push('Alt');
     if (event.shiftKey) keys.push('Shift');
 
-    // Agregar la tecla principal
     if (event.key && !['Control', 'Alt', 'Shift'].includes(event.key)) {
-        // Manejar teclas especiales
         if (event.key.startsWith('F') && event.key.length <= 3) {
-            // Teclas de función F1-F12
             keys.push(event.key.toUpperCase());
         } else if (event.key === ' ') {
             keys.push('SPACE');
@@ -149,7 +343,6 @@ function normalizarCombinacion(event) {
     return keys.join('+');
 }
 
-// Mapeo de acciones a URLs/funciones
 const ACTIONS_MAP = {
     'inicio': () => window.location.href = '/es-inicio',
     'vehiculos': () => window.location.href = '/es-vehiculos',
@@ -166,34 +359,27 @@ const ACTIONS_MAP = {
             bsModal.show();
         }
     },
-    'buscar': () => {
-        const searchInput = document.querySelector('input[type="search"], input[name="buscar"]');
-        if (searchInput) searchInput.focus();
-    },
-    'ayuda': () => {
-        mostrarAyudaAtajos();
-    }
+    'ayuda': () => mostrarAyudaAtajos()
 };
 
-// Manejador global de eventos de teclado
 document.addEventListener('keydown', (event) => {
     const combinacion = normalizarCombinacion(event);
     const shortcuts = cargarAtajos();
 
-    // Buscar si la combinación coincide con algún atajo
     for (const [action, shortcut] of Object.entries(shortcuts)) {
         if (combinacion === shortcut) {
             event.preventDefault();
             const actionFn = ACTIONS_MAP[action];
-            if (actionFn) {
-                actionFn();
-            }
+            if (actionFn) actionFn();
             break;
         }
     }
 });
 
-// Mostrar panel de ayuda de atajos
+// ============================================
+// FUNCIONES DE AYUDA Y CONFIGURACIÓN
+// ============================================
+
 function mostrarAyudaAtajos() {
     const shortcuts = cargarAtajos();
     let html = '<div class="shortcuts-help"><h3>Atajos de Teclado</h3><table class="table table-sm"><thead><tr><th>Acción</th><th>Atajo</th></tr></thead><tbody>';
@@ -208,7 +394,6 @@ function mostrarAyudaAtajos() {
         'admin': 'Panel Admin',
         'logout': 'Cerrar Sesión',
         'accesibilidad': 'Accesibilidad',
-        'buscar': 'Buscar',
         'ayuda': 'Esta Ayuda'
     };
 
@@ -230,22 +415,14 @@ function mostrarAyudaAtajos() {
 }
 
 function cerrarAyudaAtajos() {
-    const overlay = document.getElementById('shortcuts-overlay');
-    if (overlay) overlay.remove();
+    document.getElementById('shortcuts-overlay')?.remove();
 }
 
-// ============================================
-// CONFIGURADOR DE ATAJOS PERSONALIZADO
-// ============================================
-
 function mostrarConfiguradorAtajos() {
-    // Cerrar el modal de accesibilidad si está abierto
     const modal = document.getElementById('accessModal');
     if (modal) {
         const bsModal = bootstrap.Modal.getInstance(modal);
-        if (bsModal) {
-            bsModal.hide();
-        }
+        if (bsModal) bsModal.hide();
     }
 
     const shortcuts = cargarAtajos();
@@ -259,7 +436,6 @@ function mostrarConfiguradorAtajos() {
         'admin': 'Panel Admin',
         'logout': 'Cerrar Sesión',
         'accesibilidad': 'Accesibilidad',
-        'buscar': 'Buscar',
         'ayuda': 'Ayuda de Atajos'
     };
 
@@ -272,14 +448,9 @@ function mostrarConfiguradorAtajos() {
         html += `
             <div class="shortcut-item">
                 <label>${labels[action] || action}</label>
-                <input
-                    type="text"
-                    class="form-control shortcut-input"
-                    data-action="${action}"
-                    data-original="${shortcut}"
-                    value="${shortcut}"
-                    placeholder="Haz clic y presiona teclas..."
-                >
+                <input type="text" class="form-control shortcut-input" 
+                    data-action="${action}" value="${shortcut}"
+                    placeholder="Haz clic y presiona teclas...">
             </div>
         `;
     }
@@ -289,8 +460,7 @@ function mostrarConfiguradorAtajos() {
     html += '<button class="btn border-secondary flex-fill" onclick="restaurarAtajosDefecto()">Restaurar atajos</button>';
     html += '<button class="btn border-secondary" onclick="cerrarConfiguradorAtajos()">Cancelar</button>';
     html += '<button class="btn border-success flex-fill" onclick="guardarAtajosConfig()">Guardar</button>';
-    html += '</div>';
-    html += '</div>';
+    html += '</div></div>';
 
     const overlay = document.createElement('div');
     overlay.id = 'shortcuts-config-overlay';
@@ -298,29 +468,19 @@ function mostrarConfiguradorAtajos() {
     overlay.innerHTML = html;
     document.body.appendChild(overlay);
 
-    // Agregar listeners a los inputs
     const inputs = overlay.querySelectorAll('.shortcut-input');
     inputs.forEach(input => {
-        // Cuando se presiona una tecla, capturar la combinación
         input.addEventListener('keydown', (e) => {
             e.preventDefault();
             e.stopPropagation();
-
             const combinacion = normalizarCombinacion(e);
-            if (combinacion && combinacion !== '') {
+            if (combinacion) {
                 input.value = combinacion;
                 input.dataset.newShortcut = combinacion;
-                input.style.backgroundColor = '#d4edda'; // Verde claro para indicar cambio
-                console.log(`Nuevo atajo para ${input.dataset.action}: ${combinacion}`);
+                input.style.backgroundColor = '#d4edda';
             }
         });
-
-        // Al hacer clic, seleccionar todo el texto para facilitar reemplazo
-        input.addEventListener('click', (e) => {
-            e.target.select();
-        });
-
-        // Al recibir foco, solo seleccionar el texto (no limpiar)
+        input.addEventListener('click', (e) => e.target.select());
         input.addEventListener('focus', (e) => {
             e.target.select();
             e.target.placeholder = 'Presiona la combinación de teclas...';
@@ -344,60 +504,22 @@ function guardarAtajosConfig() {
 
     guardarAtajos(newShortcuts);
     cerrarConfiguradorAtajos();
-
-    // Mostrar confirmación
-    const msg = document.createElement('div');
-    msg.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#198754;color:white;padding:1rem 2rem;border-radius:5px;z-index:10000;';
-    msg.textContent = 'Atajos guardados correctamente';
-    document.body.appendChild(msg);
-    setTimeout(() => msg.remove(), 2000);
+    mostrarMensajeExito('Atajos guardados. Usa "Guardar preferencias" para hacerlo permanente.');
 }
 
 function restaurarAtajosDefecto() {
     if (confirm('¿Restaurar atajos a valores por defecto?')) {
         guardarAtajos(DEFAULT_SHORTCUTS);
         cerrarConfiguradorAtajos();
-
-        const msg = document.createElement('div');
-        msg.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#198754;color:white;padding:1rem 2rem;border-radius:5px;z-index:10000;';
-        msg.textContent = 'Atajos restaurados a valores por defecto';
-        document.body.appendChild(msg);
-        setTimeout(() => msg.remove(), 2000);
+        mostrarMensajeExito('Atajos restaurados a valores por defecto');
     }
 }
 
 function cerrarConfiguradorAtajos() {
-    const overlay = document.getElementById('shortcuts-config-overlay');
-    if (overlay) overlay.remove();
+    document.getElementById('shortcuts-config-overlay')?.remove();
 }
 
-// ============================================
-// ORDEN DE TABULACIÓN MEJORADO
-// ============================================
-
-// Mejorar orden de tabulación en formularios
-function mejorarOrdenTabulacion() {
-    // Obtener todos los elementos interactivos
-    const elementos = document.querySelectorAll('a, button, input, select, textarea, [tabindex]');
-
-    // Elementos con tabindex explícito se ordenan primero
-    const conTabindex = Array.from(elementos).filter(el => {
-        const ti = parseInt(el.getAttribute('tabindex'));
-        return !isNaN(ti) && ti >= 0;
-    }).sort((a, b) => {
-        return parseInt(a.getAttribute('tabindex')) - parseInt(b.getAttribute('tabindex'));
-    });
-
-    // Elementos sin tabindex mantienen orden DOM
-    const sinTabindex = Array.from(elementos).filter(el => {
-        const ti = el.getAttribute('tabindex');
-        return ti === null || ti === '';
-    });
-
-    console.log(`Orden de tabulación: ${conTabindex.length} elementos con tabindex, ${sinTabindex.length} en orden DOM`);
-}
-
-// Inyectar estilos para el panel de ayuda
+// Inyectar estilos
 function inyectarEstilosAyuda() {
     const style = document.createElement('style');
     style.textContent = `
@@ -411,28 +533,16 @@ function inyectarEstilosAyuda() {
             overflow-y: auto;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
-
         [data-theme="dark"] .shortcuts-help {
             background: #2d2d2d;
             color: #f0f0f0;
         }
-
         .shortcuts-help h3 {
             margin-bottom: 1.5rem;
             color: #198754;
         }
-
-        .shortcuts-help table {
-            margin-bottom: 1.5rem;
-            color: inherit;
-        }
-
-        .shortcuts-help table th,
-        .shortcuts-help table td {
-            color: inherit;
-            padding: 0.5rem;
-        }
-
+        .shortcuts-help table { margin-bottom: 1.5rem; color: inherit; }
+        .shortcuts-help table th, .shortcuts-help table td { color: inherit; padding: 0.5rem; }
         .shortcuts-help kbd {
             background: #f4f4f4;
             border: 1px solid #ccc;
@@ -442,33 +552,18 @@ function inyectarEstilosAyuda() {
             font-size: 0.9em;
             color: #333;
         }
-
         [data-theme="dark"] .shortcuts-help kbd {
             background: #444;
             border-color: #666;
             color: #f0f0f0;
         }
-
-        .shortcuts-help button {
-            width: 100%;
-        }
-
-        /* Indicador visual de foco mejorado */
+        .shortcuts-help button { width: 100%; }
         *:focus {
             outline: 3px solid #198754;
             outline-offset: 2px;
         }
-
-        [data-theme="dark"] *:focus {
-            outline-color: #4CAF50;
-        }
-
-        /* Estilos para el configurador de atajos */
-        .shortcuts-config {
-            max-width: 700px;
-            max-height: 90vh;
-        }
-
+        [data-theme="dark"] *:focus { outline-color: #4CAF50; }
+        .shortcuts-config { max-width: 700px; max-height: 90vh; }
         .shortcuts-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -477,35 +572,16 @@ function inyectarEstilosAyuda() {
             overflow-y: auto;
             padding: 0.5rem;
         }
-
-        .shortcut-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .shortcut-item label {
-            font-weight: 500;
-            margin: 0;
-        }
-
-        .shortcut-input {
-            cursor: pointer;
-        }
-
+        .shortcut-item { display: flex; flex-direction: column; gap: 0.5rem; }
+        .shortcut-item label { font-weight: 500; margin: 0; }
+        .shortcut-input { cursor: pointer; }
         .shortcut-input:focus {
             background-color: #ffffcc;
             border-color: #198754;
         }
-
-        [data-theme="dark"] .shortcut-input:focus {
-            background-color: #3a3a00;
-        }
-
+        [data-theme="dark"] .shortcut-input:focus { background-color: #3a3a00; }
         @media (min-width: 768px) {
-            .shortcuts-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+            .shortcuts-grid { grid-template-columns: 1fr 1fr; }
         }
     `;
     document.head.appendChild(style);
@@ -513,8 +589,6 @@ function inyectarEstilosAyuda() {
 
 // Ejecutar al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
-    mejorarOrdenTabulacion();
     inyectarEstilosAyuda();
-    console.log('Sistema de atajos de teclado activado');
-    console.log('Presiona F1 para ver la lista de atajos');
+    cargarPreferenciasBD();
 });

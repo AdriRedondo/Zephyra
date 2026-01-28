@@ -69,14 +69,6 @@ router.post('/submit_login', validateLogin, (req, res) => {
                 return res.render(vista, { error });
             }
 
-            //Si el usuario marcó 'Recordar contraseña', extendemos la vida de la cookie a 7días
-            if (recordar) {
-                req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000;
-            } else {
-                //Si no lo marcó, entonces expirará al cerrar el navegador
-                req.session.cookie.expires = false;
-            }
-
             //Guardamos lso datos del usuario en la sesión si todo salió bien
             req.session.usuario = {
                 id_usuario: user.id_usuario,
@@ -87,11 +79,27 @@ router.post('/submit_login', validateLogin, (req, res) => {
                 id_concesionario: user.id_concesionario
             };
 
-            //Redirigimos la vista según el idioma
-            if (language === 'english')
-                res.redirect('/en-user');
-            else
-                res.redirect('/login');
+            if (recordar) {
+                // Guardar sesión persistente 7 días
+                req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000;
+                req.session.recordar = true;
+
+                // Guardamos explícitamente en MySQL
+                req.session.save(err => {
+                    if (err) console.error('Error guardando sesión:', err);
+                    if (language === 'english') res.redirect('/en-user');
+                    else res.redirect('/login');
+                });
+            } else {
+                // Sesión temporal: expira al cerrar navegador
+                req.session.cookie.expires = false;
+                req.session.cookie.maxAge = null;
+                req.session.recordar = false;
+
+                // NO guardar en BD, solo en memoria temporal
+                if (language === 'english') res.redirect('/en-user');
+                else res.redirect('/login');
+            }
 
         });
     });

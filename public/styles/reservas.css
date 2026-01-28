@@ -57,6 +57,7 @@
 .vehiculo-card {
     background-color: var(--card-color);
     border: 2px solid var(--border-color);
+    cursor: pointer;
 }
 
 
