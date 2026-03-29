@@ -90,26 +90,5 @@ router.post('/dealer-edit/:id', requiredAdminId, validateDealer, (req, res) => {
             res.redirect('/es-admin');
     });
 });
-/*
-// POST para eliminar un concesionario
-router.post('/dealer-delete/:id', requiredAdminId, checkDealerDependencies, (req, res) => {
-    const id = req.params.id;
 
-    Concesionario.eliminar(id, (err, filasAfectadas) => {
-        if (err) {
-            console.error(`Error al eliminar el concesionario con ID ${id}: `, err);
-            return res.status(500).send(`Error al eliminar el concesionario con ID ${id}: `);
-        }
-
-        if (filasAfectadas === 0) {
-            return res.status(404).send(`Concesionario con ID ${id} no encontrado`);
-        }
-
-        console.log(`Concesionario eliminado con ID: ${id}`);
-
-        //Hay que cambiarlo con ajax ??
-        res.redirect('/es-admin');
-    });
-});
-*/
 module.exports = router;

@@ -1,180 +1,216 @@
-const fs = require('fs');
-const path = require('path');
-const pool = require('./db');
+const mysql = require('mysql');
 const bcrypt = require('bcrypt');
-const Concesionario = require('./models/Concesionario');
-const Usuario = require('./models/Usuario');
-const Vehiculo = require('./models/Vehiculo');
 
-function cargarDatosIniciales() {
-    const jsonPath = path.join(__dirname, 'data.json');
+const DB_NAME = 'zephyra';
 
-    if (!fs.existsSync(jsonPath)) {
-        console.log('No se encontró el archivo data.json');
+// Configuración para XAMPP
+const CONFIG = {
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    password: ''
+};
+
+// 1. Conexión inicial para crear la BD
+const connection = mysql.createConnection(CONFIG);
+
+connection.connect((err) => {
+    if (err) {
+        console.error('Error de conexión:', err.message);
         return;
     }
 
-    const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-
-    // Solo verifica si la tabla Concesionarios está vacía
-    const consultaC = 'SELECT COUNT(*) AS hayDatosC FROM Concesionarios';
-    pool.query(consultaC, (err, res) => {
-        if (err) return console.error('Error al verificar Concesionarios:', err);
-
-        if (res[0].hayDatosC === 0) {
-            console.log('Base de datos vacía. Iniciando carga de datos...');
-
-            // Cargar todo en secuencia
-            cargarConcesionarios(data.concesionarios, () => {
-                console.log('Concesionarios del json cargados');
-
-                cargarUsuarios(data.usuarios, () => {
-                    console.log('Usuarios del json cargados');
-
-                    cargarVehiculos(data.vehiculos, () => {
-                        console.log('Vehículos del json cargados');
-                    });
-                });
-            });
-        } else {
-            console.log('La base de datos ya tiene datos, no se realiza carga inicial');
+    // 2. Crear base de datos
+    connection.query(`CREATE DATABASE IF NOT EXISTS ${DB_NAME}`, (err) => {
+        if (err) {
+            console.error('Error creando la base de datos:', err.message);
+            connection.end();
+            return;
         }
-    });
-}
+        // Cerrar conexión inicial
+        connection.end();
 
-// Carga de concesionarios usando el modelo
-function cargarConcesionarios(concesionarios, callback) {
-    if (!concesionarios || concesionarios.length === 0) {
-        console.log('No hay concesionarios que cargar');
-        return callback();
-    }
-
-    let completed = 0;
-    const total = concesionarios.length;
-
-    concesionarios.forEach(c => {
-        const datos = {
-            nombre: c.nombre,
-            ciudad: c.ciudad,
-            direccion: c.direccion,
-            telefono_contacto: c.telefono_contacto
-        };
-
-        Concesionario.crear(datos, (err, id) => {
-            if (err) {
-                console.log(`Error con ${c.nombre}:`, err.message);
-            } else {
-                console.log(`${c.nombre} insertado (ID: ${id})`);
-            }
-            completed++;
-            if (completed === total) callback();
+        // 3. Nueva conexión con la BD seleccionada
+        const dbConnection = mysql.createConnection({
+            ...CONFIG,
+            database: DB_NAME
         });
-    });
-}
 
-// Carga de usuarios usando el modelo
-function cargarUsuarios(usuarios, callback) {
-    if (!usuarios || usuarios.length === 0) {
-        console.log('No hay usuarios que cargar');
-        return callback();
-    }
-
-    let completed = 0;
-    const total = usuarios.length;
-    const saltRounds = 10;
-
-    usuarios.forEach(u => {
-        // Se encripta la contraseña del usuario
-        bcrypt.hash(u.contraseña, saltRounds, (err, hashedPassword) => {
+        dbConnection.connect((err) => {
             if (err) {
-                console.error(`Error codificando contraseña para ${u.nombre}:`, err);
-                if (++completed === total) callback();
+                console.error('Error conectando a la base de datos:', err.message);
                 return;
             }
 
-            const datos = {
-                nombre: u.nombre,
-                correo: u.correo,
-                contrasenya: hashedPassword,
-                rol: u.rol,
-                telefono: u.telefono,
-                id_concesionario: u.id_concesionario
+            // 4. Crear tablas
+
+            const tablas = [
+                {
+                    nombre: 'Concesionarios',
+                    consulta: `CREATE TABLE IF NOT EXISTS Concesionarios (
+                        id_concesionario INT AUTO_INCREMENT PRIMARY KEY,
+                        nombre VARCHAR(100) NOT NULL,
+                        ciudad VARCHAR(100) NOT NULL,
+                        direccion VARCHAR(200),
+                        telefono_contacto VARCHAR(20)
+                    )`
+                },
+                {
+                    nombre: 'Cliente',
+                    consulta: `CREATE TABLE IF NOT EXISTS Cliente (
+                        id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+                        nombre VARCHAR(100) NOT NULL,
+                        correo VARCHAR(150) NOT NULL UNIQUE,
+                        telefono VARCHAR(20)
+                    )`
+                },
+                {
+                    nombre: 'Usuarios',
+                    consulta: `CREATE TABLE IF NOT EXISTS Usuarios (
+                        id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+                        nombre VARCHAR(100) NOT NULL,
+                        correo VARCHAR(150) NOT NULL UNIQUE,
+                        contraseña VARCHAR(255) NOT NULL, 
+                        rol ENUM('empleado', 'admin') DEFAULT 'empleado',
+                        telefono VARCHAR(20),
+                        id_concesionario INT,
+                        preferencias_accesibilidad JSON,
+                        CONSTRAINT fk_usuario_concesionario
+                            FOREIGN KEY (id_concesionario)
+                            REFERENCES Concesionarios(id_concesionario)
+                            ON DELETE SET NULL
+                            ON UPDATE CASCADE
+                    )`
+                },
+                {
+                    nombre: 'Vehiculos',
+                    consulta: `CREATE TABLE IF NOT EXISTS Vehiculos (
+                        id_vehiculo INT AUTO_INCREMENT PRIMARY KEY,
+                        matricula VARCHAR(20) NOT NULL UNIQUE,
+                        marca VARCHAR(50) NOT NULL,
+                        modelo VARCHAR(50) NOT NULL,
+                        anyo_matriculacion YEAR,
+                        numero_plazas INT,
+                        autonomia_km DECIMAL(6,1),
+                        color VARCHAR(30),
+                        imagen LONGBLOB,
+                        estado ENUM('disponible', 'reservado', 'mantenimiento') DEFAULT 'disponible',
+                        id_concesionario INT NOT NULL,
+                        CONSTRAINT fk_vehiculo_concesionario
+                            FOREIGN KEY (id_concesionario)
+                            REFERENCES Concesionarios(id_concesionario)
+                            ON DELETE CASCADE
+                            ON UPDATE CASCADE
+                    )`
+                },
+                {
+                    nombre: 'Reservas',
+                    consulta: `CREATE TABLE IF NOT EXISTS Reservas (
+                        id_reserva INT AUTO_INCREMENT PRIMARY KEY,
+                        id_usuario INT,
+                        id_cliente INT NOT NULL,
+                        id_vehiculo INT NOT NULL,
+                        fecha_inicio DATETIME NOT NULL,
+                        fecha_fin DATETIME NOT NULL,
+                        estado ENUM('activa', 'finalizada', 'cancelada') DEFAULT 'activa',
+                        kilometros_recorridos DECIMAL(8,2),
+                        incidencias_reportadas TEXT,
+                        CONSTRAINT fk_reserva_usuario
+                            FOREIGN KEY (id_usuario)
+                            REFERENCES Usuarios(id_usuario)
+                            ON DELETE SET NULL
+                            ON UPDATE CASCADE,
+                        CONSTRAINT fk_reserva_cliente
+                            FOREIGN KEY (id_cliente)
+                            REFERENCES Cliente(id_cliente)
+                            ON DELETE CASCADE
+                            ON UPDATE CASCADE,
+                        CONSTRAINT fk_reserva_vehiculo
+                            FOREIGN KEY (id_vehiculo)
+                            REFERENCES Vehiculos(id_vehiculo)
+                            ON DELETE CASCADE
+                            ON UPDATE CASCADE
+                    )`
+                }
+            ];
+
+            // Función recursiva para crear tablas
+            let i = 0;
+            const crearSiguienteTabla = () => {
+                if (i >= tablas.length) {
+                    console.log('');
+                    // 5. Crear usuario admin
+                    crearUsuarioAdmin(dbConnection);
+                    return;
+                }
+
+                const tabla = tablas[i];
+                dbConnection.query(tabla.consulta, (err) => {
+                    if (err) {
+                        console.error(`Error creando la tabla "${tabla.nombre}":`, err.message);
+                        dbConnection.end();
+                        return;
+                    }
+                    console.log(`Tabla "${tabla.nombre}" creada`);
+                    i++;
+                    crearSiguienteTabla();
+                });
             };
 
-            Usuario.crear(datos, (err, id) => {
-                if (err) {
-                    console.log(`Error al insertar el usuario ${u.nombre}:`, err.message);
-                } else {
-                    console.log(`Usuario ${u.nombre} insertado (ID: ${id})`);
-                }
-
-                completed++;
-                if (completed === total) {
-                    callback();
-                }
-            });
+            crearSiguienteTabla();
         });
     });
-}
+});
 
-// Carga de vehículos usando el modelo
-function cargarVehiculos(vehiculos, callback) {
-    if (!vehiculos || vehiculos.length === 0) {
-        console.log('No hay vehículos que cargar');
-        return callback();
-    }
+// Función para crear usuario admin
+function crearUsuarioAdmin(dbConnection) {
 
-    let completed = 0;
-    const total = vehiculos.length;
-    const imagenesDir = path.join(__dirname, 'public', 'images', 'vehiculos');
-
-    vehiculos.forEach(v => {
-        // Leer la imagen PNG desde el archivo si existe
-        let imagenBuffer = null;
-
-        if (v.imagen) {
-            const imagePath = path.join(imagenesDir, v.imagen);
-            if (fs.existsSync(imagePath)) {
-                try {
-                    // Leer el archivo como Buffer (BLOB)
-                    imagenBuffer = fs.readFileSync(imagePath);
-                } catch (error) {
-                    console.error(`Error al leer imagen ${v.imagen}:`, error.message);
-                }
-            } else {
-                console.log(`Advertencia: No se encontró la imagen ${imagePath}`);
-            }
-        }
-
-        const datos = {
-            matricula: v.matricula,
-            marca: v.marca,
-            modelo: v.modelo,
-            anyo_matriculacion: v.anyo_matriculacion,
-            numero_plazas: v.numero_plazas,
-            autonomia_km: v.autonomia_km,
-            color: v.color,
-            imagen: imagenBuffer,
-            estado: v.estado,
-            id_concesionario: v.id_concesionario
-        };
-
-        Vehiculo.crear(datos, (err, id) => {
+    // Verificar si ya existe
+    dbConnection.query(
+        'SELECT id_usuario FROM Usuarios WHERE correo = ?',
+        ['admin@zephyra.com'],
+        (err, results) => {
             if (err) {
-                console.error(`Error con ${v.matricula}:`, err.message);
-            } else {
-                console.log(`Vehículo ${v.matricula} insertado (ID: ${id})`);
+                console.error('Error verificando usuario admin:', err.message);
+                dbConnection.end();
+                return;
             }
 
-            completed++;
-            if (completed === total) {
-                callback();
+            if (results.length > 0) {
+                console.log('Usuario admin ya existe, omitiendo...');
+                dbConnection.end();
+
+                return;
             }
-        });
-    });
-}
 
+            // Cifrar contraseña
+            bcrypt.hash('Admin123!', 10, (err, passwordHash) => {
+                if (err) {
+                    console.error('Error cifrando contraseña:', err.message);
+                    dbConnection.end();
+                    return;
+                }
 
-module.exports = {
-    cargarDatosIniciales
+                // Insertar usuario admin
+                dbConnection.query(
+                    `INSERT INTO Usuarios (nombre, correo, contraseña, rol) 
+                     VALUES (?, ?, ?, ?)`,
+                    ['Administrador', 'admin@zephyra.com', passwordHash, 'admin'],
+                    (err) => {
+                        if (err) {
+                            console.error('❌ Error creando usuario admin:', err.message);
+                            dbConnection.end();
+                            return;
+                        }
+
+                        console.log('Usuario admin creado');
+                        console.log('Email: admin@zephyra.com');
+                        console.log('Password: Admin123!');
+                        dbConnection.end();
+
+                    }
+                );
+            });
+        }
+    );
 }

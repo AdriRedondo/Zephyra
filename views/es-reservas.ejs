@@ -26,8 +26,8 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="correo" class="form-label">Correo
-                                    electrónico: <span class="text-danger">*</span></label>
+                                <label for="correo" class="form-label">Correo electrónico: <span
+                                        class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text">
                                         <i class="bi bi-envelope"></i>
@@ -38,24 +38,7 @@
                                 <span id="correo-error" class="error" aria-live="polite"></span>
                             </div>
 
-                            <div class="col-md-6">
-                                <label for="vehiculo-seleccionado" class="form-label">Vehículo a reservar: <span
-                                        class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="bi bi-ev-front"></i>
-                                    </span>
-                                    <input type="text" id="vehiculo-seleccionado" class="form-control"
-                                        placeholder="Haz clic para seleccionar un vehículo" data-bs-toggle="modal"
-                                        data-bs-target="#modalVehiculos" readonly required>
-                                    <input type="hidden" id="vehiculo-id" name="vehiculo">
-                                    <button type="button" class="btn border-secondary" data-bs-toggle="modal"
-                                        data-bs-target="#modalVehiculos" aria-label="Buscar vehículo">
-                                        <i class="bi bi-search"></i>
-                                    </button>
-                                </div>
-                                <span id="vehículo-error" class="error" aria-live="polite"></span>
-                            </div>
+                            <!-- FECHAS PRIMERO -->
                             <div class="col-md-6">
                                 <label for="inicio" class="form-label">Inicio de reserva: <span
                                         class="text-danger">*</span>
@@ -64,23 +47,55 @@
                                     <span class="input-group-text">
                                         <i class="bi bi-calendar"></i>
                                     </span>
-                                    <input type="datetime-local" id="inicio" name="inicio" class="form-control" required>
+                                    <input type="datetime-local" id="inicio" name="inicio" class="form-control"
+                                        required>
                                 </div>
                                 <span id="inicio-error" class="error" aria-live="polite"></span>
-
                             </div>
+
                             <div class="col-md-6">
-                                <label for="horas" class="form-label">Horas de reserva: <span
+                                <label for="fin" class="form-label">Fin de reserva: <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-calendar-check"></i>
+                                    </span>
+                                    <input type="datetime-local" id="fin" name="fin" class="form-control" required>
+                                </div>
+                                <span id="fin-error" class="error" aria-live="polite"></span>
+                            </div>
+
+                            <!-- AVISO: Debe seleccionar fechas primero -->
+                            <div class="col-md-12" id="aviso-fechas">
+                                <div class="alert alert-info d-flex align-items-center" role="alert">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <div>
+                                        Selecciona las fechas de inicio y fin para ver los vehículos disponibles
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SELECTOR DE VEHÍCULO (deshabilitado hasta seleccionar fechas) -->
+                            <div class="col-md-6">
+                                <label for="vehiculo-seleccionado" class="form-label">Vehículo a reservar: <span
                                         class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text">
-                                        <i class="bi bi-clock"></i>
+                                        <i class="bi bi-ev-front"></i>
                                     </span>
-                                    <input type="number" id="horas" name="horas" class="form-control"
-                                        placeholder="Ej: 24" required min="1">
+                                    <input type="text" id="vehiculo-seleccionado" class="form-control"
+                                        placeholder="Primero selecciona las fechas" data-bs-toggle="modal"
+                                        data-bs-target="#modalVehiculos" readonly required disabled>
+                                    <input type="hidden" id="vehiculo-id" name="vehiculo">
+                                    <button type="button" class="btn border-secondary" id="btn-buscar-vehiculo"
+                                        data-bs-toggle="modal" data-bs-target="#modalVehiculos"
+                                        aria-label="Buscar vehículo" disabled>
+                                        <i class="bi bi-search"></i>
+                                    </button>
                                 </div>
-                                <span id="horas-error" class="error" aria-live="polite"></span>
+                                <span id="vehículo-error" class="error" aria-live="polite"></span>
                             </div>
+
                             <div class="col-md-6">
                                 <label for="telefono" class="form-label">Teléfono de contacto: <span
                                         class="text-danger">*</span></label>
@@ -93,45 +108,53 @@
                                 </div>
                                 <span id="telefono-error" class="error" aria-live="polite"></span>
                             </div>
-                            <div class="col-md-12">
-                                <label for="terminos">Aceptar términos y
-                                    condiciones <span class="text-danger">*</span></label>
+
+                            <div class="col-md-6">
+                                <label for="terminos">Aceptar términos y condiciones <span
+                                        class="text-danger">*</span></label>
                                 <input type="checkbox" id="terminos" name="terminos" class="form-check-input" required>
                             </div>
+
                             <div class="col-md-12 progress" role="progressbar"
                                 aria-label="Barra de progreso del formulario" aria-valuenow="16.7" aria-valuemin="0"
                                 aria-valuemax="100">
                                 <div class="progress-bar"></div>
                             </div>
+
                             <div>
-                                <div id="porcentaje-text">
-                                    0.0%
-                                </div>
+                                <div id="porcentaje-text">0.0%</div>
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                     <button type="reset" class="btn border-secondary" aria-label="Limpiar formulario">
-                                        <i class="bi bi-arrow-clockwise me-2"></i> Limpiar datos</button>
-                                    <button type="submit" class="btn border-success" aria-label="Enviar formulario"> <i
-                                            class="bi bi-send me-2"></i> Enviar reserva</button>
+                                        <i class="bi bi-arrow-clockwise me-2"></i> Limpiar datos
+                                    </button>
+                                    <button type="submit" class="btn border-success" aria-label="Enviar formulario">
+                                        <i class="bi bi-send me-2"></i> Enviar reserva
+                                    </button>
                                 </div>
-
-
                             </div>
                         </div>
                     </fieldset>
                 </div>
-
             </form>
         </section>
     </main>
+
     <!-- Modal de selección de vehículos -->
     <div class="modal fade" id="modalVehiculos" tabindex="-1" aria-labelledby="modalVehiculosLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalVehiculosLabel">Seleccionar Vehículo</h5>
+                    <h5 class="modal-title" id="modalVehiculosLabel">Vehículos Disponibles</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- Información de fechas seleccionadas -->
+                    <div class="alert alert-primary mb-3" id="info-fechas-modal">
+                        <i class="bi bi-calendar-range me-2"></i>
+                        <strong>Buscando vehículos disponibles para:</strong>
+                        <div id="rango-fechas-texto" class="mt-1"></div>
+                    </div>
+
                     <!-- Filtros en el modal -->
                     <div class="row mb-3">
                         <div class="col-md-3">
@@ -142,31 +165,43 @@
                         </div>
                         <div class="col-md-3">
                             <label for="filtro-modelo" class="form-label">Modelo:</label>
-                            <select id="filtro-modelo" class="form-select form-select-sm" aria-label="Filtrar por modelo">
+                            <select id="filtro-modelo" class="form-select form-select-sm"
+                                aria-label="Filtrar por modelo">
                                 <option value="">Todos</option>
                             </select>
                         </div>
                         <div class="col-md-3">
                             <label for="filtro-plazas" class="form-label">Plazas:</label>
-                            <select id="filtro-plazas" class="form-select form-select-sm" aria-label="Filtrar por número de plazas">
+                            <select id="filtro-plazas" class="form-select form-select-sm"
+                                aria-label="Filtrar por número de plazas">
                                 <option value="">Todas</option>
                             </select>
                         </div>
                         <div class="col-md-3">
                             <label for="filtro-concesionario" class="form-label">Concesionario:</label>
-                            <select id="filtro-concesionario" class="form-select form-select-sm" aria-label="Filtrar por concesionario">
+                            <select id="filtro-concesionario" class="form-select form-select-sm"
+                                aria-label="Filtrar por concesionario">
                                 <option value="">Todos</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Lista de vehículos -->
-                    <div id="lista-vehiculos" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-                        <!-- Aquí se cargarán los vehículos desde la BD en el js -->
+                    <!-- Loading spinner -->
+                    <div id="loading-vehiculos" class="text-center py-4" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Buscando vehículos disponibles...</p>
                     </div>
 
-                    <div id="sin-vehiculos" class="text-center py-4">
-                        <p class="text-muted">No hay vehículos disponibles con los filtros seleccionados</p>
+                    <!-- Lista de vehículos -->
+                    <div id="lista-vehiculos" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                        <!-- Aquí se cargarán los vehículos disponibles -->
+                    </div>
+
+                    <div id="sin-vehiculos" class="text-center py-4" style="display: none;">
+                        <i class="bi bi-calendar-x" style="font-size: 3rem; color: #6c757d;"></i>
+                        <p class="text-muted mt-3">No hay vehículos disponibles en el rango de fechas seleccionado</p>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -175,4 +210,5 @@
             </div>
         </div>
     </div>
+
     <%- include('footer', {scripts: ['formulario-reservas']}) -%>

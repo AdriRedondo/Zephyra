@@ -122,35 +122,9 @@
             "autonomia_km": 520,
             "color": "Negro",
             "imagen": "tesla1.png",
-            "estado": "disponible",
-            "tipo": "coche",
-            "id_concesionario": 1
-        },
-        {
-            "matricula": "2002TSL",
-            "marca": "Tesla",
-            "modelo": "Model 3",
-            "anyo_matriculacion": 2024,
-            "numero_plazas": 5,
-            "autonomia_km": 520,
-            "color": "Negro",
-            "imagen": "tesla2.png",
-            "estado": "disponible",
-            "tipo": "coche",
-            "id_concesionario": 2
-        },
-        {
-            "matricula": "2003TSL",
-            "marca": "Tesla",
-            "modelo": "Model Y",
-            "anyo_matriculacion": 2023,
-            "numero_plazas": 5,
-            "autonomia_km": 533,
-            "color": "Gris",
-            "imagen": "tesla3.png",
             "estado": "reservado",
             "tipo": "coche",
-            "id_concesionario": 3
+            "id_concesionario": 1
         },
         {
             "matricula": "2004TSL",
@@ -506,7 +480,6 @@
             "contraseña": "Maria123!",
             "rol": "empleado",
             "telefono": "600111222",
-            "concesionario_nombre": "Zephyra Madrid Centro",
             "id_concesionario": 2
         },
         {
@@ -515,7 +488,6 @@
             "contraseña": "Carlos123!",
             "rol": "empleado",
             "telefono": "600333444",
-            "concesionario_nombre": "Zephyra Barcelona Norte",
             "id_concesionario": 2
         },
         {
@@ -524,8 +496,181 @@
             "contraseña": "Ana123!",
             "rol": "empleado",
             "telefono": "607555666",
-            "concesionario_nombre": "Zephyra Valencia Sur",
             "id_concesionario": 3
+        }
+    ],
+    "clientes": [
+        {
+            "nombre": "Juan Pérez González",
+            "correo": "juan.perez@gmail.com",
+            "telefono": "612345678"
+        },
+        {
+            "nombre": "Laura Sánchez Ruiz",
+            "correo": "laura.sanchez@hotmail.com",
+            "telefono": "623456789"
+        },
+        {
+            "nombre": "Miguel Torres Fernández",
+            "correo": "miguel.torres@yahoo.es",
+            "telefono": "634567890"
+        },
+        {
+            "nombre": "Carmen Rodríguez López",
+            "correo": "carmen.rodriguez@outlook.com",
+            "telefono": "645678901"
+        },
+        {
+            "nombre": "David Martín García",
+            "correo": "david.martin@gmail.com",
+            "telefono": "656789012"
+        },
+        {
+            "nombre": "Isabel Hernández Ruiz",
+            "correo": "isabel.hernandez@live.com",
+            "telefono": "667890123"
+        },
+        {
+            "nombre": "Roberto Jiménez Moreno",
+            "correo": "roberto.jimenez@icloud.com",
+            "telefono": "678901234"
+        },
+        {
+            "nombre": "Patricia Díaz Castro",
+            "correo": "patricia.diaz@protonmail.com",
+            "telefono": "689012345"
+        },
+        {
+            "nombre": "Francisco Álvarez Serrano",
+            "correo": "francisco.alvarez@gmail.com",
+            "telefono": "690123456"
+        },
+        {
+            "nombre": "Elena Moreno Vega",
+            "correo": "elena.moreno@yahoo.com",
+            "telefono": "601234567"
+        },
+        {
+            "nombre": "Alberto Romero Navarro",
+            "correo": "alberto.romero@hotmail.es",
+            "telefono": "612345098"
+        },
+        {
+            "nombre": "Sofía Gil Ortiz",
+            "correo": "sofia.gil@gmail.com",
+            "telefono": "623456109"
+        },
+        {
+            "nombre": "Alejandro Canora",
+            "correo": "acanora@ucm.es",
+            "telefono": "912345678"
+        },
+        {
+            "nombre": "Pedro García Test",
+            "correo": "asdsdasd2@g.co",
+            "telefono": "963456789"
+        }
+    ],
+    "reservas": [
+        {
+            "id_usuario": 2,
+            "id_cliente": 1,
+            "id_vehiculo": 4,
+            "fecha_inicio": "2025-01-15T09:00:00",
+            "fecha_fin": "2026-01-20T18:00:00",
+            "estado": "activa",
+            "kilometros_recorridos": null,
+            "incidencias_reportadas": null
+        },
+        {
+            "id_usuario": 3,
+            "id_cliente": 2,
+            "id_vehiculo": 6,
+            "fecha_inicio": "2025-01-18T10:00:00",
+            "fecha_fin": "2026-01-22T17:00:00",
+            "estado": "activa",
+            "kilometros_recorridos": null,
+            "incidencias_reportadas": null
+        },
+        {
+            "id_usuario": 2,
+            "id_cliente": 3,
+            "id_vehiculo": 11,
+            "fecha_inicio": "2025-01-10T08:00:00",
+            "fecha_fin": "2026-01-12T20:00:00",
+            "estado": "activa",
+            "kilometros_recorridos": null,
+            "incidencias_reportadas": null
+        },
+        {
+            "id_usuario": 4,
+            "id_cliente": 4,
+            "id_vehiculo": 15,
+            "fecha_inicio": "2025-01-25T11:00:00",
+            "fecha_fin": "2026-01-28T16:00:00",
+            "estado": "activa",
+            "kilometros_recorridos": null,
+            "incidencias_reportadas": null
+        },
+        {
+            "id_usuario": 3,
+            "id_cliente": 5,
+            "id_vehiculo": 18,
+            "fecha_inicio": "2025-01-12T09:30:00",
+            "fecha_fin": "2025-01-14T19:00:00",
+            "estado": "cancelada",
+            "kilometros_recorridos": null,
+            "incidencias_reportadas": null
+        },
+        {
+            "id_usuario": 2,
+            "id_cliente": 6,
+            "id_vehiculo": 22,
+            "fecha_inicio": "2025-02-01T10:00:00",
+            "fecha_fin": "2026-02-05T18:00:00",
+            "estado": "activa",
+            "kilometros_recorridos": null,
+            "incidencias_reportadas": null
+        },
+        {
+            "id_usuario": 4,
+            "id_cliente": 7,
+            "id_vehiculo": 21,
+            "fecha_inicio": "2024-12-20T08:00:00",
+            "fecha_fin": "2024-12-23T20:00:00",
+            "estado": "activa",
+            "kilometros_recorridos": null,
+            "incidencias_reportadas": null
+        },
+        {
+            "id_usuario": 3,
+            "id_cliente": 8,
+            "id_vehiculo": 1,
+            "fecha_inicio": "2025-01-20T12:00:00",
+            "fecha_fin": "2026-01-24T14:00:00",
+            "estado": "activa",
+            "kilometros_recorridos": null,
+            "incidencias_reportadas": null
+        },
+        {
+            "id_usuario": 1,
+            "id_cliente": 13,
+            "id_vehiculo": 7,
+            "fecha_inicio": "2025-12-10T10:18:00",
+            "fecha_fin": "2025-12-10T11:18:00",
+            "estado": "cancelada",
+            "kilometros_recorridos": null,
+            "incidencias_reportadas": "Cancelada por el administrador"
+        },
+        {
+            "id_usuario": 2,
+            "id_cliente": 14,
+            "id_vehiculo": 8,
+            "fecha_inicio": "2025-12-10T10:22:00",
+            "fecha_fin": "2025-12-10T11:22:00",
+            "estado": "activa",
+            "kilometros_recorridos": null,
+            "incidencias_reportadas": null
         }
     ]
 }

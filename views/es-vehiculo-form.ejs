@@ -3,7 +3,7 @@
     <main>
         <section id="vehicle_id" class="vehicle">
             <form id="vehicle-form-id" class="formularios vehicle-form" aria-label="Formulario de vehiculo"
-                method="post"
+                method="post" enctype="multipart/form-data"
                 action="<%= editar ? `/es-vehiculos/${vehiculo.id_vehiculo}/editar`:`/es-vehiculos/nuevo-vehiculo` %>">
                 <div class="mb-3">
                     <fieldset class="vehicle-fs" name="vehicle">
@@ -193,4 +193,4 @@
         </section>
 
     </main>
-    <%- include('footer', {scripts: []}) -%>
+    <%- include('footer', {scripts: ['formulario-vehiculos']}) -%>

@@ -74,10 +74,25 @@ const middleWareSession = session({
 //Se aplica el middleware de la sesión
 app.use(middleWareSession);
 
+app.use((req, res, next) => {
+    // Si la sesión NO debe recordarse y existe en BD...
+    if (req.session && req.session.recordar === false) {
+
+        // Fuerza a que NO quede persistente
+        req.session.cookie.expires = false;
+        req.session.cookie.maxAge = null;
+
+        // Y si el usuario cerró el navegador, la sesión no volverá
+    }
+
+    next();
+});
+
 //Middleware para compartir datos de sesión con las vistas EJS
 app.use((req, res, next) => {
     res.locals.session = req.session;
     res.locals.usuario = req.session.usuario || null;
+
 
     // Detectar idioma desde la URL si no está en sesión
     let lang = req.session.lang || 'es';

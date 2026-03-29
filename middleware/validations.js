@@ -109,14 +109,6 @@ const validateVehicle = (req, res, next) => {
     const { matricula, marca, modelo, concesionario, anyo_matriculacion, numero_plazas, color, autonomia_km } = req.body;
     const id_concesionario = concesionario;
     const language = req.body.idioma;
-    console.log(req.body);
-    console.log(matricula);
-    console.log(marca);
-    console.log(modelo);
-    console.log(anyo_matriculacion);
-    console.log(numero_plazas);
-    console.log(color);
-    console.log(autonomia_km);
 
     // Validar campos obligatorios
     if (!matricula || !marca || !modelo || !id_concesionario || !anyo_matriculacion ||

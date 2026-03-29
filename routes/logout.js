@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const requiredLoggedIn = require('../middleware/autorizaciones').requiredLoggedIn
 
 //GET del logout de usuario en español
-router.get('/es-logout', (req, res) => {
+router.get('/es-logout', requiredLoggedIn, (req, res) => {
 
     //Se destruye la sesión actual del usuario logeado
     req.session.destroy((err) => {
@@ -20,7 +21,7 @@ router.get('/es-logout', (req, res) => {
 });
 
 //GET del logout de usuario en inglés
-router.get('/en-logout', (req, res) => {
+router.get('/en-logout', requiredLoggedIn, (req, res) => {
     res.render('en-home');
     console.log('The user logs out');
     //Implementar el resto

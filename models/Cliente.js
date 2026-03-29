@@ -5,16 +5,14 @@ class Cliente {
     static crear(datosCliente, callback) {
         const consulta = `
             INSERT INTO Cliente
-            (nombre, correo, telefono, direccion, codigo_postal)
-            VALUES (?, ?, ?, ?, ?)
+            (nombre, correo, telefono)
+            VALUES (?, ?, ?)
         `;
 
         const valores = [
             datosCliente.nombre,
             datosCliente.correo,
-            datosCliente.telefono || null,
-            datosCliente.direccion || null,
-            datosCliente.codigo_postal || null
+            datosCliente.telefono || null
         ];
 
         pool.query(consulta, valores, (err, result) => {
@@ -59,8 +57,7 @@ class Cliente {
     static actualizar(id, datos, callback) {
         const consulta = `
             UPDATE Cliente
-            SET nombre = ?, correo = ?, telefono = ?,
-                direccion = ?, codigo_postal = ?
+            SET nombre = ?, correo = ?, telefono = ?
             WHERE id_cliente = ?
         `;
 
@@ -68,8 +65,6 @@ class Cliente {
             datos.nombre,
             datos.correo,
             datos.telefono || null,
-            datos.direccion || null,
-            datos.codigo_postal || null,
             id
         ];
 
