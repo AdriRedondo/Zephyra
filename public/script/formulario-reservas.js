@@ -4,6 +4,55 @@ let vehiculosDisponibles = [];
 let todosLosVehiculos = [];
 let concesionarios = [];
 
+['nombre', 'correo', 'inicio', 'fin', 'telefono'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener('input', actualizarProgreso);
+        el.addEventListener('change', actualizarProgreso);
+    }
+});
+
+document.getElementById('terminos')?.addEventListener('change', actualizarProgreso);
+
+function actualizarProgreso() {
+    const campos = [
+        { valido: () => /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,}$/.test(document.getElementById('nombre')?.value.trim()) },
+        { valido: () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('correo')?.value.trim()) },
+        {
+            valido: () => {
+                const v = document.getElementById('inicio')?.value;
+                return v && new Date(v) > new Date();
+            }
+        },
+        {
+            valido: () => {
+                const inicio = document.getElementById('inicio')?.value;
+                const fin = document.getElementById('fin')?.value;
+                if (!inicio || !fin) return false;
+                const fi = new Date(inicio), ff = new Date(fin);
+                return ff > fi && (ff - fi) / (1000 * 60 * 60) >= 1;
+            }
+        },
+        { valido: () => document.getElementById('vehiculo-id')?.value !== '' },
+        { valido: () => /^[0-9]{9}$/.test(document.getElementById('telefono')?.value.trim()) },
+        { valido: () => document.getElementById('terminos')?.checked }
+    ];
+
+    const camposValidos = campos.filter(c => c.valido()).length;
+    const porcentaje = (camposValidos / campos.length) * 100;
+
+    const barra = document.querySelector('.progress-bar');
+    const texto = document.getElementById('porcentaje-text');
+
+    if (barra) {
+        barra.style.width = porcentaje + '%';
+        barra.style.transition = 'width 0.4s ease';
+        barra.classList.add('bg-success');
+    }
+
+    if (texto) texto.textContent = porcentaje.toFixed(1) + '%';
+}
+
 // Configurar fecha mínima (hoy)
 document.addEventListener('DOMContentLoaded', () => {
     const ahora = new Date();
@@ -137,20 +186,21 @@ function cargarDatosIniciales() {
             vehiculosCargados = true;
             verificarCargaCompleta();
         });
-
-    // Cargar concesionarios
-    fetch('/api/concesionarios')
-        .then(response => response.json())
-        .then(data => {
-            concesionarios = data;
-            concesionariosCargados = true;
-            verificarCargaCompleta();
-        })
-        .catch(error => {
-            errorConcesionarios = error;
-            concesionariosCargados = true;
-            verificarCargaCompleta();
-        });
+    /*
+// Cargar concesionarios
+fetch('/api/concesionarios')
+    .then(response => response.json())
+    .then(data => {
+        concesionarios = data;
+        concesionariosCargados = true;
+        verificarCargaCompleta();
+    })
+    .catch(error => {
+        errorConcesionarios = error;
+        concesionariosCargados = true;
+        verificarCargaCompleta();
+    });
+    */
 
     function verificarCargaCompleta() {
         if (vehiculosCargados && concesionariosCargados) {
