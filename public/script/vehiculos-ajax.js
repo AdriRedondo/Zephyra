@@ -124,9 +124,9 @@ function aplicarFiltros() {
         marca: elementos.selectMarca.value,
         modelo: elementos.selectModelo.value,
         plazas: elementos.selectPlazas.value,
-        concesionario: elementos.selectConcesionario.value,
+        concesionario: elementos.selectConcesionario ? elementos.selectConcesionario.value : '',
         ciudad: elementos.selectCiudad ? elementos.selectCiudad.value : '',
-        estado: elementos.selectEstado.value,
+        estado: elementos.selectEstado ? elementos.selectEstado.value : '',
         autonomia_min: elementos.inputAutonomia ? elementos.inputAutonomia.value : '',
         color: elementos.selectColor ? elementos.selectColor.value : ''
     };

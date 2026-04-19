@@ -416,12 +416,13 @@ input {
 }
 
 */
-/* Logo centrado en modo colapsado */
 @media (max-width: 1199px) {
     .logo-container {
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
+        top: 0.4rem;
+        z-index: 10;
     }
 
     .navbar-toggler {

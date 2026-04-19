@@ -77,6 +77,34 @@ class Vehiculo {
         });
     }
 
+    // Obtener vehículos disponibles de un concesionario concreto
+    static obtenerDisponiblesPorConcesionario(idConcesionario, callback) {
+        const consulta = `
+        SELECT 
+            v.id_vehiculo,
+            v.matricula,
+            v.marca,
+            v.modelo,
+            v.anyo_matriculacion,
+            v.numero_plazas,
+            v.autonomia_km,
+            v.color,
+            v.imagen,
+            v.estado,
+            c.nombre AS nombre_concesionario,
+            c.ciudad AS ciudad_concesionario
+        FROM Vehiculos v
+        LEFT JOIN Concesionarios c 
+            ON v.id_concesionario = c.id_concesionario
+        WHERE v.id_concesionario = ? AND v.estado = 'disponible'
+        ORDER BY v.marca, v.modelo
+    `;
+        pool.query(consulta, [idConcesionario], (err, results) => {
+            if (err) return callback(err, null);
+            callback(null, results);
+        });
+    }
+
     // Obtener solo la imagen de un vehículo por ID
     static obtenerImagen(id, callback) {
         pool.getConnection((err, con) => {

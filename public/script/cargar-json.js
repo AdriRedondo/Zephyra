@@ -20,13 +20,13 @@ function inicializarCargaJSON() {
 
         // Validar que se haya seleccionado un archivo
         if (!jsonFileInput.files || jsonFileInput.files.length === 0) {
-            alert('⚠️ Por favor, selecciona un archivo JSON');
+            alert('Por favor, selecciona un archivo JSON');
             return;
         }
 
         // Validar que el checkbox esté marcado
         if (!confirmarCheckbox.checked) {
-            alert('⚠️ Debes confirmar que entiendes que esta acción eliminará todos los datos');
+            alert('Debes confirmar que entiendes que esta acción eliminará todos los datos');
             return;
         }
 
@@ -34,19 +34,19 @@ function inicializarCargaJSON() {
 
         // Validar extensión del archivo
         if (!archivo.name.toLowerCase().endsWith('.json')) {
-            alert('⚠️ Por favor, selecciona un archivo JSON válido (.json)');
+            alert('Por favor, selecciona un archivo JSON válido (.json)');
             return;
         }
 
         // Validar tamaño del archivo (10MB)
         if (archivo.size > 10 * 1024 * 1024) {
-            alert('⚠️ El archivo es demasiado grande. Tamaño máximo: 10MB');
+            alert('El archivo es demasiado grande. Tamaño máximo: 10MB');
             return;
         }
 
         // Mostrar alerta de confirmación
         const confirmacion = confirm(
-            '⚠️ ÚLTIMA ADVERTENCIA ⚠️\n\n' +
+            'ÚLTIMA ADVERTENCIA\n\n' +
             'Estás a punto de ELIMINAR TODOS los datos de la base de datos:\n\n' +
             '• Todos los concesionarios\n' +
             '• Todos los usuarios\n' +
@@ -54,7 +54,6 @@ function inicializarCargaJSON() {
             '• Todos los clientes\n' +
             '• Todas las reservas\n\n' +
             'Archivo a cargar: ' + archivo.name + '\n' +
-            'Tamaño: ' + (archivo.size / 1024).toFixed(2) + ' KB\n\n' +
             '¿Estás COMPLETAMENTE SEGURO de que deseas continuar?'
         );
 
@@ -102,11 +101,6 @@ function inicializarCargaJSON() {
                     collapse.hide();
                 }
 
-                // Recargar la página después de 2 segundos
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
-
             } else {
                 // Extraer mensaje de error
                 const text = await response.text();
@@ -137,7 +131,7 @@ function inicializarCargaJSON() {
             if (this.files && this.files.length > 0) {
                 const archivo = this.files[0];
                 const tamañoKB = (archivo.size / 1024).toFixed(2);
-                console.log(`📄 Archivo seleccionado: ${archivo.name} (${tamañoKB} KB)`);
+                console.log(`Archivo seleccionado: ${archivo.name}`);
             }
         });
     }
@@ -184,6 +178,10 @@ function mostrarModalExitoJSON(mensaje) {
 
     const modal = new bootstrap.Modal(document.getElementById('exitoModalJSON'));
     modal.show();
+
+    document.getElementById('exitoModalJSON').addEventListener('hidden.bs.modal', () => {
+        window.location.reload();
+    });
 }
 
 // Modal de error para carga de JSON (siguiendo el estilo de admin-ajax.js)

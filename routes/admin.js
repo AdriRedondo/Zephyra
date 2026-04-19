@@ -152,7 +152,7 @@ function limpiarBaseDatos(callback) {
     pool.getConnection((err, connection) => {
         if (err) return callback(err);
 
-        crearTablas();
+        //crearTablas();
 
 
         // 1. Desactivar las comprobaciones de claves foráneas
@@ -231,7 +231,7 @@ function cargarDatosCompletos(data, callback) {
                     cargarReservas(data.reservas, (err) => {
                         if (err) return callback(err);
 
-                        console.log('odos los datos cargados correctamente');
+                        console.log('Todos los datos cargados correctamente');
                         callback(null);
                     });
                 });
@@ -294,7 +294,7 @@ function cargarUsuarios(usuarios, callback) {
 
         usuarios.forEach((u) => {
             if (u.id_concesionario && !idsValidos.includes(u.id_concesionario)) {
-                console.log(`⚠️  Usuario "${u.nombre}" omitido: concesionario ID ${u.id_concesionario} no existe`);
+                console.log(`Usuario "${u.nombre}" omitido: concesionario ID ${u.id_concesionario} no existe`);
                 usuariosOmitidos++;
                 completed++;
                 if (completed === usuarios.length && !hasError) {
@@ -514,7 +514,7 @@ function cargarReservas(reservas, callback) {
                     Reserva.crear(datos, (err, id) => {
                         if (err && !hasError) {
                             hasError = true;
-                            console.error('❌ Error al crear reserva:', err.message);
+                            console.error('Error al crear reserva:', err.message);
                             return callback(err);
                         }
                         completed++;

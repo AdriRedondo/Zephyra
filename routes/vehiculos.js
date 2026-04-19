@@ -37,13 +37,28 @@ router.get('/es-vehiculos', (req, res) => {
             res.render('es-vehiculos', { vehiculos });
         });
     } else {
-        Vehiculo.obtenerDisponibles((err, vehiculos) => {
-            if (err) {
-                console.error('Error al obtener los vehículos:', err);
-                return res.status(500).send('Error al cargar vehículos');
-            }
-            res.render('es-vehiculos', { vehiculos });
-        });
+        const idConcesionario = req.session.usuario && req.session.usuario.id_concesionario;
+        //console.log(idConcesionario);
+
+        if (idConcesionario) {
+            Vehiculo.obtenerDisponiblesPorConcesionario(idConcesionario, (err, vehiculos) => {
+                if (err) {
+                    console.error('Error al obtener los vehículos:', err);
+                    return res.status(500).send('Error al cargar vehículos');
+                }
+                //console.log(vehiculos);
+
+                res.render('es-vehiculos', { vehiculos });
+            });
+        } else {
+            Vehiculo.obtenerDisponibles((err, vehiculos) => {
+                if (err) {
+                    console.error('Error al obtener los vehículos:', err);
+                    return res.status(500).send('Error al cargar vehículos');
+                }
+                res.render('es-vehiculos', { vehiculos });
+            });
+        }
     }
 });
 

@@ -122,7 +122,7 @@
             "autonomia_km": 520,
             "color": "Negro",
             "imagen": "tesla1.png",
-            "estado": "reservado",
+            "estado": "disponible",
             "tipo": "coche",
             "id_concesionario": 1
         },
@@ -187,7 +187,7 @@
             "autonomia_km": 420,
             "color": "Plateado",
             "imagen": "volvo2.png",
-            "estado": "reservado",
+            "estado": "disponible",
             "tipo": "coche",
             "id_concesionario": 2
         },
@@ -239,7 +239,7 @@
             "autonomia_km": 540,
             "color": "Azul",
             "imagen": "byd_seal2.png",
-            "estado": "reservado",
+            "estado": "disponible",
             "tipo": "coche",
             "id_concesionario": 5
         },
@@ -278,7 +278,7 @@
             "autonomia_km": 533,
             "color": "Blanco",
             "imagen": "tesla2.png",
-            "estado": "reservado",
+            "estado": "disponible",
             "tipo": "coche",
             "id_concesionario": 5
         },
@@ -330,7 +330,7 @@
             "autonomia_km": 510,
             "color": "Azul",
             "imagen": "tesla6.png",
-            "estado": "reservado",
+            "estado": "mantenimiento",
             "tipo": "coche",
             "id_concesionario": 9
         },
@@ -408,7 +408,7 @@
             "autonomia_km": 610,
             "color": "Blanco",
             "imagen": "VW3.png",
-            "estado": "reservado",
+            "estado": "mantenimiento",
             "tipo": "coche",
             "id_concesionario": 6
         },
@@ -497,6 +497,14 @@
             "rol": "empleado",
             "telefono": "607555666",
             "id_concesionario": 3
+        },
+        {
+            "nombre": "Alex Canora",
+            "correo": "alexcanora@zephyra.com",
+            "contraseña": "Alex123!",
+            "rol": "empleado",
+            "telefono": "111111111",
+            "id_concesionario": 2
         }
     ],
     "clientes": [

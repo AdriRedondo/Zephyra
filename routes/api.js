@@ -86,6 +86,7 @@ router.delete('/concesionarios/:id', requiredAdminId, checkDealerDependencies, (
 router.get('/vehiculos', (req, res) => {
     // Verificar si el usuario es admin
     const esAdmin = req.session && req.session.usuario && req.session.usuario.rol === 'admin';
+    const esEmpleado = req.session && req.session.usuario && req.session.usuario.rol === 'empleado';
 
     // Si no hay filtros, usar el modelo directamente
     if (Object.keys(req.query).length === 0) {
@@ -99,9 +100,14 @@ router.get('/vehiculos', (req, res) => {
                 });
             }
 
-            // Si no es admin, filtrar solo disponibles
+            // Si es empleado, filtrar solo disponibles
             if (!esAdmin) {
-                vehiculos = vehiculos.filter(v => v.estado === 'disponible');
+                const idConcesionario = req.session.usuario && req.session.usuario.id_concesionario;
+                vehiculos = vehiculos.filter(v => {
+                    if (v.estado !== 'disponible') return false;
+                    if (esEmpleado && idConcesionario) return v.id_concesionario === parseInt(idConcesionario);
+                    return true;
+                });
             }
 
             res.status(200).json({
@@ -137,6 +143,14 @@ router.get('/vehiculos', (req, res) => {
     if (!esAdmin) {
         consulta += ' AND v.estado = ?';
         params.push('disponible');
+    }
+
+    const idConcesionario = req.session.usuario && req.session.usuario.id_concesionario;
+    //console.log(idConcesionario);
+
+    if (esEmpleado && idConcesionario) {
+        consulta += ' AND v.id_concesionario = ?';
+        params.push(idConcesionario);
     }
 
     // Filtro por marca
@@ -219,26 +233,28 @@ router.get('/vehiculos/disponibles', (req, res) => {
     }
 
     // Consulta para obtener vehículos NO reservados en ese rango
-    const query = `
-        SELECT 
-            v.*,
-            c.nombre as concesionario_nombre,
-            c.ciudad as concesionario_ciudad
-        FROM Vehiculos v
-        LEFT JOIN Concesionarios c ON v.id_concesionario = c.id_concesionario
-        WHERE v.estado != 'mantenimiento'
-        AND v.id_vehiculo NOT IN (
-            SELECT r.id_vehiculo
-            FROM Reservas r
-            WHERE r.estado = 'activa'
-            AND (
-                -- El rango solicitado se superpone con la reserva existente
-                (? < r.fecha_fin AND ? > r.fecha_inicio)
-            )
-        )
+    const esAdmin = req.session && req.session.usuario && req.session.usuario.rol === 'admin';
+    const idConcesionario = req.session && req.session.usuario && req.session.usuario.id_concesionario;
+
+    const params = [fechaInicio, fechaFin];
+    let query = `
+    SELECT v.*, c.nombre as concesionario_nombre, c.ciudad as concesionario_ciudad
+    FROM Vehiculos v
+    LEFT JOIN Concesionarios c ON v.id_concesionario = c.id_concesionario
+    WHERE v.estado != 'mantenimiento'
+    AND v.id_vehiculo NOT IN (
+        SELECT r.id_vehiculo FROM Reservas r
+        WHERE r.estado = 'activa'
+        AND (? < r.fecha_fin AND ? > r.fecha_inicio)
+    )
     `;
 
-    pool.query(query, [fechaInicio, fechaFin], (err, vehiculos) => {
+    if (!esAdmin && idConcesionario) {
+        query += ' AND v.id_concesionario = ?';
+        params.push(idConcesionario);
+    }
+
+    pool.query(query, params, (err, vehiculos) => {
         if (err) {
             console.error('Error al obtener vehículos disponibles:', err);
             return res.status(500).json({
