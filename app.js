@@ -137,6 +137,30 @@ app.use((req, res, next) => {
     });
 });
 
+// Middleware: si la BD está vacía, redirigir a carga inicial
+app.use((req, res, next) => {
+    const rutasPermitidas = [
+        '/carga-inicial', '/es-admin/cargar-json',
+        '/es-login', '/en-login', '/submit_login',
+        '/es-logout', '/en-logout'
+    ];
+    const esEstatico = req.path.startsWith('/styles/') ||
+        req.path.startsWith('/script/') ||
+        req.path.startsWith('/images/') ||
+        req.path.startsWith('/fonts/') ||
+        req.path.startsWith('/bootstrap-icons/') ||
+        req.path.startsWith('/api/');
+
+    if (esEstatico || rutasPermitidas.includes(req.path)) return next();
+
+    const pool = require('./db');
+    pool.query('SELECT COUNT(*) as total FROM Vehiculos', (err, results) => {
+        if (err) return next(); // Si hay error de BD, no bloquear
+        if (results[0].total === 0) return res.redirect('/carga-inicial');
+        next();
+    });
+});
+
 //Rutas principales de la app
 app.use('/api', apiRouter);
 
@@ -164,6 +188,14 @@ app.get('/en-home', (req, res) => {
     res.render('en-home');
 });
 
+app.get('/carga-inicial', (req, res) => {
+    res.render('carga-inicial', {
+        usuario: req.session.usuario || null,
+        lang: 'es',
+        error_carga_json: req.query.error_carga_json || null,
+        success_carga_json: req.query.success_carga_json || null
+    });
+});
 
 //Manejador del error 404
 app.use(function (req, res, next) {

@@ -1,0 +1,45 @@
+<%- include('es-header', { title: 'Carga inicial de datos' , estilos: ['style', 'forms' ], actual_es: 'carga-inicial' ,
+    actual_en: 'carga-inicial' }) %>
+    <main>
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    <div class="card shadow">
+                        <div class="card-header bg-success text-white text-center">
+                            <h4>Base de datos vacía</h4>
+                            <p class="mb-0">Carga el fichero JSON para iniciar la aplicación</p>
+                        </div>
+                        <div class="card-body">
+
+                            <% if (typeof error_carga_json !=='undefined' && error_carga_json) { %>
+                                <div class="alert alert-danger">
+                                    <%= error_carga_json %>
+                                </div>
+                                <% } %>
+
+                                    <% if (!usuario || usuario.rol !=='admin' ) { %>
+                                        <div class="m-3">
+                                            Debes iniciar sesión como <strong>administrador</strong> para cargar datos.
+                                        </div>
+                                        <a href="/es-login" class="btn border-success w-100">Iniciar sesión</a>
+                                        <% } else { %>
+                                            <form action="/es-admin/cargar-json" method="POST"
+                                                enctype="multipart/form-data">
+                                                <input type="hidden" name="idioma" value="español">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Selecciona el fichero JSON</label>
+                                                    <input type="file" name="jsonFile" accept=".json"
+                                                        class="form-control" required>
+                                                </div>
+                                                <button type="submit" class="btn border-success w-100">Cargar
+                                                    datos</button>
+                                            </form>
+                                            <% } %>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <%- include('footer', {scripts: []}) -%>

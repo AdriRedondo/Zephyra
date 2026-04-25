@@ -55,15 +55,16 @@
                                 <a class="nav-link" href="/es-historial" accesskey="h">Mis Reservas</a>
                             </li>
                             <% } %>
+
+                                <li class="nav-item me-3">
+                                    <a role="button" class="nav-link pt-auto" accesskey="a" data-bs-toggle="modal"
+                                        data-bs-target="#accessModal">Accesibilidad</a>
+                                </li>
                                 <% if(!usuario) {%>
                                     <li class="nav-item me-3">
                                         <a class="nav-link pt-auto" href="/es-login" accesskey="l">Login</a>
                                     </li>
                                     <% } %>
-                                        <li class="nav-item me-3">
-                                            <a role="button" class="nav-link pt-auto" accesskey="a"
-                                                data-bs-toggle="modal" data-bs-target="#accessModal">Accesibilidad</a>
-                                        </li>
                                         <% if(usuario && usuario.rol==='admin' ) {%>
                                             <li class="nav-item me-3">
                                                 <a class="nav-link pt-auto" href="/es-admin"

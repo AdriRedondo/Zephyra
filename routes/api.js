@@ -561,19 +561,12 @@ router.put('/reservas/:id', validateReservation, (req, res) => {
 router.post('/reservas/:id/cancelar', (req, res) => {
     const id = req.params.id;
 
-    Reserva.cancelar(id, 'Cancelada por el administrador', (err, affectedRows) => {
+    Reserva.cancelarReserva(id, (err) => {
         if (err) {
             console.error('Error al cancelar reserva:', err);
             return res.status(500).json({
                 success: false,
                 message: 'Error al cancelar reserva'
-            });
-        }
-
-        if (affectedRows === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Reserva no encontrada'
             });
         }
 
