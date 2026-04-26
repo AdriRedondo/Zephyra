@@ -122,7 +122,7 @@
             "autonomia_km": 520,
             "color": "Negro",
             "imagen": "tesla1.png",
-            "estado": "disponible",
+            "estado": "reservado",
             "tipo": "coche",
             "id_concesionario": 1
         },
@@ -135,7 +135,7 @@
             "autonomia_km": 533,
             "color": "Azul",
             "imagen": "tesla4.png",
-            "estado": "disponible",
+            "estado": "reservado",
             "tipo": "coche",
             "id_concesionario": 1
         },
@@ -174,7 +174,7 @@
             "autonomia_km": 445,
             "color": "Gris",
             "imagen": "volvo1.png",
-            "estado": "disponible",
+            "estado": "reservado",
             "tipo": "coche",
             "id_concesionario": 1
         },
@@ -584,41 +584,37 @@
             "id_usuario": 2,
             "id_cliente": 1,
             "id_vehiculo": 4,
-            "fecha_inicio": "2025-01-15T09:00:00",
-            "fecha_fin": "2026-01-20T18:00:00",
+            "fecha_inicio": "2026-05-10T09:00:00",
+            "fecha_fin": "2026-05-15T18:00:00",
             "estado": "activa",
             "kilometros_recorridos": null,
-            "incidencias_reportadas": null
+            "incidencias_reportadas": null,
+            "puntuacion": null,
+            "comentario": null
         },
         {
             "id_usuario": 3,
             "id_cliente": 2,
-            "id_vehiculo": 6,
-            "fecha_inicio": "2025-01-18T10:00:00",
-            "fecha_fin": "2026-01-22T17:00:00",
+            "id_vehiculo": 5,
+            "fecha_inicio": "2026-05-20T10:00:00",
+            "fecha_fin": "2026-05-25T17:00:00",
             "estado": "activa",
             "kilometros_recorridos": null,
-            "incidencias_reportadas": null
-        },
-        {
-            "id_usuario": 2,
-            "id_cliente": 3,
-            "id_vehiculo": 11,
-            "fecha_inicio": "2025-01-10T08:00:00",
-            "fecha_fin": "2026-01-12T20:00:00",
-            "estado": "activa",
-            "kilometros_recorridos": null,
-            "incidencias_reportadas": null
+            "incidencias_reportadas": null,
+            "puntuacion": null,
+            "comentario": null
         },
         {
             "id_usuario": 4,
-            "id_cliente": 4,
-            "id_vehiculo": 15,
-            "fecha_inicio": "2025-01-25T11:00:00",
-            "fecha_fin": "2026-01-28T16:00:00",
+            "id_cliente": 3,
+            "id_vehiculo": 8,
+            "fecha_inicio": "2026-06-01T08:00:00",
+            "fecha_fin": "2026-06-05T20:00:00",
             "estado": "activa",
             "kilometros_recorridos": null,
-            "incidencias_reportadas": null
+            "incidencias_reportadas": null,
+            "puntuacion": null,
+            "comentario": null
         },
         {
             "id_usuario": 3,
@@ -628,37 +624,9 @@
             "fecha_fin": "2025-01-14T19:00:00",
             "estado": "cancelada",
             "kilometros_recorridos": null,
-            "incidencias_reportadas": null
-        },
-        {
-            "id_usuario": 2,
-            "id_cliente": 6,
-            "id_vehiculo": 22,
-            "fecha_inicio": "2025-02-01T10:00:00",
-            "fecha_fin": "2026-02-05T18:00:00",
-            "estado": "activa",
-            "kilometros_recorridos": null,
-            "incidencias_reportadas": null
-        },
-        {
-            "id_usuario": 4,
-            "id_cliente": 7,
-            "id_vehiculo": 21,
-            "fecha_inicio": "2024-12-20T08:00:00",
-            "fecha_fin": "2024-12-23T20:00:00",
-            "estado": "activa",
-            "kilometros_recorridos": null,
-            "incidencias_reportadas": null
-        },
-        {
-            "id_usuario": 3,
-            "id_cliente": 8,
-            "id_vehiculo": 1,
-            "fecha_inicio": "2025-01-20T12:00:00",
-            "fecha_fin": "2026-01-24T14:00:00",
-            "estado": "activa",
-            "kilometros_recorridos": null,
-            "incidencias_reportadas": null
+            "incidencias_reportadas": null,
+            "puntuacion": null,
+            "comentario": null
         },
         {
             "id_usuario": 1,
@@ -668,17 +636,141 @@
             "fecha_fin": "2025-12-10T11:18:00",
             "estado": "cancelada",
             "kilometros_recorridos": null,
-            "incidencias_reportadas": "Cancelada por el administrador"
+            "incidencias_reportadas": "Cancelada por el administrador",
+            "puntuacion": null,
+            "comentario": null
         },
         {
             "id_usuario": 2,
+            "id_cliente": 9,
+            "id_vehiculo": 1,
+            "fecha_inicio": "2025-01-15T09:00:00",
+            "fecha_fin": "2025-01-20T18:00:00",
+            "estado": "finalizada",
+            "kilometros_recorridos": 342,
+            "incidencias_reportadas": null,
+            "puntuacion": 5,
+            "comentario": "Impresionante autonomía, llegamos sin parar desde Madrid hasta Barcelona. El coche es silencioso y extremadamente cómodo."
+        },
+        {
+            "id_usuario": 3,
+            "id_cliente": 10,
+            "id_vehiculo": 4,
+            "fecha_inicio": "2025-03-10T10:00:00",
+            "fecha_fin": "2025-03-14T17:00:00",
+            "estado": "finalizada",
+            "kilometros_recorridos": 415,
+            "incidencias_reportadas": null,
+            "puntuacion": 4,
+            "comentario": "Muy buena experiencia. El autopilot funciona genial en autopista. La carga rápida es impresionante, en 20 minutos al 80%."
+        },
+        {
+            "id_usuario": 4,
+            "id_cliente": 11,
+            "id_vehiculo": 21,
+            "fecha_inicio": "2024-12-20T08:00:00",
+            "fecha_fin": "2024-12-23T20:00:00",
+            "estado": "finalizada",
+            "kilometros_recorridos": 178,
+            "incidencias_reportadas": null,
+            "puntuacion": 4,
+            "comentario": "Pequeño pero muy bien equipado. Perfecto para moverse por la ciudad, fácil de aparcar y con buena visibilidad."
+        },
+        {
+            "id_usuario": 2,
+            "id_cliente": 12,
+            "id_vehiculo": 10,
+            "fecha_inicio": "2025-07-10T12:00:00",
+            "fecha_fin": "2025-07-13T14:00:00",
+            "estado": "finalizada",
+            "kilometros_recorridos": 287,
+            "incidencias_reportadas": null,
+            "puntuacion": 5,
+            "comentario": "El C40 Recharge es una pasada. Precioso, eficiente y la integración con el teléfono es perfecta. Sin duda repetiría."
+        },
+        {
+            "id_usuario": 3,
+            "id_cliente": 1,
+            "id_vehiculo": 2,
+            "fecha_inicio": "2025-08-18T10:00:00",
+            "fecha_fin": "2025-08-20T18:00:00",
+            "estado": "finalizada",
+            "kilometros_recorridos": 148,
+            "incidencias_reportadas": "Fallo en la aplicación de gestión de carga. El aire acondicionado emitía un ruido extraño durante todo el trayecto.",
+            "puntuacion": 2,
+            "comentario": "El aire acondicionado hacía un ruido extraño y la app de carga falló varias veces. Experiencia bastante decepcionante."
+        },
+        {
+            "id_usuario": 5,
+            "id_cliente": 4,
+            "id_vehiculo": 11,
+            "fecha_inicio": "2025-09-05T09:00:00",
+            "fecha_fin": "2025-09-07T19:00:00",
+            "estado": "finalizada",
+            "kilometros_recorridos": 224,
+            "incidencias_reportadas": null,
+            "puntuacion": 3,
+            "comentario": "Correcto para uso urbano, pero la autonomía real en autopista se quedó bastante por debajo de los 430 km anunciados."
+        },
+        {
+            "id_usuario": 4,
+            "id_cliente": 6,
+            "id_vehiculo": 3,
+            "fecha_inicio": "2025-10-22T11:00:00",
+            "fecha_fin": "2025-10-25T16:00:00",
+            "estado": "finalizada",
+            "kilometros_recorridos": 312,
+            "incidencias_reportadas": null,
+            "puntuacion": 4,
+            "comentario": "Gran vehículo eléctrico. La carga rápida en DC es impresionante, de 10% a 80% en menos de media hora."
+        },
+        {
+            "id_usuario": 3,
+            "id_cliente": 8,
+            "id_vehiculo": 27,
+            "fecha_inicio": "2025-11-10T09:00:00",
+            "fecha_fin": "2025-11-12T18:00:00",
+            "estado": "finalizada",
+            "kilometros_recorridos": 195,
+            "incidencias_reportadas": "Vehículo entregado con batería al 40% y parabrisas sin limpiar. Tuvimos que parar a cargar antes de lo previsto.",
+            "puntuacion": 1,
+            "comentario": "El vehículo llegó con la batería al 40% y el parabrisas sucio. Muy mala organización, tuvimos que parar a cargar nada más salir."
+        },
+        {
+            "id_usuario": 2,
+            "id_cliente": 7,
+            "id_vehiculo": 9,
+            "fecha_inicio": "2025-04-15T10:00:00",
+            "fecha_fin": "2025-04-18T18:00:00",
+            "estado": "finalizada",
+            "kilometros_recorridos": 380,
+            "incidencias_reportadas": null,
+            "puntuacion": 5,
+            "comentario": "Espacioso y muy cómodo, perfecto para un viaje familiar largo. Los niños iban tranquilos y el consumo fue muy bajo."
+        },
+        {
+            "id_usuario": 4,
             "id_cliente": 14,
-            "id_vehiculo": 8,
-            "fecha_inicio": "2025-12-10T10:22:00",
-            "fecha_fin": "2025-12-10T11:22:00",
-            "estado": "activa",
-            "kilometros_recorridos": null,
-            "incidencias_reportadas": null
+            "id_vehiculo": 16,
+            "fecha_inicio": "2025-12-01T10:00:00",
+            "fecha_fin": "2025-12-03T18:00:00",
+            "estado": "finalizada",
+            "kilometros_recorridos": 167,
+            "incidencias_reportadas": null,
+            "puntuacion": null,
+            "comentario": null
+        },
+        {
+            "id_usuario": 2,
+            "id_cliente": 2,
+            "id_vehiculo": 23,
+            "fecha_inicio": "2026-01-15T11:00:00",
+            "fecha_fin": "2026-01-18T17:00:00",
+            "estado": "finalizada",
+            "kilometros_recorridos": 220,
+            "incidencias_reportadas": null,
+            "puntuacion": null,
+            "comentario": null
         }
     ]
 }

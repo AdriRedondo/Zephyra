@@ -392,9 +392,8 @@
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <div class="card border-warning">
-                            <div
-                                class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">
                                     <i class="bi bi-database-fill-gear me-2"></i>
                                     Cargar Base de Datos desde JSON
@@ -425,13 +424,12 @@
 
                                         <div class="mb-3">
                                             <label for="jsonFile" class="form-label">
-                                                <i class="bi bi-file-earmark-code me-2"></i>
                                                 Seleccionar archivo JSON
                                             </label>
                                             <input type="file" class="form-control" id="jsonFile" name="jsonFile"
                                                 accept=".json" required>
                                             <div class="form-text">
-                                                Solo se permiten archivos .json (máximo 10MB).
+                                                Solo se permiten archivos .json.
                                                 Debe contener: concesionarios, usuarios, vehiculos, clientes y reservas.
                                             </div>
                                         </div>
@@ -439,8 +437,7 @@
                                         <div class="form-check mb-3">
                                             <input class="form-check-input" type="checkbox" id="confirmarEliminacion"
                                                 required>
-                                            <label class="form-check-label text-danger fw-bold"
-                                                for="confirmarEliminacion">
+                                            <label class="form-check-label fw-bold" for="confirmarEliminacion">
                                                 Confirmo que entiendo que esta acción eliminará todos los datos actuales
                                             </label>
                                         </div>

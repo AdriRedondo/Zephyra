@@ -69,6 +69,7 @@
                                     <th>Estado</th>
                                     <th>Kilómetros</th>
                                     <th>Incidencias</th>
+                                    <th>Valoración</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -113,6 +114,25 @@
                                                     Ninguna
                                                     <% } %>
                                         </td>
+                                        <td>
+                                            <% if (reserva.estado==='finalizada' ) { %>
+                                                <% if (reserva.puntuacion) { %>
+                                                    <span class="text-warning">
+                                                        <% for(let i=1; i <=5; i++) { %>
+                                                            <i
+                                                                class="bi bi-star<%= i <= reserva.puntuacion ? '-fill' : '' %>"></i>
+                                                            <% } %>
+                                                    </span>
+                                                    <% } else { %>
+                                                        <button class="btn btn-sm border-success"
+                                                            onclick="abrirModalValorar('<%= reserva.id_reserva %>', '<%= reserva.marca %> <%= reserva.modelo %>')">
+                                                            <i class="bi bi-star me-1"></i> Valorar
+                                                        </button>
+                                                        <% } %>
+                                                            <% } else { %>
+                                                                —
+                                                                <% } %>
+                                        </td>
                                     </tr>
                                     <% }) %>
                             </tbody>
@@ -132,6 +152,106 @@
                 </a>
             </div>
         </div>
-    </main>
 
+    </main>
+    <!-- Modal de valoración -->
+    <div class="modal fade" id="modalValorar" tabindex="-1" aria-labelledby="modalValorarLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalValorarLabel">Valorar reserva</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modal-vehiculo-nombre" class="text-muted mb-3"></p>
+
+                    <label class="form-label fw-bold">Puntuación:</label>
+                    <div class="d-flex gap-2 mb-3" id="estrellas-selector">
+                        <% for(let i=1; i <=5; i++) { %>
+                            <i class="bi bi-star fs-3 text-warning estrella-btn" style="cursor:pointer"
+                                data-valor="<%= i %>"></i>
+                            <% } %>
+                    </div>
+                    <input type="hidden" id="puntuacion-seleccionada" value="">
+
+                    <label for="comentario-valoracion" class="form-label fw-bold">Comentario (opcional):</label>
+                    <textarea id="comentario-valoracion" class="form-control" rows="3"
+                        placeholder="Cuéntanos tu experiencia con este vehículo..."></textarea>
+
+                    <div id="valorar-error" class="text-danger mt-2" style="display:none"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn border-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn border-success" id="btn-enviar-valoracion">
+                        <i class="bi bi-send me-1"></i> Enviar valoración
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let reservaIdActual = null;
+
+        function abrirModalValorar(idReserva, nombreVehiculo) {
+            reservaIdActual = idReserva;
+            document.getElementById('modal-vehiculo-nombre').textContent = nombreVehiculo;
+            document.getElementById('puntuacion-seleccionada').value = '';
+            document.getElementById('comentario-valoracion').value = '';
+            document.getElementById('valorar-error').style.display = 'none';
+
+            // Resetear estrellas
+            document.querySelectorAll('.estrella-btn').forEach(e => {
+                e.classList.remove('bi-star-fill');
+                e.classList.add('bi-star');
+            });
+
+            new bootstrap.Modal(document.getElementById('modalValorar')).show();
+        }
+
+        // Selección de estrellas
+        document.querySelectorAll('.estrella-btn').forEach(estrella => {
+            estrella.addEventListener('click', () => {
+                const valor = parseInt(estrella.dataset.valor);
+                document.getElementById('puntuacion-seleccionada').value = valor;
+                document.querySelectorAll('.estrella-btn').forEach((e, i) => {
+                    e.classList.toggle('bi-star-fill', i < valor);
+                    e.classList.toggle('bi-star', i >= valor);
+                });
+            });
+        });
+
+        // Enviar valoración
+        document.getElementById('btn-enviar-valoracion').addEventListener('click', () => {
+            const puntuacion = document.getElementById('puntuacion-seleccionada').value;
+            const comentario = document.getElementById('comentario-valoracion').value;
+            const errorDiv = document.getElementById('valorar-error');
+
+            if (!puntuacion) {
+                errorDiv.textContent = 'Debes seleccionar una puntuación';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            fetch(`/api/reservas/${reservaIdActual}/valorar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ puntuacion, comentario })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        bootstrap.Modal.getInstance(document.getElementById('modalValorar')).hide();
+                        location.reload();
+                    } else {
+                        errorDiv.textContent = data.message;
+                        errorDiv.style.display = 'block';
+                    }
+                })
+                .catch(() => {
+                    errorDiv.textContent = 'Error al enviar la valoración';
+                    errorDiv.style.display = 'block';
+                });
+        });
+    </script>
     <%- include('footer', { scripts: [] }) %>

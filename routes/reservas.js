@@ -122,7 +122,7 @@ router.post('/submit-bookings', requiredLoggedIn, (req, res) => {
 
                 // NO CAMBIAR PERMANENTEMENTE EL ESTADO DEL VEHÍCULO
                 // El vehículo debe seguir "disponible" pero con reservas activas
-                console.log(`✅ Reserva creada: ID ${idReserva} para vehículo ${id_vehiculo}`);
+                console.log(`Reserva creada: ID ${idReserva} para vehículo ${id_vehiculo}`);
                 console.log(`   Desde: ${fecha_inicio} hasta: ${fecha_fin}`);
 
                 if (language === 'english')
@@ -149,6 +149,8 @@ router.get('/es-historial', requiredLoggedIn, (req, res) => {
             r.estado,
             r.kilometros_recorridos,
             r.incidencias_reportadas,
+            r.puntuacion,
+            r.comentario,
             v.marca,
             v.modelo,
             v.matricula,
@@ -194,6 +196,8 @@ router.get('/en-history', requiredLoggedIn, (req, res) => {
             r.estado,
             r.kilometros_recorridos,
             r.incidencias_reportadas,
+            r.puntuacion,
+            r.comentario,
             v.marca,
             v.modelo,
             v.matricula,

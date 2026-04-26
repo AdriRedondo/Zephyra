@@ -115,6 +115,8 @@ connection.connect((err) => {
                         estado ENUM('activa', 'finalizada', 'cancelada') DEFAULT 'activa',
                         kilometros_recorridos DECIMAL(8,2),
                         incidencias_reportadas TEXT,
+                        puntuacion TINYINT CHECK (puntuacion BETWEEN 1 AND 5),
+                        comentario TEXT,
                         CONSTRAINT fk_reserva_usuario
                             FOREIGN KEY (id_usuario)
                             REFERENCES Usuarios(id_usuario)

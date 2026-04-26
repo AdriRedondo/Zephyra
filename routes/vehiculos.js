@@ -328,7 +328,7 @@ router.get('/en-vehicles', (req, res) => {
 router.get('/en-vehicles/imagen/:id', (req, res) => {
     const id = req.params.id;
 
-    obtenerImagen(id, (err, imagen) => {
+    Vehiculo.obtenerImagen(id, (err, imagen) => {
         if (err || !imagen) {
             console.error('Error al obtener imagen:', err);
             return res.status(404).send('Image not found');

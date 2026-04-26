@@ -12,6 +12,9 @@
     <% estilos.forEach(estilo=> { %>
         <link rel="stylesheet" href="/styles/<%= estilo %>.css">
         <% }) %>
+            <% if (typeof extraCSS !== 'undefined') { extraCSS.forEach(url=> { %>
+                <link rel="stylesheet" href="<%= url %>">
+            <% }) } %>
             <script>
                 // Aplicar tema lo antes posible, antes de que cargue el CSS
                 const theme = localStorage.getItem('theme');

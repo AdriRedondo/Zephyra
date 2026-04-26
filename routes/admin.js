@@ -508,7 +508,9 @@ function cargarReservas(reservas, callback) {
                         fecha_fin: new Date(r.fecha_fin),
                         estado: r.estado || 'activa',
                         kilometros_recorridos: r.kilometros_recorridos || null,
-                        incidencias_reportadas: r.incidencias_reportadas || null
+                        incidencias_reportadas: r.incidencias_reportadas || null,
+                        puntuacion: r.puntuacion || null,
+                        comentario: r.comentario || null
                     };
 
                     Reserva.crear(datos, (err, id) => {

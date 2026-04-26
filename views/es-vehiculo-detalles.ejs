@@ -53,7 +53,13 @@
                                 <%= vehiculo.nombre_concesionario %>
                             </p>
                         </div>
-
+                        <!-- Valoraciones del vehículo -->
+                        <div class="container mt-4">
+                            <h4><i class="bi bi-star text-warning me-2"></i>Valoraciones</h4>
+                            <div id="seccion-valoraciones">
+                                <p class="text-muted">Cargando valoraciones...</p>
+                            </div>
+                        </div>
                         <% if(usuario && usuario.rol==='admin' ) { %>
                             <div class="d-flex gap-2 mt-3">
                                 <div class="col-6">
@@ -74,7 +80,51 @@
                             <% } %>
                     </div>
                 </div>
+
         </section>
+
+        <script>
+            fetch('/api/vehiculos/<%= vehiculo.id_vehiculo %>/valoraciones')
+                .then(res => res.json())
+                .then(data => {
+                    const contenedor = document.getElementById('seccion-valoraciones');
+                    if (!data.success || data.data.total_valoraciones === 0) {
+                        contenedor.innerHTML = '<p class="text-muted">Este vehículo aún no tiene valoraciones.</p>';
+                        return;
+                    }
+                    const d = data.data;
+                    const estrellasFill = Math.round(d.media);
+                    contenedor.innerHTML = `
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <span class="display-5 fw-bold text-warning">${d.media}</span>
+                <div>
+                    <div class="text-warning fs-4">
+                        ${[1, 2, 3, 4, 5].map(i =>
+                        `<i class="bi bi-star${i <= estrellasFill ? '-fill' : ''}"></i>`
+                    ).join('')}
+                    </div>
+                    <small class="text-muted">${d.total_valoraciones} valoracion${d.total_valoraciones !== 1 ? 'es' : ''}</small>
+                </div>
+            </div>
+            ${[5, 4, 3, 2, 1].map(n => {
+                        const count = d[`estrellas_${n}`] || 0;
+                        const pct = d.total_valoraciones > 0 ? Math.round((count / d.total_valoraciones) * 100) : 0;
+                        return `
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span style="width:60px">${n} <i class="bi bi-star-fill text-warning"></i></span>
+                    <div class="progress flex-grow-1" style="height:12px">
+                        <div class="progress-bar bg-warning" style="width:${pct}%"></div>
+                    </div>
+                    <span style="width:35px" class="text-muted small">${count}</span>
+                </div>`;
+                    }).join('')}
+        `;
+                })
+                .catch(() => {
+                    document.getElementById('seccion-valoraciones').innerHTML =
+                        '<p class="text-muted">No se pudieron cargar las valoraciones.</p>';
+                });
+        </script>
     </main>
 
     <%- include('footer', {scripts: [ 'admin-ajax' ]}) %>

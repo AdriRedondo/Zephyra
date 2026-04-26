@@ -966,6 +966,52 @@ router.get('/estadisticas/resumen-general', requiredAdminId, (req, res) => {
         });
 });
 
+// GET /api/estadisticas/kms-totales
+router.get('/estadisticas/kms-totales', requiredAdminId, (req, res) => {
+    const consulta = `
+        SELECT COALESCE(SUM(kilometros_recorridos), 0) AS total_kms
+        FROM Reservas
+        WHERE estado = 'finalizada' AND kilometros_recorridos IS NOT NULL
+    `;
+    pool.query(consulta, (err, results) => {
+        if (err) return res.status(500).json({ success: false, message: 'Error al obtener kms' });
+        res.json({ success: true, data: { total_kms: results[0].total_kms } });
+    });
+});
+
+// GET /api/estadisticas/franjas-horarias
+router.get('/estadisticas/franjas-horarias', requiredAdminId, (req, res) => {
+    const consulta = `
+        SELECT 
+            CASE 
+                WHEN HOUR(fecha_inicio) >= 6  AND HOUR(fecha_inicio) < 12 THEN 'Mañana'
+                WHEN HOUR(fecha_inicio) >= 12 AND HOUR(fecha_inicio) < 18 THEN 'Tarde'
+                ELSE 'Noche'
+            END AS franja,
+            COUNT(*) AS total
+        FROM Reservas
+        GROUP BY franja
+        ORDER BY total DESC
+    `;
+    pool.query(consulta, (err, results) => {
+        if (err) return res.status(500).json({ success: false, message: 'Error al obtener franjas' });
+        res.json({ success: true, data: results });
+    });
+});
+
+// GET /api/estadisticas/incidencias
+router.get('/estadisticas/incidencias', requiredAdminId, (req, res) => {
+    const consulta = `
+        SELECT COUNT(*) AS total_incidencias
+        FROM Reservas
+        WHERE incidencias_reportadas IS NOT NULL AND incidencias_reportadas != ''
+    `;
+    pool.query(consulta, (err, results) => {
+        if (err) return res.status(500).json({ success: false, message: 'Error al obtener incidencias' });
+        res.json({ success: true, data: { total_incidencias: results[0].total_incidencias } });
+    });
+});
+
 // GET /api/marcas - Obtener todas las marcas disponibles
 router.get('/marcas', (req, res) => {
     const consulta = 'SELECT DISTINCT marca FROM Vehiculos ORDER BY marca';
@@ -1009,6 +1055,41 @@ router.get('/modelos', (req, res) => {
             success: true,
             data: results.map(r => r.modelo)
         });
+    });
+});
+
+// POST /api/reservas/:id/valorar
+router.post('/reservas/:id/valorar', requiredLoggedIn, (req, res) => {
+    const id_reserva = req.params.id;
+    const { puntuacion, comentario } = req.body;
+
+    const p = parseInt(puntuacion);
+    if (!p || p < 1 || p > 5) {
+        return res.status(400).json({ success: false, message: 'Puntuación inválida (1-5)' });
+    }
+
+    Reserva.valorar(id_reserva, p, comentario || null, (err, affectedRows) => {
+        if (err) {
+            console.error('Error al guardar valoración:', err);
+            return res.status(500).json({ success: false, message: 'Error al guardar valoración' });
+        }
+        if (affectedRows === 0) {
+            return res.status(400).json({ success: false, message: 'Reserva no encontrada, ya valorada, o no finalizada' });
+        }
+        res.json({ success: true, message: 'Valoración guardada correctamente' });
+    });
+});
+
+// GET /api/vehiculos/:id/valoraciones
+router.get('/vehiculos/:id/valoraciones', (req, res) => {
+    const id_vehiculo = req.params.id;
+
+    Reserva.obtenerValoracionesPorVehiculo(id_vehiculo, (err, data) => {
+        if (err) {
+            console.error('Error al obtener valoraciones:', err);
+            return res.status(500).json({ success: false, message: 'Error al obtener valoraciones' });
+        }
+        res.json({ success: true, data });
     });
 });
 

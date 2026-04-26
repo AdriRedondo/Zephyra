@@ -2,9 +2,7 @@ const pool = require('../db');
 
 class Reserva {
 
-    // ===============================================================
     // OBTENER TODAS LAS RESERVAS
-    // ===============================================================
     static obtenerTodas = (callback) => {
         const consulta = `
             SELECT r.*, 
@@ -26,16 +24,14 @@ class Reserva {
         });
     };
 
-    // ===============================================================
     // CREAR RESERVA
-    // ===============================================================
     static crear = (datos, callback) => {
         const consulta = `
-            INSERT INTO Reservas 
-            (id_usuario, id_cliente, id_vehiculo, fecha_inicio, fecha_fin, estado, kilometros_recorridos, incidencias_reportadas)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `;
-
+        INSERT INTO Reservas 
+        (id_usuario, id_cliente, id_vehiculo, fecha_inicio, fecha_fin, 
+         estado, kilometros_recorridos, incidencias_reportadas, puntuacion, comentario)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
         const valores = [
             datos.id_usuario || null,
             datos.id_cliente,
@@ -44,18 +40,17 @@ class Reserva {
             datos.fecha_fin,
             datos.estado || 'activa',
             datos.kilometros_recorridos || null,
-            datos.incidencias_reportadas || null
+            datos.incidencias_reportadas || null,
+            datos.puntuacion || null,
+            datos.comentario || null
         ];
-
         pool.query(consulta, valores, (err, resultado) => {
             if (err) return callback(err, null);
             callback(null, resultado.insertId);
         });
-    };
+    }
 
-    // ===============================================================
     // OBTENER RESERVA POR ID
-    // ===============================================================
     static obtenerPorId = (id, callback) => {
         const consulta = `
             SELECT * FROM Reservas WHERE id_reserva = ?
@@ -66,9 +61,7 @@ class Reserva {
         });
     };
 
-    // ===============================================================
     // CANCELAR RESERVA + LIBERAR VEHÍCULO
-    // ===============================================================
     static cancelarReserva = (id_reserva, callback) => {
 
         const consulta = `
@@ -113,9 +106,7 @@ class Reserva {
         });
     };
 
-    // ===============================================================
     // FINALIZAR RESERVA + LIBERAR VEHÍCULO
-    // ===============================================================
     static finalizarReserva = (id_reserva, callback) => {
         const consulta = `
             UPDATE Reservas 
@@ -148,9 +139,7 @@ class Reserva {
         });
     };
 
-    // ===============================================================
     // ACTUALIZACIÓN AUTOMÁTICA DEL ESTADO DE RESERVAS
-    // ===============================================================
     static actualizarEstadosAutomaticamente = (callback) => {
         const Vehiculo = require('./Vehiculo');
         const ahora = new Date();
@@ -226,7 +215,6 @@ class Reserva {
         });
     };
     // VERIFICAR DISPONIBILIDAD DEL VEHÍCULO
-    // ===============================================================
     static verificarDisponibilidad = (id_vehiculo, fecha_inicio, fecha_fin, id_reserva_excluir, callback) => {
         // Validar que las fechas sean válidas
         const inicio = new Date(fecha_inicio);
@@ -267,6 +255,39 @@ class Reserva {
             callback(null, disponible);
         });
     };
+
+    // Guardar valoración de una reserva finalizada
+    static valorar(id_reserva, puntuacion, comentario, callback) {
+        const consulta = `
+        UPDATE Reservas 
+        SET puntuacion = ?, comentario = ?
+        WHERE id_reserva = ? AND estado = 'finalizada' AND puntuacion IS NULL
+    `;
+        pool.query(consulta, [puntuacion, comentario, id_reserva], (err, result) => {
+            if (err) return callback(err, null);
+            callback(null, result.affectedRows);
+        });
+    }
+
+    // Obtener valoraciones de un vehículo
+    static obtenerValoracionesPorVehiculo(id_vehiculo, callback) {
+        const consulta = `
+        SELECT 
+            COUNT(*) AS total_valoraciones,
+            ROUND(AVG(puntuacion), 1) AS media,
+            SUM(puntuacion = 1) AS estrellas_1,
+            SUM(puntuacion = 2) AS estrellas_2,
+            SUM(puntuacion = 3) AS estrellas_3,
+            SUM(puntuacion = 4) AS estrellas_4,
+            SUM(puntuacion = 5) AS estrellas_5
+        FROM Reservas
+        WHERE id_vehiculo = ? AND puntuacion IS NOT NULL
+    `;
+        pool.query(consulta, [id_vehiculo], (err, results) => {
+            if (err) return callback(err, null);
+            callback(null, results[0]);
+        });
+    }
 }
 
 module.exports = Reserva;
