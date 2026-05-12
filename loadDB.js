@@ -52,7 +52,9 @@ connection.connect((err) => {
                         nombre VARCHAR(100) NOT NULL,
                         ciudad VARCHAR(100) NOT NULL,
                         direccion VARCHAR(200),
-                        telefono_contacto VARCHAR(20)
+                        telefono_contacto VARCHAR(20),
+                        latitud DECIMAL(10, 7),
+                        longitud DECIMAL(11, 7)
                     )`
                 },
                 {

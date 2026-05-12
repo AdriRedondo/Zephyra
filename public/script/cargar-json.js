@@ -1,7 +1,4 @@
-// ============================================
 // SISTEMA DE CARGA DE JSON - PANEL ADMIN
-// Usando AJAX para cargar datos desde JSON
-// ============================================
 
 document.addEventListener('DOMContentLoaded', function () {
     inicializarCargaJSON();

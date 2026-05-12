@@ -255,7 +255,9 @@ function cargarConcesionarios(concesionarios, callback) {
             nombre: c.nombre,
             ciudad: c.ciudad,
             direccion: c.direccion,
-            telefono_contacto: c.telefono_contacto
+            telefono_contacto: c.telefono_contacto,
+            latitud: c.latitud || null,
+            longitud: c.longitud || null
         };
 
         Concesionario.crear(datos, (err, id) => {

@@ -436,7 +436,6 @@ function seleccionarVehiculo(id, marca, modelo, matricula) {
 }
 
 // VALIDACIONES EN TIEMPO REAL PARA DATOS DEL CLIENTE
-// -----------------------------------------------------
 
 function colorearInputs(input, esCorrecto) {
     if (esCorrecto) {

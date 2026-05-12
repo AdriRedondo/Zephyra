@@ -133,3 +133,61 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
+
+// ── MAPA PICKER ──────────────────────────────────────────────
+const inputCiudad = document.getElementById('dealer-ciudad');
+const inputDireccion = document.getElementById('dealer-direccion');
+const inputLat = document.getElementById('dealer-latitud');
+const inputLng = document.getElementById('dealer-longitud');
+const mapaInfo = document.getElementById('dealer-mapa-info');
+
+// Inicializar Leaflet (centro en España por defecto)
+const mapa = L.map('mapa-picker').setView([40.4168, -3.7038], 6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+}).addTo(mapa);
+
+let marcador = null;
+
+// Si ya tenemos coordenadas (edición), poner marcador
+const latInicial = parseFloat(inputLat.value);
+const lngInicial = parseFloat(inputLng.value);
+if (latInicial && lngInicial) {
+    marcador = L.marker([latInicial, lngInicial]).addTo(mapa);
+    mapa.setView([latInicial, lngInicial], 14);
+}
+
+// Clic en el mapa → colocar marcador y guardar coords
+mapa.on('click', (e) => {
+    const { lat, lng } = e.latlng;
+    if (marcador) marcador.setLatLng([lat, lng]);
+    else marcador = L.marker([lat, lng]).addTo(mapa);
+    inputLat.value = lat.toFixed(7);
+    inputLng.value = lng.toFixed(7);
+    mapaInfo.textContent = `Coordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+});
+
+// Geocodificar automáticamente al cambiar ciudad o dirección
+let geocodeTimeout;
+function geocodificar() {
+    const q = `${inputDireccion.value}, ${inputCiudad.value}, España`;
+    clearTimeout(geocodeTimeout);
+    geocodeTimeout = setTimeout(() => {
+        fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.length === 0) return;
+                const lat = parseFloat(data[0].lat);
+                const lng = parseFloat(data[0].lon);
+                if (marcador) marcador.setLatLng([lat, lng]);
+                else marcador = L.marker([lat, lng]).addTo(mapa);
+                mapa.setView([lat, lng], 15);
+                inputLat.value = lat.toFixed(7);
+                inputLng.value = lng.toFixed(7);
+                mapaInfo.textContent = `Localizado: ${data[0].display_name.split(',').slice(0, 2).join(',')}`;
+            });
+    }, 800); // espera 800ms tras dejar de escribir
+}
+
+inputCiudad.addEventListener('input', geocodificar);
+inputDireccion.addEventListener('input', geocodificar);

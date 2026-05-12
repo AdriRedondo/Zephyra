@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
         resetColors(rol);
     });
 
-    /* ======== FUNCIONES REUTILIZABLES ======== */
+    /* FUNCIONES REUTILIZABLES */
     function colorearInputs(input, esCorrecto) {
         if (esCorrecto) {
             input.classList.add("right-input");
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (errorElement) errorElement.textContent = "";
     }
 
-    /* ========== VALIDACIONES ========== */
+    /* VALIDACIONES */
 
     // Nombre (solo letras, mínimo 3)
     function validarNombre() {

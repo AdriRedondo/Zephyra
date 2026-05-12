@@ -26,7 +26,9 @@ router.post('/dealer-register', requiredAdminId, validateDealer, (req, res) => {
         nombre,
         ciudad,
         direccion,
-        telefono: telefono_contacto
+        telefono: telefono_contacto,
+        latitud: req.body.latitud || null,
+        longitud: req.body.longitud || null
     }, (err, nuevoId) => {
         if (err) {
             console.error('Error al insertar concesionario:', err);
@@ -67,13 +69,15 @@ router.post('/dealer-edit/:id', requiredAdminId, validateDealer, (req, res) => {
     const language = req.body.idioma;
 
     // Usar datos validados
-    const { nombre, ciudad, direccion, telefono_contacto } = req.validatedData;
+    const { nombre, ciudad, direccion, telefono_contacto, latitud, longitud } = req.validatedData;
 
     Concesionario.actualizar(id, {
         nombre,
         ciudad,
         direccion,
-        telefono: telefono_contacto
+        telefono: telefono_contacto,
+        latitud: req.body.latitud || null,    // ← añadir
+        longitud: req.body.longitud || null
     }, (err, filasAfectadas) => {
         if (err) {
             console.error(`Error al actualizar el concesionario con ID ${id}`, err);
@@ -88,6 +92,21 @@ router.post('/dealer-edit/:id', requiredAdminId, validateDealer, (req, res) => {
             res.redirect('/en-admin');
         else
             res.redirect('/es-admin');
+    });
+});
+
+const requiredLoggedIn = require('../middleware/autorizaciones').requiredLoggedIn;
+
+// GET mapa de concesionarios
+router.get('/es-mapa', requiredLoggedIn, (req, res) => {
+    Concesionario.obtenerTodos((err, concesionarios) => {
+        if (err) {
+            console.error('Error al obtener concesionarios para el mapa:', err);
+            return res.status(500).send('Error al cargar el mapa');
+        }
+        // Solo los que tienen coordenadas
+        const conCoords = concesionarios.filter(c => c.latitud && c.longitud);
+        res.render('es-mapa-concesionarios', { concesionarios: conCoords });
     });
 });
 

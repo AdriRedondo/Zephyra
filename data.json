@@ -2,75 +2,99 @@
     "concesionarios": [
         {
             "nombre": "Zephyra Prime Motors",
-            "ciudad": "Sevilla",
-            "direccion": "Avenida de la Constitución, 14",
-            "telefono_contacto": "954123456"
+            "ciudad": "Madrid",
+            "direccion": "Avenida Complutense, 12",
+            "telefono_contacto": "954123456",
+            "latitud": 40.4528,
+            "longitud": -3.7295
         },
         {
             "nombre": "Zephyra AutoElite",
-            "ciudad": "Bilbao",
-            "direccion": "Gran Vía Don Diego López de Haro, 50",
-            "telefono_contacto": "944567890"
+            "ciudad": "Madrid",
+            "direccion": "Calle Isaac Peral, 5",
+            "telefono_contacto": "944567890",
+            "latitud": 40.4480,
+            "longitud": -3.7165
         },
         {
             "nombre": "Zephyra Drive Center",
-            "ciudad": "Zaragoza",
-            "direccion": "Paseo de la Independencia, 22",
-            "telefono_contacto": "976223344"
+            "ciudad": "Madrid",
+            "direccion": "Calle Princesa, 43",
+            "telefono_contacto": "976223344",
+            "latitud": 40.4438,
+            "longitud": -3.7102
         },
         {
             "nombre": "Zephyra Mobility Hub",
-            "ciudad": "Málaga",
-            "direccion": "Calle Larios, 9",
-            "telefono_contacto": "952112233"
+            "ciudad": "Madrid",
+            "direccion": "Calle Bravo Murillo, 28",
+            "telefono_contacto": "952112233",
+            "latitud": 40.4365,
+            "longitud": -3.7068
         },
         {
             "nombre": "Zephyra AutoPoint",
-            "ciudad": "Alicante",
-            "direccion": "Avenida Maisonnave, 17",
-            "telefono_contacto": "965889900"
+            "ciudad": "Madrid",
+            "direccion": "Paseo del Pintor Rosales, 16",
+            "telefono_contacto": "965889900",
+            "latitud": 40.4455,
+            "longitud": -3.7381
         },
         {
             "nombre": "Zephyra EV Center",
-            "ciudad": "Murcia",
-            "direccion": "Gran Vía Alfonso X, 44",
-            "telefono_contacto": "968445566"
+            "ciudad": "Madrid",
+            "direccion": "Calle Francos Rodríguez, 8",
+            "telefono_contacto": "968445566",
+            "latitud": 40.4572,
+            "longitud": -3.7413
         },
         {
             "nombre": "Zephyra MotorLine",
-            "ciudad": "Valladolid",
-            "direccion": "Calle Santiago, 28",
-            "telefono_contacto": "983667788"
+            "ciudad": "Madrid",
+            "direccion": "Calle Orense, 34",
+            "telefono_contacto": "983667788",
+            "latitud": 40.4612,
+            "longitud": -3.7138
         },
         {
             "nombre": "Zephyra AutoStudio",
-            "ciudad": "Gijón",
-            "direccion": "Calle Corrida, 35",
-            "telefono_contacto": "984557799"
+            "ciudad": "Madrid",
+            "direccion": "Avenida de Valdeacederas, 21",
+            "telefono_contacto": "984557799",
+            "latitud": 40.4648,
+            "longitud": -3.7261
         },
         {
             "nombre": "Zephyra Signature Cars",
-            "ciudad": "Santander",
-            "direccion": "Paseo de Pereda, 13",
-            "telefono_contacto": "942778899"
+            "ciudad": "Madrid",
+            "direccion": "Calle Peñagrande, 10",
+            "telefono_contacto": "942778899",
+            "latitud": 40.4702,
+            "longitud": -3.7342
         },
         {
             "nombre": "Zephyra AutoSpace",
-            "ciudad": "Pamplona",
-            "direccion": "Avenida Carlos III, 21",
-            "telefono_contacto": "948112233"
+            "ciudad": "Madrid",
+            "direccion": "Avenida de Fuencarral, 55",
+            "telefono_contacto": "948112233",
+            "latitud": 40.4688,
+            "longitud": -3.7062
         },
         {
             "nombre": "Zephyra Excellence Motors",
-            "ciudad": "Castellón",
-            "direccion": "Calle Colón, 18",
-            "telefono_contacto": "964334455"
+            "ciudad": "Madrid",
+            "direccion": "Paseo de Moret, 7",
+            "telefono_contacto": "964334455",
+            "latitud": 40.4415,
+            "longitud": -3.7408
         },
         {
             "nombre": "Zephyra AutoHub",
-            "ciudad": "Logroño",
-            "direccion": "Gran Vía Juan Carlos I, 62",
-            "telefono_contacto": "941556677"
+            "ciudad": "Madrid",
+            "direccion": "Paseo del Marqués de Monistrol, 3",
+            "telefono_contacto": "941556677",
+            "latitud": 40.4328,
+            "longitud": -3.7235
         }
     ],
     "vehiculos": [

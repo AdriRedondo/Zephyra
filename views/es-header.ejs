@@ -12,16 +12,16 @@
     <% estilos.forEach(estilo=> { %>
         <link rel="stylesheet" href="/styles/<%= estilo %>.css">
         <% }) %>
-            <% if (typeof extraCSS !== 'undefined') { extraCSS.forEach(url=> { %>
+            <% if (typeof extraCSS !=='undefined' ) { extraCSS.forEach(url=> { %>
                 <link rel="stylesheet" href="<%= url %>">
-            <% }) } %>
-            <script>
-                // Aplicar tema lo antes posible, antes de que cargue el CSS
-                const theme = localStorage.getItem('theme');
-                if (theme === 'dark') {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                };
-            </script>
+                <% }) } %>
+                    <script>
+                        // Aplicar tema lo antes posible, antes de que cargue el CSS
+                        const theme = localStorage.getItem('theme');
+                        if (theme === 'dark') {
+                            document.documentElement.setAttribute('data-theme', 'dark');
+                        };
+                    </script>
 </head>
 
 <body>
@@ -41,42 +41,54 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item me-3">
-                            <a class="nav-link" href="/es-inicio" accesskey="i">Inicio</a>
+                            <a class="nav-link" href="/es-inicio" accesskey="i" data-bs-toggle="tooltip"
+                                data-bs-placement="bottom" title="Ir al inicio (Alt+I)">Inicio</a>
                         </li>
                         <li class="nav-item me-3">
-                            <a class="nav-link" href="/es-vehiculos" accesskey="v">Vehículos</a>
+                            <a class="nav-link" href="/es-vehiculos" accesskey="v" data-bs-toggle="tooltip"
+                                data-bs-placement="bottom" title="Mostrar vehículos (Alt+V)">Vehículos</a>
                         </li>
                         <% if(usuario) {%>
                             <li class="nav-item me-3">
-                                <a class="nav-link" href="/es-reservas" accesskey="r">Reservar vehículo</a>
+                                <a class="nav-link" href="/es-reservas" accesskey="r" data-bs-toggle="tooltip"
+                                    data-bs-placement="bottom" title="Reserva de vehículos (Alt+R)">Reservar
+                                    vehículo</a>
                             </li>
                             <% } %>
                     </ul>
                     <ul class="navbar-nav ms-auto">
                         <% if(usuario) {%>
                             <li class="nav-item me-3">
-                                <a class="nav-link" href="/es-historial" accesskey="h">Mis Reservas</a>
+                                <a class="nav-link" href="/es-historial" accesskey="h" data-bs-toggle="tooltip"
+                                    data-bs-placement="bottom" title="Mis reservas (Alt+H)">Mis Reservas</a>
                             </li>
                             <% } %>
 
                                 <li class="nav-item me-3">
                                     <a role="button" class="nav-link pt-auto" accesskey="a" data-bs-toggle="modal"
-                                        data-bs-target="#accessModal">Accesibilidad</a>
+                                        data-bs-target="#accessModal" data-bs-toggle="tooltip"
+                                        data-bs-placement="bottom"
+                                        title="Opciones de ccesibilidad (Alt+A)">Accesibilidad</a>
                                 </li>
                                 <% if(!usuario) {%>
                                     <li class="nav-item me-3">
-                                        <a class="nav-link pt-auto" href="/es-login" accesskey="l">Login</a>
+                                        <a class="nav-link pt-auto" href="/es-login" accesskey="l"
+                                            data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                            title="Iniciar sesión (Alt+L)">Login</a>
                                     </li>
                                     <% } %>
                                         <% if(usuario && usuario.rol==='admin' ) {%>
                                             <li class="nav-item me-3">
-                                                <a class="nav-link pt-auto" href="/es-admin"
-                                                    accesskey="m">Administrador</a>
+                                                <a class="nav-link pt-auto" href="/es-admin" accesskey="m"
+                                                    data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                    title="Panel de administrador (Alt+M)">Administrador</a>
                                             </li>
                                             <% } %>
                                                 <% if(usuario) {%>
                                                     <li class="nav-item me-3">
-                                                        <a class="menu-icon nav-link" href="/es-logout" accesskey="g">
+                                                        <a class="menu-icon nav-link" href="/es-logout" accesskey="g"
+                                                            data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                            title="Cerrar sesión (Alt+G)">
                                                             <i class="bi bi-box-arrow-left"></i>
                                                         </a>
                                                     </li>
@@ -84,7 +96,9 @@
                                                         <% if(usuario) {%>
                                                             <li class="nav-item">
                                                                 <a class="menu-icon nav-link" href="/es-perfil"
-                                                                    accesskey="p">
+                                                                    accesskey="p" data-bs-toggle="tooltip"
+                                                                    data-bs-placement="bottom"
+                                                                    title="Ver perfil (Alt+P)">
                                                                     <i class="profile-icon bi bi-person-circle"></i>
                                                                 </a>
                                                             </li>

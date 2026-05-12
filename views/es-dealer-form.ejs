@@ -1,5 +1,6 @@
 <%- include('es-header', { title: typeof concesionario !=='undefined' ? 'Editar Concesionario'
-    : 'Registrar Concesionario' , estilos: ['style', 'forms' ], actual_es: '' , actual_en: '' }) %>
+    : 'Registrar Concesionario' , estilos: ['style', 'forms' ], actual_es: '' , actual_en: '' , extraCSS:
+    ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'] }) %>
 
     <main>
         <section id="EditarConcesionario" class="contacto">
@@ -88,6 +89,22 @@
                                         <span id="dealer-telefono-error" class="error" aria-live="polite"></span>
                                     </div>
 
+                                    <!-- Coordenadas (se rellenan automáticamente al geocodificar) -->
+                                    <input type="hidden" id="dealer-latitud" name="latitud"
+                                        value="<%= typeof concesionario !== 'undefined' ? concesionario.latitud || '' : '' %>">
+                                    <input type="hidden" id="dealer-longitud" name="longitud"
+                                        value="<%= typeof concesionario !== 'undefined' ? concesionario.longitud || '' : '' %>">
+
+                                    <!-- Mapa picker -->
+                                    <div class="col-md-12">
+                                        <label class="form-label">Ubicación en el mapa: <span
+                                                class="text-muted small">(haz clic para ajustar)</span></label>
+                                        <div id="mapa-picker"
+                                            style="height: 300px; border-radius: 8px; border: 1px solid #ced4da;"></div>
+                                        <span id="dealer-mapa-info" class="text-muted small mt-1 d-block">Introduce la
+                                            dirección y ciudad para localizar automáticamente</span>
+                                    </div>
+
                                     <!-- Mensajes del servidor -->
                                     <% if (typeof success !=='undefined' && success) { %>
                                         <div class="alert alert-success">
@@ -123,5 +140,5 @@
             </form>
         </section>
     </main>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <%- include('footer', {scripts: ['formulario-concesionario']}) %>

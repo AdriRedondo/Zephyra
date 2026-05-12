@@ -137,6 +137,8 @@
                                             <th>Ciudad</th>
                                             <th>Dirección</th>
                                             <th>Teléfono</th>
+                                            <th>Latitud</th>
+                                            <th>Longitud</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -157,6 +159,12 @@
                                                 </td>
                                                 <td>
                                                     <%= c.telefono_contacto %>
+                                                </td>
+                                                <td>
+                                                    <%= c.latitud || "N/A" %>
+                                                </td>
+                                                <td>
+                                                    <%= c.longitud || "N/A" %>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex">

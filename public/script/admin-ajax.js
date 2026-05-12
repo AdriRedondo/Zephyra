@@ -1,7 +1,3 @@
-// ============================================
-// SISTEMA DE ELIMINACIÓN CON AJAX - PANEL ADMIN
-// Usando método HTTP DELETE correctamente
-// ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
     inicializarEliminacionAjax();
@@ -247,9 +243,7 @@ function verificarTablaVacia(tipo) {
     }
 }
 
-// ============================================
 // SISTEMA DE CANCELACIÓN DE RESERVAS
-// ============================================
 
 function inicializarCancelacionReservas() {
     const botonesCancelar = document.querySelectorAll('.cancelar-reserva');
@@ -280,41 +274,41 @@ function cancelarReserva(idReserva, btn) {
         },
         body: JSON.stringify({})
     })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(data => {
-                throw new Error(data.message || `Error ${response.status}`);
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Reserva cancelada correctamente:', data);
-        mostrarModalExito('Reserva cancelada correctamente');
-
-        // Actualizar el estado en la tabla
-        const fila = btn.closest('tr');
-        if (fila) {
-            // Cambiar el badge de estado
-            const estadoBadge = fila.querySelector('.badge');
-            if (estadoBadge) {
-                estadoBadge.className = 'badge bg-danger';
-                estadoBadge.textContent = 'cancelada';
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || `Error ${response.status}`);
+                });
             }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Reserva cancelada correctamente:', data);
+            mostrarModalExito('Reserva cancelada correctamente');
 
-            // Eliminar el botón de cancelar
-            btn.remove();
+            // Actualizar el estado en la tabla
+            const fila = btn.closest('tr');
+            if (fila) {
+                // Cambiar el badge de estado
+                const estadoBadge = fila.querySelector('.badge');
+                if (estadoBadge) {
+                    estadoBadge.className = 'badge bg-danger';
+                    estadoBadge.textContent = 'cancelada';
+                }
 
-            // Animar la fila
-            fila.style.transition = 'all 0.3s ease';
-            fila.style.backgroundColor = '#f8d7da';
-            setTimeout(() => {
-                fila.style.backgroundColor = '';
-            }, 1000);
-        }
-    })
-    .catch(error => {
-        console.error('Error al cancelar reserva:', error);
-        mostrarModalError(error.message || 'No se pudo cancelar la reserva');
-    });
+                // Eliminar el botón de cancelar
+                btn.remove();
+
+                // Animar la fila
+                fila.style.transition = 'all 0.3s ease';
+                fila.style.backgroundColor = '#f8d7da';
+                setTimeout(() => {
+                    fila.style.backgroundColor = '';
+                }, 1000);
+            }
+        })
+        .catch(error => {
+            console.error('Error al cancelar reserva:', error);
+            mostrarModalError(error.message || 'No se pudo cancelar la reserva');
+        });
 }

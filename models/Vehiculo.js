@@ -63,7 +63,10 @@ class Vehiculo {
             SELECT 
                 v.*,
                 c.nombre AS nombre_concesionario,
-                c.ciudad AS ciudad_concesionario
+                c.ciudad AS ciudad_concesionario,
+                c.direccion AS direccion_concesionario,
+                c.latitud,
+                c.longitud
             FROM Vehiculos v
             LEFT JOIN Concesionarios c 
                 ON v.id_concesionario = c.id_concesionario
