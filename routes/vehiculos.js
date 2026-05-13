@@ -274,31 +274,8 @@ router.post('/es-vehiculos/:id/editar', requiredAdminId, multerFactory.single('i
     }
 });
 
-/*
-router.post('/es-vehiculos/:id/eliminar', requiredAdminId, (req, res) => {
-    const id = req.params.id;
 
-    Vehiculo.eliminar(id, (err, filasAfectadas) => {
-        if (err) {
-            console.error(`Error al eliminar el vehículo con ID ${id}: `, err);
-            return res.status(500).send(`Error al eliminar el vehículo con ID ${id}: `);
-        }
-
-        if (filasAfectadas === 0) {
-            return res.status(404).send(`Vehículo con ID ${id} no encontrado`);
-        }
-
-        console.log(`vehículo eliminado con ID: ${id}`);
-
-        //Hay que cambiarlo con ajax ??
-        res.redirect('/es-admin');
-    });
-});
-*/
-
-// ============================================
 // VERSIÓN EN INGLÉS
-// ============================================
 
 //GET de la página de vehículos con filtros en inglés
 router.get('/en-vehicles', (req, res) => {
@@ -565,29 +542,6 @@ router.post('/en-vehicles/:id/edit', requiredAdminId, multerFactory.single('imag
         res.redirect('/en-vehicles');
     });
 });
-/*
-router.post('/en-vehicles/:id/delete', requiredAdminId, (req, res) => {
-    const id = req.params.id;
 
-    Vehiculo.eliminar(id, (err, filasAfectadas) => {
-        if (err) {
-            console.error(`Error al eliminar el vehículo con ID ${id}: `, err);
-            return res.status(500).send(`Error al eliminar el vehículo con ID ${id}: `);
-        }
-
-        if (filasAfectadas === 0) {
-            return res.status(404).send(`Vehículo con ID ${id} no encontrado`);
-        }
-
-        console.log(`vehículo eliminado con ID: ${id}`);
-
-        //Hay que cambiarlo con ajax ??
-        // Redirigir a la página anterior
-        const previousPage = req.get('Referer') || '/'; // fallback a home
-        res.redirect(previousPage);
-
-    });
-});
-*/
 
 module.exports = router;

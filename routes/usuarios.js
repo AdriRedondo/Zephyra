@@ -157,25 +157,5 @@ router.post('/user-edit/:id', requiredAdminId, validateUser, (req, res) => {
         });
     }
 });
-/*
-router.post('/user-delete/:id', requiredAdminId, (req, res) => {
-    const id = req.params.id;
 
-    Usuario.eliminar(id, (err, filasAfectadas) => {
-        if (err) {
-            console.error(`Error al eliminar el vehículo con ID ${id}:`, err);
-            return res.status(500).send("Error interno al eliminar vehículo");
-        }
-
-        if (filasAfectadas === 0) {
-            return res.status(404).send(`Vehículo con ID ${id} no encontrado`);
-        }
-
-        console.log(`Vehículo eliminado con ID: ${id}`);
-
-        //Hay que cambiarlo con ajax ??
-        res.redirect('/es-admin');
-    });
-});
-*/
 module.exports = router;
