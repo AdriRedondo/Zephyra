@@ -1,6 +1,6 @@
 //Función que revisa si el usuario tiene autorización de administrador
 function requiredAdminId(req, res, next) {
-    if (req.session.usuario && req.session.usuario.rol === 'admin') {
+    if (req.session?.usuario && req.session.usuario.rol === 'admin') {
         next();
     }
     else {
@@ -14,7 +14,7 @@ function requiredAdminId(req, res, next) {
 
 //Función que revisa si el usuario tiene autorización de administrador o empleado
 function requiredEmployeeId(req, res, next) {
-    if (req.session.usuario && req.session.usuario.rol === 'empleado') {
+    if (req.session?.usuario && req.session.usuario.rol === 'empleado') {
         next();
     }
     else {
@@ -28,7 +28,7 @@ function requiredEmployeeId(req, res, next) {
 
 //Función que revisa si el usuario está loggeado (empleado o admin)
 function requiredLoggedIn(req, res, next) {
-    if (req.session.usuario) {
+    if (req.session?.usuario) {
         next();
     }
     else {

@@ -16,11 +16,13 @@
                 <link rel="stylesheet" href="<%= url %>">
                 <% }) } %>
                     <script>
-                        // Aplicar tema lo antes posible, antes de que cargue el CSS
-                        const theme = localStorage.getItem('theme');
+                        // El tema ya viene del servidor, no hace falta leer localStorage
+                        const theme = '<%= tema %>';
                         if (theme === 'dark') {
                             document.documentElement.setAttribute('data-theme', 'dark');
-                        };
+                        }
+                        // Aplicar tamaño de fuente
+                        document.documentElement.style.fontSize = '<%= tamano %>px';
                     </script>
 </head>
 

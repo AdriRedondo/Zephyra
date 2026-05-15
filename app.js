@@ -1,7 +1,15 @@
 const express = require('express');
 const path = require('path');
 const apiRouter = require('./routes/api');
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
 
+// Middleware de accesibilidad — disponible en todas las vistas
+app.use((req, res, next) => {
+    res.locals.tema = req.cookies.tema || 'light';
+    res.locals.tamano = req.cookies.tamano || '16';
+    next();
+});
 
 //Importación de routers
 const vehiculosRouter = require('./routes/vehiculos');
@@ -60,7 +68,12 @@ const sessionStore = new MySQLStore({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'zephyra'
+    database: 'zephyra',
+    createDatabaseTable: false
+});
+
+sessionStore.on('error', (err) => {
+    console.warn('Session store sin conexión (MySQL inactivo):', err.code);
 });
 
 //Configuración del middleware de sesión
@@ -72,7 +85,16 @@ const middleWareSession = session({
 });
 
 //Se aplica el middleware de la sesión
-app.use(middleWareSession);
+//app.use(middleWareSession);
+app.use((req, res, next) => {
+    middleWareSession(req, res, (err) => {
+        if (err) {
+            console.warn("Error en sesión, continuando sin store:", err.code);
+            return next();
+        }
+        next();
+    });
+});
 
 app.use((req, res, next) => {
     // Si la sesión NO debe recordarse y existe en BD...
@@ -89,13 +111,14 @@ app.use((req, res, next) => {
 });
 
 //Middleware para compartir datos de sesión con las vistas EJS
+
 app.use((req, res, next) => {
-    res.locals.session = req.session;
-    res.locals.usuario = req.session.usuario || null;
+    res.locals.session = req.session || {};
+    res.locals.usuario = req.session?.usuario || null;
 
 
     // Detectar idioma desde la URL si no está en sesión
-    let lang = req.session.lang || 'es';
+    let lang = req.session?.lang || 'es';
 
     // Si la URL contiene '/en-' o termina con rutas en inglés, usar inglés
     if (req.path.includes('/en-') || req.path.startsWith('/en/')) {
@@ -110,13 +133,14 @@ app.use((req, res, next) => {
     next();
 });
 
+
 // Middleware para establecer el idioma en la sesión si se envía en el body
 app.use((req, res, next) => {
 
     if (req.method === 'POST' && req.body.idioma) {
 
         const newLang = req.body.idioma === 'english' ? 'en' : 'es';
-        req.session.lang = newLang;
+        if (req.session) req.session.lang = newLang;
     }
     next();
 });
@@ -154,10 +178,14 @@ app.use((req, res, next) => {
     if (esEstatico || rutasPermitidas.includes(req.path)) return next();
 
     const pool = require('./db');
-    pool.query('SELECT COUNT(*) as total FROM Vehiculos', (err, results) => {
-        if (err) return next(); // Si hay error de BD, no bloquear
-        if (results[0].total === 0) return res.redirect('/carga-inicial');
-        next();
+    pool.getConnection((err, connection) => {
+        if (err) return res.redirect('/carga-inicial'); // MySQL caído -> redirect seguro
+
+        connection.query('SELECT COUNT(*) as total FROM Vehiculos', (queryErr, results) => {
+            connection.release();
+            if (queryErr || results[0].total === 0) return res.redirect('/carga-inicial');
+            next();
+        });
     });
 });
 
@@ -190,7 +218,7 @@ app.get('/en-home', (req, res) => {
 
 app.get('/carga-inicial', (req, res) => {
     res.render('carga-inicial', {
-        usuario: req.session.usuario || null,
+        usuario: req.session?.usuario || null,
         lang: 'es',
         error_carga_json: req.query.error_carga_json || null,
         success_carga_json: req.query.success_carga_json || null
