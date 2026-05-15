@@ -61,7 +61,7 @@ const sessionStore = new MySQLStore({
     user: 'root',
     password: '',
     database: 'zephyra',
-    createDatabaseTable: false
+    createDatabaseTable: true
 });
 
 sessionStore.on('error', (err) => {
@@ -69,50 +69,6 @@ sessionStore.on('error', (err) => {
 });
 
 app.use(cookieParser());
-
-// Middleware de accesibilidad - disponible en todas las vistas
-app.use((req, res, next) => {
-
-    //Valores por defecto
-    let prefs = {
-        tema: 'light',
-        fuente: '100'
-    };
-
-    //Función segura para parsear JSON
-    const parsear = (dato) => {
-        try {
-            return typeof dato === 'string' ? JSON.parse(dato) : dato;
-        } catch (e) {
-            return {};
-        }
-    };
-
-    let datos = null;
-
-    //PRIORIDAD 1: BD (usuario logueado)
-    if (req.session?.usuario?.preferencias_accesibilidad) {
-        datos = parsear(req.session.usuario.preferencias_accesibilidad);
-    }
-
-    //PRIORIDAD 2: cookies
-    else if (req.cookies.preferencias_usuario) {
-        datos = parsear(req.cookies.preferencias_usuario);
-    }
-
-    //Mezclar con defaults
-    if (datos) {
-        if (datos.tema) prefs.tema = datos.tema;
-        if (datos.fuente) prefs.fuente = datos.fuente;
-    }
-
-    //Enviar a vistas
-    res.locals.tema = prefs.tema;
-    res.locals.tamano = prefs.fuente;
-
-    next();
-});
-
 
 //Configuración del middleware de sesión
 const middleWareSession = session({
@@ -180,6 +136,49 @@ app.use((req, res, next) => {
         const newLang = req.body.idioma === 'english' ? 'en' : 'es';
         if (req.session) req.session.lang = newLang;
     }
+    next();
+});
+
+// Middleware de accesibilidad - disponible en todas las vistas
+app.use((req, res, next) => {
+
+    //Valores por defecto
+    let prefs = {
+        tema: 'light',
+        fuente: '100'
+    };
+
+    //Función segura para parsear JSON
+    const parsear = (dato) => {
+        try {
+            return typeof dato === 'string' ? JSON.parse(dato) : dato;
+        } catch (e) {
+            return {};
+        }
+    };
+
+    let datos = null;
+
+    //PRIORIDAD 1: BD (usuario logueado)
+    if (req.session?.usuario?.preferencias_accesibilidad) {
+        datos = parsear(req.session.usuario.preferencias_accesibilidad);
+    }
+
+    //PRIORIDAD 2: cookies
+    else if (req.cookies.preferencias_usuario) {
+        datos = parsear(req.cookies.preferencias_usuario);
+    }
+
+    //Mezclar con defaults
+    if (datos) {
+        if (datos.tema) prefs.tema = datos.tema;
+        if (datos.fuente) prefs.fuente = datos.fuente;
+    }
+
+    //Enviar a vistas
+    res.locals.tema = prefs.tema;
+    res.locals.tamano = prefs.fuente;
+
     next();
 });
 

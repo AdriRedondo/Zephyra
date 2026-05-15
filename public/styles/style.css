@@ -39,6 +39,25 @@
     --hover-bg: #3a3a3a;
 }
 
+/* Variables CSS para tema daltonico */
+[data-theme="daltonismo"] {
+    --bg-color: #fff8e6;
+    --text-color: #1a1a1a;
+    --card-bg: #fffdf5;
+    --border-color: #c8b96e;
+    --primary-color: #7a5c00;
+    --secondary-color: #b38600;
+    --list-bg: #fff3cd;
+    --dl-bg: #fffdf0;
+    --success-color: #b38600;
+    --danger-color: #c0392b;
+    --success-bg: #fff3cd;
+    --danger-bg: #fde8e6;
+    --input-bg-color: #fffdf5;
+    --input-icon-color: #e8ddb5;
+    --hover-bg: #fff3cd;
+}
+
 @font-face {
     font-family: 'CaviarDreams';
     src: url('../fonts/caviar_dreams/CaviarDreams.ttf') format('truetype');

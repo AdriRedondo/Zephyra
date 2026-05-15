@@ -683,7 +683,7 @@ router.post('/accesibilidad/preferencias', requiredLoggedIn, (req, res) => {
 
     // Validar valores permitidos
     const fontSizesPermitidos = ['80', '100', '120'];
-    const temasPermitidos = ['light', 'dark'];
+    const temasPermitidos = ['light', 'dark', 'daltonismo'];
 
     if (!fontSizesPermitidos.includes(fontSize)) {
         return res.status(400).json({

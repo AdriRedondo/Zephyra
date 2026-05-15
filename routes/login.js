@@ -76,7 +76,8 @@ router.post('/submit_login', validateLogin, (req, res) => {
                 correo: user.correo,
                 rol: user.rol,
                 telefono: user.telefono,
-                id_concesionario: user.id_concesionario
+                id_concesionario: user.id_concesionario,
+                preferencias_accesibilidad: user.preferencias_accesibilidad || null
             };
 
             if (recordar) {

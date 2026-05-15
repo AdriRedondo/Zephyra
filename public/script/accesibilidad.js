@@ -72,7 +72,11 @@ function aplicarPreferencias(prefs) {
     if (prefs.theme) {
         if (prefs.theme === "dark") {
             document.documentElement.setAttribute("data-theme", "dark");
-        } else {
+        }
+        else if (prefs.theme === "daltonismo") {
+            document.documentElement.setAttribute("data-theme", "daltonismo");
+        }
+        else {
             document.documentElement.removeAttribute("data-theme");
         }
         actualizarUITheme(prefs.theme);
@@ -136,16 +140,11 @@ function actualizarUIFontSize(fontSize) {
 function actualizarUITheme(theme) {
     const lightBtn = document.getElementById("light-btn");
     const darkBtn = document.getElementById("dark-btn");
+    const daltonBtn = document.getElementById("daltonismo-btn");
 
-    if (lightBtn && darkBtn) {
-        if (theme === 'dark') {
-            darkBtn.disabled = true;
-            lightBtn.disabled = false;
-        } else {
-            lightBtn.disabled = true;
-            darkBtn.disabled = false;
-        }
-    }
+    if (lightBtn) lightBtn.disabled = (theme === 'light');
+    if (darkBtn) darkBtn.disabled = (theme === 'dark');
+    if (daltonBtn) daltonBtn.disabled = (theme === 'daltonismo');
 }
 
 function guardarPreferenciasCookie() {
@@ -160,19 +159,23 @@ function cambiarFontSize(size) {
     document.documentElement.style.fontSize = size + "%";
     preferenciasActuales.fontSize = size;
     actualizarUIFontSize(size);
-    guardarPreferenciasCookie();
+    if (!usuarioAutenticado) guardarPreferenciasCookie();
 }
 
 // Cambiar tema
 function cambiarTema(theme) {
     if (theme === 'dark') {
         document.documentElement.setAttribute("data-theme", "dark");
-    } else {
+    }
+    else if (theme === 'daltonismo') {
+        document.documentElement.setAttribute("data-theme", "daltonismo");
+    }
+    else {
         document.documentElement.removeAttribute("data-theme");
     }
     preferenciasActuales.theme = theme;
     actualizarUITheme(theme);
-    guardarPreferenciasCookie();
+    if (!usuarioAutenticado) guardarPreferenciasCookie();
 }
 
 // Guardar preferencias en la BD (solo para usuarios autenticados)
@@ -292,14 +295,14 @@ function cargarAtajos() {
 
 // Guardar atajos en localStorage (temporal)
 function guardarAtajos(shortcuts) {
-    //localStorage.setItem('keyboardShortcuts', JSON.stringify(shortcuts));
+    localStorage.setItem('keyboardShortcuts', JSON.stringify(shortcuts));
     console.log('Atajos guardados en localStorage:', shortcuts);
 }
 
 // Guardar atajos en memoria
 function guardarAtajosEnMemoria(shortcuts) {
     preferenciasActuales.atajos = shortcuts;
-    //localStorage.setItem('keyboardShortcuts', JSON.stringify(shortcuts));
+    localStorage.setItem('keyboardShortcuts', JSON.stringify(shortcuts));
 }
 
 // EVENT LISTENERS
@@ -322,6 +325,10 @@ document.getElementById("light-btn")?.addEventListener("click", () => {
 
 document.getElementById("dark-btn")?.addEventListener("click", () => {
     cambiarTema("dark");
+});
+
+document.getElementById("daltonismo-btn")?.addEventListener("click", () => {
+    cambiarTema("daltonismo");
 });
 
 // MANEJADOR DE ATAJOS DE TECLADO
@@ -381,10 +388,7 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-// ============================================
 // FUNCIONES DE AYUDA Y CONFIGURACIÓN
-// ============================================
-
 function mostrarAyudaAtajos() {
     const shortcuts = cargarAtajos();
     let html = '<div class="shortcuts-help"><h3>Atajos de Teclado</h3><table class="table table-sm"><thead><tr><th>Acción</th><th>Atajo</th></tr></thead><tbody>';
