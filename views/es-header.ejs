@@ -16,14 +16,22 @@
                 <link rel="stylesheet" href="<%= url %>">
                 <% }) } %>
                     <script>
-                        // El tema ya viene del servidor, no hace falta leer localStorage
-                        const theme = '<%= tema %>';
-                        if (theme === 'dark') {
-                            document.documentElement.setAttribute('data-theme', 'dark');
-                        }
-                        // Aplicar tamaño de fuente
-                        document.documentElement.style.fontSize = '<%= tamano %>px';
+                        (function () {
+                            const tema = "<%= tema %>";
+                            const tamano = "<%= tamano %>";
+
+                            if (tema === "dark") {
+                                document.documentElement.setAttribute("data-theme", "dark");
+                            }
+
+                            document.documentElement.style.fontSize = tamano + "%";
+                            window.addEventListener('DOMContentLoaded', () => {
+                                actualizarUIFontSize(tamano);
+                                actualizarUITheme(tema);
+                            });
+                        })();
                     </script>
+
 </head>
 
 <body>
@@ -76,7 +84,7 @@
                                     <li class="nav-item me-3">
                                         <a class="nav-link pt-auto" href="/es-login" accesskey="l"
                                             data-bs-toggle="tooltip" data-bs-placement="bottom"
-                                            title="Iniciar sesión (Alt+L)">Login</a>
+                                            title="Iniciar sesión (Alt+L)">Iniciar sersión</a>
                                     </li>
                                     <% } %>
                                         <% if(usuario && usuario.rol==='admin' ) {%>

@@ -2,14 +2,6 @@ const express = require('express');
 const path = require('path');
 const apiRouter = require('./routes/api');
 const cookieParser = require('cookie-parser');
-app.use(cookieParser());
-
-// Middleware de accesibilidad — disponible en todas las vistas
-app.use((req, res, next) => {
-    res.locals.tema = req.cookies.tema || 'light';
-    res.locals.tamano = req.cookies.tamano || '16';
-    next();
-});
 
 //Importación de routers
 const vehiculosRouter = require('./routes/vehiculos');
@@ -75,6 +67,52 @@ const sessionStore = new MySQLStore({
 sessionStore.on('error', (err) => {
     console.warn('Session store sin conexión (MySQL inactivo):', err.code);
 });
+
+app.use(cookieParser());
+
+// Middleware de accesibilidad - disponible en todas las vistas
+app.use((req, res, next) => {
+
+    //Valores por defecto
+    let prefs = {
+        tema: 'light',
+        fuente: '100'
+    };
+
+    //Función segura para parsear JSON
+    const parsear = (dato) => {
+        try {
+            return typeof dato === 'string' ? JSON.parse(dato) : dato;
+        } catch (e) {
+            return {};
+        }
+    };
+
+    let datos = null;
+
+    //PRIORIDAD 1: BD (usuario logueado)
+    if (req.session?.usuario?.preferencias_accesibilidad) {
+        datos = parsear(req.session.usuario.preferencias_accesibilidad);
+    }
+
+    //PRIORIDAD 2: cookies
+    else if (req.cookies.preferencias_usuario) {
+        datos = parsear(req.cookies.preferencias_usuario);
+    }
+
+    //Mezclar con defaults
+    if (datos) {
+        if (datos.tema) prefs.tema = datos.tema;
+        if (datos.fuente) prefs.fuente = datos.fuente;
+    }
+
+    //Enviar a vistas
+    res.locals.tema = prefs.tema;
+    res.locals.tamano = prefs.fuente;
+
+    next();
+});
+
 
 //Configuración del middleware de sesión
 const middleWareSession = session({

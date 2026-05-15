@@ -12,11 +12,14 @@ router.get('/es-logout', requiredLoggedIn, (req, res) => {
             console.error('Error al cerrar sesión: ', err);
             res.status(500);
         }
-        else {
-            //Si todo va bien se redirige a la pagina de inicio
-            console.log('El usuario se ha cerrado');
-            res.redirect('es-inicio');
-        }
+        res.clearCookie('connect.sid'); // sesión
+        res.clearCookie('tema');
+        res.clearCookie('tamano');
+        res.clearCookie('preferencias_usuario');
+
+        console.log('El usuario se ha cerrado');
+
+        res.redirect('/es-inicio');
     });
 });
 

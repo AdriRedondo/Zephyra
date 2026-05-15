@@ -148,13 +148,19 @@ function actualizarUITheme(theme) {
     }
 }
 
-
+function guardarPreferenciasCookie() {
+    document.cookie = "preferencias_usuario=" + encodeURIComponent(JSON.stringify({
+        tema: preferenciasActuales.theme,
+        fuente: preferenciasActuales.fontSize
+    }));
+}
 
 // Cambiar tamaño de fuente
 function cambiarFontSize(size) {
     document.documentElement.style.fontSize = size + "%";
     preferenciasActuales.fontSize = size;
     actualizarUIFontSize(size);
+    guardarPreferenciasCookie();
 }
 
 // Cambiar tema
@@ -166,6 +172,7 @@ function cambiarTema(theme) {
     }
     preferenciasActuales.theme = theme;
     actualizarUITheme(theme);
+    guardarPreferenciasCookie();
 }
 
 // Guardar preferencias en la BD (solo para usuarios autenticados)
@@ -583,8 +590,35 @@ function inyectarEstilosAyuda() {
     document.head.appendChild(style);
 }
 
+function cargarPreferenciasDesdeCookie() {
+    const match = document.cookie.match(/preferencias_usuario=([^;]+)/);
+
+    if (match) {
+        try {
+            const prefs = JSON.parse(decodeURIComponent(match[1]));
+
+            aplicarPreferencias({
+                fontSize: prefs.fuente,
+                theme: prefs.tema
+            });
+
+            console.log("Preferencias cargadas desde cookies");
+        } catch (e) {
+            console.error("Error leyendo cookie");
+        }
+    }
+}
+
 // Ejecutar al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
     inyectarEstilosAyuda();
+
     cargarPreferenciasBD();
+
+    //fallback SI no hay usuario
+    setTimeout(() => {
+        if (!usuarioAutenticado) {
+            cargarPreferenciasDesdeCookie();
+        }
+    }, 200);
 });
