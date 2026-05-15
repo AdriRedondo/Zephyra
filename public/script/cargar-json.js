@@ -92,12 +92,6 @@ function inicializarCargaJSON() {
                 formCargarJSON.reset();
                 confirmarCheckbox.checked = false;
 
-                // Colapsar el dropdown
-                const collapse = bootstrap.Collapse.getInstance(document.getElementById('collapseCargarJSON'));
-                if (collapse) {
-                    collapse.hide();
-                }
-
             } else {
                 // Extraer mensaje de error
                 const text = await response.text();

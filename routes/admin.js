@@ -110,10 +110,13 @@ router.post('/es-admin/cargar-json', requiredAdminId, upload.single('jsonFile'),
     }
 
     // Validar estructura del JSON
-    if (!jsonData.concesionarios || !jsonData.usuarios || !jsonData.vehiculos ||
-        !jsonData.clientes || !jsonData.reservas) {
-        return res.redirect(`${rutaAdmin}?error_carga_json=${encodeURIComponent('Estructura del JSON inválida. Debe contener: concesionarios, usuarios, vehiculos, clientes y reservas')}`);
+    if (!jsonData.concesionarios || !jsonData.usuarios || !jsonData.vehiculos) {
+        return res.redirect(`${rutaAdmin}?error_carga_json=${encodeURIComponent('Estructura del JSON inválida. Debe contener al menos: concesionarios, usuarios y vehiculos')}`);
     }
+
+
+    if (!jsonData.clientes) jsonData.clientes = [];
+    if (!jsonData.reservas) jsonData.reservas = [];
 
     console.log(`   - ${jsonData.concesionarios.length} concesionarios`);
     console.log(`   - ${jsonData.usuarios.length} usuarios`);
