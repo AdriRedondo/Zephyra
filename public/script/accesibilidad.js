@@ -70,13 +70,9 @@ function aplicarPreferencias(prefs) {
 
     // Aplicar tema
     if (prefs.theme) {
-        if (prefs.theme === "dark") {
-            document.documentElement.setAttribute("data-theme", "dark");
-        }
-        else if (prefs.theme === "daltonismo") {
-            document.documentElement.setAttribute("data-theme", "daltonismo");
-        }
-        else {
+        if (prefs.theme === "dark" || prefs.theme === "daltonismo") {
+            document.documentElement.setAttribute("data-theme", prefs.theme);
+        } else {
             document.documentElement.removeAttribute("data-theme");
         }
         actualizarUITheme(prefs.theme);
@@ -151,7 +147,7 @@ function guardarPreferenciasCookie() {
     document.cookie = "preferencias_usuario=" + encodeURIComponent(JSON.stringify({
         tema: preferenciasActuales.theme,
         fuente: preferenciasActuales.fontSize
-    }));
+    })) + "; path=/; max-age=" + (365 * 24 * 60 * 60);
 }
 
 // Cambiar tamaño de fuente
@@ -164,13 +160,9 @@ function cambiarFontSize(size) {
 
 // Cambiar tema
 function cambiarTema(theme) {
-    if (theme === 'dark') {
-        document.documentElement.setAttribute("data-theme", "dark");
-    }
-    else if (theme === 'daltonismo') {
-        document.documentElement.setAttribute("data-theme", "daltonismo");
-    }
-    else {
+    if (theme === 'dark' || theme === 'daltonismo') {
+        document.documentElement.setAttribute("data-theme", theme);
+    } else {
         document.documentElement.removeAttribute("data-theme");
     }
     preferenciasActuales.theme = theme;

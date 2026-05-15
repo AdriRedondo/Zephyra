@@ -109,36 +109,68 @@
                     const d = data.data;
                     const estrellasFill = Math.round(d.media);
                     contenedor.innerHTML = `
-            <div class="d-flex align-items-center gap-3 mb-3">
-                <span class="display-5 fw-bold text-warning">${d.media}</span>
-                <div>
-                    <div class="text-warning fs-4">
-                        ${[1, 2, 3, 4, 5].map(i =>
+    <div class="d-flex align-items-center gap-3 mb-3">
+        <span class="display-5 fw-bold text-warning">${d.media}</span>
+        <div>
+            <div class="text-warning fs-4">
+                ${[1, 2, 3, 4, 5].map(i =>
                         `<i class="bi bi-star${i <= estrellasFill ? '-fill' : ''}"></i>`
                     ).join('')}
-                    </div>
-                    <small class="text-muted">${d.total_valoraciones} valoracion${d.total_valoraciones !== 1 ? 'es' : ''}</small>
-                </div>
             </div>
-            ${[5, 4, 3, 2, 1].map(n => {
+            <small class="text-muted">${d.total_valoraciones} valoracion${d.total_valoraciones !== 1 ? 'es' : ''}</small>
+        </div>
+    </div>
+    ${[5, 4, 3, 2, 1].map(n => {
                         const count = d[`estrellas_${n}`] || 0;
                         const pct = d.total_valoraciones > 0 ? Math.round((count / d.total_valoraciones) * 100) : 0;
                         return `
-                <div class="d-flex align-items-center gap-2 mb-1">
-                    <span style="width:60px">${n} <i class="bi bi-star-fill text-warning"></i></span>
-                    <div class="progress flex-grow-1" style="height:12px">
-                        <div class="progress-bar bg-warning" style="width:${pct}%"></div>
-                    </div>
-                    <span style="width:35px" class="text-muted small">${count}</span>
-                </div>`;
+    <div class="d-flex align-items-center gap-2 mb-1">
+        <span style="width:60px">${n} <i class="bi bi-star-fill text-warning"></i></span>
+        <div class="progress flex-grow-1" style="height:12px">
+            <div class="progress-bar bg-warning" style="width:${pct}%"></div>
+        </div>
+        <span style="width:35px" class="text-muted small">${count}</span>
+    </div>`;
                     }).join('')}
-        `;
+    <div id="lista-comentarios" class="mt-4">
+        <p class="text-muted small">Cargando comentarios...</p>
+    </div>
+    `;
+
+                    fetch('/api/vehiculos/<%= vehiculo.id_vehiculo %>/comentarios')
+                        .then(r => r.json())
+                        .then(resp => {
+                            const lista = document.getElementById('lista-comentarios');
+                            if (!resp.success || resp.data.length === 0) {
+                                lista.innerHTML = '<p class="text-muted small">Sin comentarios escritos aún.</p>';
+                                return;
+                            }
+                            lista.innerHTML = '<h6 class="mb-3">Comentarios</h6>' +
+                                resp.data.map(c => {
+                                    const estrellas = [1, 2, 3, 4, 5].map(i =>
+                                        `<i class="bi bi-star${i <= c.puntuacion ? '-fill' : ''} text-warning"></i>`
+                                    ).join('');
+                                    const fecha = new Date(c.fecha_fin).toLocaleDateString('es-ES');
+                                    return `
+    <div class="border rounded p-3 mb-2">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <div>${estrellas}</div>
+            <small class="text-muted">${fecha}</small>
+        </div>
+        <p class="mb-1 small">${c.comentario}</p>
+        <small class="text-muted fst-italic">${c.nombre_cliente || 'Cliente anónimo'}</small>
+    </div>`;
+                                }).join('');
+                        })
+                        .catch(() => {
+                            const lista = document.getElementById('lista-comentarios');
+                            if (lista) lista.innerHTML = '';
+                        });
                 })
                 .catch(() => {
                     document.getElementById('seccion-valoraciones').innerHTML =
                         '<p class="text-muted">No se pudieron cargar las valoraciones.</p>';
                 });
-
         </script>
     </main>
     <% if (vehiculo.latitud && vehiculo.longitud) { %>

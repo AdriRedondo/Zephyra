@@ -166,13 +166,13 @@ app.use((req, res, next) => {
 
     //PRIORIDAD 2: cookies
     else if (req.cookies.preferencias_usuario) {
-        datos = parsear(req.cookies.preferencias_usuario);
+        datos = parsear(decodeURIComponent(req.cookies.preferencias_usuario));
     }
 
     //Mezclar con defaults
     if (datos) {
-        if (datos.tema) prefs.tema = datos.tema;
-        if (datos.fuente) prefs.fuente = datos.fuente;
+        prefs.tema = datos.tema || datos.theme || prefs.tema;
+        prefs.fuente = datos.fuente || datos.fontSize || prefs.fuente;
     }
 
     //Enviar a vistas

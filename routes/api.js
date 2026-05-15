@@ -1093,4 +1093,16 @@ router.get('/vehiculos/:id/valoraciones', (req, res) => {
     });
 });
 
+// GET /api/vehiculos/:id/comentarios
+router.get('/vehiculos/:id/comentarios', (req, res) => {
+    const id_vehiculo = req.params.id;
+    Reserva.obtenerComentariosDetalle(id_vehiculo, (err, comentarios) => {
+        if (err) {
+            console.error('Error al obtener comentarios:', err);
+            return res.status(500).json({ success: false, message: 'Error al obtener comentarios' });
+        }
+        res.json({ success: true, data: comentarios });
+    });
+});
+
 module.exports = router;

@@ -151,6 +151,7 @@ router.get('/es-historial', requiredLoggedIn, (req, res) => {
             r.incidencias_reportadas,
             r.puntuacion,
             r.comentario,
+             v.id_vehiculo,
             v.marca,
             v.modelo,
             v.matricula,

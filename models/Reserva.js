@@ -288,6 +288,27 @@ class Reserva {
             callback(null, results[0]);
         });
     }
+
+    static obtenerComentariosDetalle(id_vehiculo, callback) {
+        const consulta = `
+        SELECT 
+            r.puntuacion,
+            r.comentario,
+            r.fecha_fin,
+            c.nombre AS nombre_cliente
+        FROM Reservas r
+        LEFT JOIN Cliente c ON r.id_cliente = c.id_cliente
+        WHERE r.id_vehiculo = ? AND r.puntuacion IS NOT NULL 
+            AND r.comentario IS NOT NULL AND r.comentario != ''
+        ORDER BY r.fecha_fin DESC
+    `;
+        pool.query(consulta, [id_vehiculo], (err, results) => {
+            if (err) return callback(err, null);
+            callback(null, results);
+        });
+    }
 }
+
+
 
 module.exports = Reserva;

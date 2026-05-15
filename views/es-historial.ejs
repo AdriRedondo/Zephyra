@@ -70,6 +70,7 @@
                         <table class="table table-hover">
                             <thead class="table-light">
                                 <tr>
+                                    <th></th>
                                     <th>Vehículo</th>
                                     <th>Matrícula</th>
                                     <th>Fecha Inicio</th>
@@ -83,6 +84,12 @@
                             <tbody>
                                 <% reservasFinalizadas.forEach(reserva=> { %>
                                     <tr>
+                                        <td>
+                                            <a class="btn border-success btn-sm me-2"
+                                                href="/es-vehiculos/<%= reserva.id_vehiculo %>">
+                                                <i class="bi bi-search"></i>
+                                            </a>
+                                        </td>
                                         <td>
                                             <%= reserva.marca %>
                                                 <%= reserva.modelo %>

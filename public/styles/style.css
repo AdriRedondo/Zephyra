@@ -311,6 +311,23 @@ a:focus {
     background: linear-gradient(135deg, #4D9B5F 0%, #5AAF6F 100%);
 }
 
+[data-theme="daltonismo"] .modal-header {
+    background: linear-gradient(135deg, #f0a500 0%, #d4920a 100%);
+    color: #1a1a1a;
+}
+
+[data-theme="daltonismo"] .modal-header .modal-title {
+    color: #1a1a1a;
+}
+
+[data-theme="daltonismo"] .modal-header .btn-close {
+    filter: none;
+}
+
+[data-theme="daltonismo"] .modal-content {
+    box-shadow: 0 20px 60px rgba(240, 165, 0, 0.3);
+}
+
 .list-group-item a {
     display: block;
     color: var(--text-color);
@@ -401,6 +418,29 @@ footer p {
 
 input {
     color: var(--text-color)
+}
+
+[data-theme="daltonismo"] .border-success:hover {
+    background: #0057b8 !important;
+    color: #fff !important;
+}
+
+[data-theme="daltonismo"] .border-danger:hover {
+    background: #d35400 !important;
+    color: #fff !important;
+}
+
+[data-theme="daltonismo"] .border-secondary:hover {
+    background: #5a5a5a !important;
+    color: #fff !important;
+}
+
+[data-theme="daltonismo"] .form-control:focus,
+[data-theme="daltonismo"] .form-select:focus,
+[data-theme="daltonismo"] .btn:focus,
+[data-theme="daltonismo"] .btn:active,
+[data-theme="daltonismo"] .btn.active {
+    border-color: #0057b8 !important;
 }
 
 /*

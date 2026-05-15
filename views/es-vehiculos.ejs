@@ -72,7 +72,7 @@
 
                     <% if(usuario && usuario.rol==='admin' ) {%>
 
-                        <label hidden>Concesionario:</label>
+                        <label>Concesionario:</label>
                         <select name="concesionario" class="form-select mb-3">
                             <option value>Todos</option>
                             <% const concesionarios=[...new Set(vehiculos.map(v=>
@@ -87,12 +87,15 @@
                         <label>Estado:</label>
                         <select name="estado" class="form-select mb-3">
                             <option value>Todos</option>
-                            <% const estados=['disponible', 'reservado' , 'mantenimiento' ]; estados.forEach(e=> { %>
+                            <% const estados=['disponible', 'reservado' , 'mantenimiento' ]; estados.forEach(e=>
+                                {
+                                %>
                                 <option value="<%= e %>">
                                     <%= e %>
                                 </option>
                                 <% }) %>
                         </select>
+
                         <% } %>
                 </form>
 
