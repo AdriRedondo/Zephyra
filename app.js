@@ -203,6 +203,7 @@ app.use((req, res, next) => {
     const rutasPermitidas = [
         '/carga-inicial', '/es-admin/cargar-json',
         '/es-login', '/en-login', '/submit_login',
+        '/es-admin/verificar-matriculas',
         '/es-logout', '/en-logout'
     ];
     const esEstatico = req.path.startsWith('/styles/') ||

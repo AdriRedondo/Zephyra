@@ -72,7 +72,7 @@ router.get('/es-admin', requiredAdminId, (req, res) => {
 });
 
 // POST: Verificar qué matrículas del JSON ya existen
-router.post('/es-admin/verificar-matriculas', requiredAdminId, express.json(), (req, res) => {
+router.post('/es-admin/verificar-matriculas', express.json(), (req, res) => {
     const { matriculas } = req.body;
     if (!matriculas || !Array.isArray(matriculas) || matriculas.length === 0) {
         return res.json({ existentes: [] });
@@ -106,14 +106,17 @@ router.get('/en-statistics', requiredAdminId, (req, res) => {
 // -----------------------------------------
 
 // POST: Procesar la carga del JSON (SIN GUARDAR ARCHIVO EN DISCO)
-router.post('/es-admin/cargar-json', requiredAdminId, upload.single('jsonFile'), (req, res) => {
+router.post('/es-admin/cargar-json', upload.single('jsonFile'), (req, res) => {
     const idioma = req.body.idioma || 'español';
     const rutaAdmin = idioma === 'español' ? '/es-admin' : '/en-admin';
+    const origen = req.body.origen;
+    const rutaExito = origen === 'carga-inicial' ? '/es-login' : rutaAdmin;
+    const rutaError = origen === 'carga-inicial' ? '/carga-inicial' : rutaAdmin;
     const actualizarExistentes = req.body.actualizar_existentes === 'true';
     console.log("Cargando JSON...");
 
     if (!req.file) {
-        return res.redirect(`${rutaAdmin}?error_carga_json=${encodeURIComponent('No se seleccionó ningún archivo')}`);
+        return res.redirect(`${rutaError}?error_carga_json=${encodeURIComponent('No se seleccionó ningún archivo')}`);
     }
 
     let jsonData;
@@ -121,11 +124,11 @@ router.post('/es-admin/cargar-json', requiredAdminId, upload.single('jsonFile'),
         const data = req.file.buffer.toString('utf8');
         jsonData = JSON.parse(data);
     } catch (errParse) {
-        return res.redirect(`${rutaAdmin}?error_carga_json=${encodeURIComponent('El archivo JSON no es válido')}`);
+        return res.redirect(`${rutaError}?error_carga_json=${encodeURIComponent('El archivo JSON no es válido')}`);
     }
 
     if (!jsonData.concesionarios || !jsonData.usuarios || !jsonData.vehiculos) {
-        return res.redirect(`${rutaAdmin}?error_carga_json=${encodeURIComponent('Estructura del JSON inválida. Debe contener al menos: concesionarios, usuarios y vehiculos')}`);
+        return res.redirect(`${rutaError}?error_carga_json=${encodeURIComponent('Estructura del JSON inválida. Debe contener al menos: concesionarios, usuarios y vehiculos')}`);
     }
 
     if (!jsonData.clientes) jsonData.clientes = [];
@@ -140,9 +143,9 @@ router.post('/es-admin/cargar-json', requiredAdminId, upload.single('jsonFile'),
     cargarDatosCompletos(jsonData, actualizarExistentes, (errCarga) => {
         if (errCarga) {
             console.error('Error al cargar datos:', errCarga);
-            return res.redirect(`${rutaAdmin}?error_carga_json=${encodeURIComponent('Error al cargar los datos: ' + errCarga.message)}`);
+            return res.redirect(`${rutaError}?error_carga_json=${encodeURIComponent('Error al cargar los datos: ' + errCarga.message)}`);
         }
-        res.redirect(`${rutaAdmin}?success_carga_json=${encodeURIComponent('Base de datos actualizada correctamente con ' +
+        res.redirect(`${rutaExito}?success_carga_json=${encodeURIComponent('Base de datos actualizada correctamente con ' +
             jsonData.concesionarios.length + ' concesionarios, ' +
             jsonData.usuarios.length + ' usuarios, ' +
             jsonData.vehiculos.length + ' vehículos, ' +
