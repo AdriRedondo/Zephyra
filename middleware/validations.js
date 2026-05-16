@@ -23,7 +23,7 @@ const validateUser = (req, res, next) => {
     }
 
     // Validar formato de email
-    const emailRegex = /^[A-Za-z0-9._%+-]+@ucm.es$/;
+    const emailRegex = /^[A-Za-z0-9._%+-]+@zephyra.com$/;
     if (!emailRegex.test(correo.trim())) {
         const error = language === 'english'
             ? 'Invalid email format'

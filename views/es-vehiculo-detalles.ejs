@@ -1,4 +1,4 @@
-<%- include('es-header', { title: 'Detalle vehículo' , estilos: ['style'], actual_es: 'es-vehiculo-detalles' ,
+<%- include('es-header', { title: 'Detalle vehículo' , estilos: ['style' ], actual_es: 'es-vehiculo-detalles' ,
     actual_en: 'en-vehicle-details' , extraCSS: vehiculo.latitud ? ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css']
     : [] }) %>
 
@@ -11,8 +11,8 @@
                 </h2>
 
                 <img src="/es-vehiculos/imagen/<%= vehiculo.id_vehiculo %>" class="card-img-top"
-                    alt="<%= vehiculo.marca %> <%= vehiculo.modelo %>"
-                    onerror="this.src='/img/vehiculo-placeholder.jpg'">
+                    style="max-width: 800px; width: 100%; display: block; margin: 0 auto;"
+                    alt="<%= vehiculo.marca %> <%= vehiculo.modelo %>" onerror="this.src='/images/unknown.png'">
 
                 <div>
                     <div class="row">

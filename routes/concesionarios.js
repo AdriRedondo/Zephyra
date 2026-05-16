@@ -26,7 +26,7 @@ router.post('/dealer-register', requiredAdminId, validateDealer, (req, res) => {
         nombre,
         ciudad,
         direccion,
-        telefono: telefono_contacto,
+        telefono_contacto,
         latitud: req.body.latitud || null,
         longitud: req.body.longitud || null
     }, (err, nuevoId) => {
