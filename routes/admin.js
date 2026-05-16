@@ -127,12 +127,13 @@ router.post('/es-admin/cargar-json', upload.single('jsonFile'), (req, res) => {
         return res.redirect(`${rutaError}?error_carga_json=${encodeURIComponent('El archivo JSON no es válido')}`);
     }
 
-    if (!jsonData.concesionarios || !jsonData.usuarios || !jsonData.vehiculos) {
+    if (!jsonData.concesionarios || !jsonData.vehiculos) {
         return res.redirect(`${rutaError}?error_carga_json=${encodeURIComponent('Estructura del JSON inválida. Debe contener al menos: concesionarios, usuarios y vehiculos')}`);
     }
 
     if (!jsonData.clientes) jsonData.clientes = [];
     if (!jsonData.reservas) jsonData.reservas = [];
+    if (!jsonData.reservas) jsonData.usuarios = [];
 
     console.log(`   - ${jsonData.concesionarios.length} concesionarios`);
     console.log(`   - ${jsonData.usuarios.length} usuarios`);
