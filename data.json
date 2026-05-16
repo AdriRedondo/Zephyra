@@ -487,6 +487,45 @@
             "estado": "mantenimiento",
             "tipo": "coche",
             "id_concesionario": 2
+        },
+        {
+            "matricula": "4005VLW",
+            "marca": "Volkswagen",
+            "modelo": "ID.7",
+            "anyo_matriculacion": 2024,
+            "numero_plazas": 5,
+            "autonomia_km": 610,
+            "color": "Azul oscuro",
+            "imagen": "VW5.png",
+            "estado": "mantenimiento",
+            "tipo": "coche",
+            "id_concesionario": 2
+        },
+        {
+            "matricula": "2222RRR",
+            "marca": "GGG",
+            "modelo": "ID.7",
+            "anyo_matriculacion": 2024,
+            "numero_plazas": 5,
+            "autonomia_km": 610,
+            "color": "Azul oscuro",
+            "imagen": "VW5.png",
+            "estado": "mantenimiento",
+            "tipo": "coche",
+            "id_concesionario": 2
+        },
+        {
+            "matricula": "1111FFF",
+            "marca": "FFFF",
+            "modelo": "ID.7",
+            "anyo_matriculacion": 2024,
+            "numero_plazas": 5,
+            "autonomia_km": 610,
+            "color": "Azul oscuro",
+            "imagen": "VW5.png",
+            "estado": "mantenimiento",
+            "tipo": "coche",
+            "id_concesionario": 2
         }
     ],
     "usuarios": [

@@ -30,58 +30,60 @@
 
                 <!-- Información del usuario en cards -->
                 <div class="row g-3 mb-4">
-                    <!-- Teléfono (solo si existe) -->
-                    <% if(usuario.telefono && usuario.telefono !=='' ) { %>
-                        <div class="col-12 col-md-6">
-                            <div class="info-card rounded-3 p-3">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="info-icon">
-                                        <i class="bi bi-telephone"></i>
-                                    </div>
-                                    <div>
-                                        <small class="text-muted d-block">Teléfono</small>
-                                        <strong>
-                                            <%= usuario.telefono %>
-                                        </strong>
-                                    </div>
+
+
+                    <!-- Rol -->
+                    <div class="col-12 col-md-6">
+                        <div class="info-card rounded-3 p-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="info-icon">
+                                    <i class="bi <%= usuario.rol === 'admin' ? 'bi-person-badge' : 'bi-person' %>"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Rol</small>
+                                    <strong>
+                                        <%= usuario.rol==='admin' ? 'Administrador' : 'Empleado' %>
+                                    </strong>
                                 </div>
                             </div>
                         </div>
-                        <% } %>
+                    </div>
 
-                            <!-- Rol -->
-                            <div class="col-12 col-md-6">
+                    <div class="col-12 col-md-6">
+                        <div class="info-card rounded-3 p-3">
+                            <div class=" d-flex align-items-center gap-3">
+                                <div class="info-icon">
+                                    <i class="bi bi-building"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Concesionario asignado</small>
+                                    <strong>
+                                        <%= concesionario %>
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Teléfono (solo si existe) -->
+                    <%= console.log(usuario) %>
+                        <% if(usuario.telefono && usuario.telefono !=='' ) { %>
+                            <div class="col-12">
                                 <div class="info-card rounded-3 p-3">
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="info-icon">
-                                            <i
-                                                class="bi <%= usuario.rol === 'admin' ? 'bi-person-badge' : 'bi-person' %>"></i>
+                                            <i class="bi bi-telephone"></i>
                                         </div>
                                         <div>
-                                            <small class="text-muted d-block">Rol</small>
+                                            <small class="text-muted d-block">Teléfono</small>
                                             <strong>
-                                                <%= usuario.rol==='admin' ? 'Administrador' : 'Empleado' %>
+                                                <%= usuario.telefono %>
                                             </strong>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="col-12 d-flex justify-content-center">
-                                <div class="info-card rounded-3 p-3" style="max-width: 600px; width: 100%;">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="info-icon">
-                                            <i class="bi bi-building"></i>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted d-block">Concesionario asignado</small>
-                                            <strong>
-                                                <%= concesionario %>
-                                            </strong>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <% } %>
                 </div>
 
             </div>

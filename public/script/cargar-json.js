@@ -15,114 +15,102 @@ function inicializarCargaJSON() {
     formCargarJSON.addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        // Validar que se haya seleccionado un archivo
         if (!jsonFileInput.files || jsonFileInput.files.length === 0) {
             alert('Por favor, selecciona un archivo JSON');
             return;
         }
-
-        // Validar que el checkbox esté marcado
         if (!confirmarCheckbox.checked) {
-            alert('Debes confirmar que entiendes que esta acción eliminará todos los datos');
+            alert('Debes confirmar que entiendes los cambios que se realizarán');
             return;
         }
 
         const archivo = jsonFileInput.files[0];
 
-        // Validar extensión del archivo
         if (!archivo.name.toLowerCase().endsWith('.json')) {
             alert('Por favor, selecciona un archivo JSON válido (.json)');
             return;
         }
-
-        // Validar tamaño del archivo (10MB)
         if (archivo.size > 10 * 1024 * 1024) {
             alert('El archivo es demasiado grande. Tamaño máximo: 10MB');
             return;
         }
 
-        // Mostrar alerta de confirmación
-        const confirmacion = confirm(
-            'ÚLTIMA ADVERTENCIA\n\n' +
-            'Estás a punto de ELIMINAR TODOS los datos de la base de datos:\n\n' +
-            '• Todos los concesionarios\n' +
-            '• Todos los usuarios\n' +
-            '• Todos los vehículos\n' +
-            '• Todos los clientes\n' +
-            '• Todas las reservas\n\n' +
-            'Archivo a cargar: ' + archivo.name + '\n' +
-            '¿Estás COMPLETAMENTE SEGURO de que deseas continuar?'
-        );
-
-        if (!confirmacion) {
+        // Leer y parsear el JSON en el cliente para verificar conflictos
+        let jsonData;
+        try {
+            const texto = await archivo.text();
+            jsonData = JSON.parse(texto);
+        } catch (e) {
+            alert('El archivo JSON no es válido');
             return;
         }
 
-        // Preparar FormData
-        const formData = new FormData(formCargarJSON);
+        // Verificar qué matrículas ya existen
+        let actualizarExistentes = false;
+        const matriculas = (jsonData.vehiculos || []).map(v => v.matricula).filter(Boolean);
 
-        // Deshabilitar botón y cambiar texto
+        if (matriculas.length > 0) {
+            try {
+                const checkResp = await fetch('/es-admin/verificar-matriculas', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ matriculas })
+                });
+                const checkData = await checkResp.json();
+
+                if (checkData.existentes && checkData.existentes.length > 0) {
+                    const lista = checkData.existentes.join('\n  • ');
+                    actualizarExistentes = confirm(
+                        `Los siguientes vehículos ya existen en la base de datos:\n\n  • ${lista}\n\n` +
+                        `¿Deseas actualizarlos con los datos del JSON?\n\n` +
+                        `  OK → Actualizar vehículos existentes\n` +
+                        `  Cancelar → Mantenerlos sin cambios (solo se añadirán los nuevos)`
+                    );
+                }
+            } catch (e) {
+                console.warn('No se pudo verificar matrículas, continuando sin verificación');
+            }
+        }
+
+        // Preparar y enviar el formulario
         const textoOriginal = btnCargarJSON.innerHTML;
         btnCargarJSON.disabled = true;
         btnCargarJSON.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Procesando...';
 
+        const formData = new FormData(formCargarJSON);
+        formData.append('actualizar_existentes', actualizarExistentes ? 'true' : 'false');
+
         try {
-            // Enviar la petición AJAX
             const response = await fetch('/es-admin/cargar-json', {
                 method: 'POST',
                 body: formData
             });
 
+            const text = await response.text();
+
             if (response.ok) {
-                // Leer la respuesta como texto
-                const text = await response.text();
-
-                // Extraer el mensaje de éxito de la URL de redirección
                 const urlMatch = text.match(/success_carga_json=([^"&]+)/);
-                let mensaje = 'Base de datos actualizada correctamente';
-
-                if (urlMatch) {
-                    mensaje = decodeURIComponent(urlMatch[1]);
-                }
-
-                // Mostrar modal de éxito usando la función existente
+                const mensaje = urlMatch ? decodeURIComponent(urlMatch[1]) : 'Base de datos actualizada correctamente';
                 mostrarModalExitoJSON(mensaje);
-
-                // Resetear formulario
                 formCargarJSON.reset();
-                confirmarCheckbox.checked = false;
-
             } else {
-                // Extraer mensaje de error
-                const text = await response.text();
                 const urlMatch = text.match(/error_carga_json=([^"&]+)/);
-                let mensajeError = 'Error al procesar el archivo';
-
-                if (urlMatch) {
-                    mensajeError = decodeURIComponent(urlMatch[1]);
-                }
-
+                const mensajeError = urlMatch ? decodeURIComponent(urlMatch[1]) : 'Error al procesar el archivo';
                 mostrarModalErrorJSON(mensajeError);
             }
-
         } catch (error) {
             console.error('Error al cargar JSON:', error);
-            mostrarModalErrorJSON('Ocurrió un error al procesar el archivo. Por favor, verifica que el JSON tenga la estructura correcta e intenta nuevamente.');
-
+            mostrarModalErrorJSON('Ocurrió un error al procesar el archivo.');
         } finally {
-            // Rehabilitar botón
             btnCargarJSON.disabled = false;
             btnCargarJSON.innerHTML = textoOriginal;
         }
     });
 
-    // Mostrar información del archivo seleccionado
     if (jsonFileInput) {
         jsonFileInput.addEventListener('change', function () {
             if (this.files && this.files.length > 0) {
-                const archivo = this.files[0];
-                const tamañoKB = (archivo.size / 1024).toFixed(2);
-                console.log(`Archivo seleccionado: ${archivo.name}`);
+                console.log(`Archivo seleccionado: ${this.files[0].name}`);
             }
         });
     }
